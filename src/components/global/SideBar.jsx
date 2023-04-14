@@ -41,21 +41,22 @@ const SideBar = ({ setIsOpen, isOpen }) => {
     },
   ];
   const [active, setActive] = useState({});
+
   return (
     <aside
-      className={`${isOpen ? "w-[230px]" : "md:w-[90px] w-[230px]"} ${
+      className={`${isOpen ? "w-[230px]" : "md:w-[70px] w-[230px]"} ${
         isMobileOpen ? "left-0" : "md:left-0 -left-full"
       } border-r md:sticky absolute bg-bg z-50 top-0 left-0 h-screen shrink-0 transition-all`}
     >
       <header
-        className={
-          "flex items-center justify-between px-5 h-[60px] border-b bg-primary text-white"
-        }
+        className={`flex items-center h-[60px] border-b bg-primary text-white ${
+          isOpen ? "px-5 gap-2 justify-between" : "px-2 justify-center"
+        }`}
       >
         {isOpen && <h4 className=" font-semibold">Stellar Aesthetics</h4>}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="text-2xl ml-1 md:block hidden rounded-full m-0 p-1 hover:bg-slate-800"
+          className="text-2xl md:block hidden rounded-full m-0 p-1 hover:bg-slate-800"
         >
           <Icon
             icon={
@@ -72,7 +73,7 @@ const SideBar = ({ setIsOpen, isOpen }) => {
           <Icon icon={"uil:times"} className="text-2xl" />
         </button>
       </header>
-      <nav className="px-4 py-5">
+      <nav className={isOpen ? "px-4 py-5" : "px-2 py-5"}>
         <ul>
           {menuLinks.map((item, i) => {
             return (

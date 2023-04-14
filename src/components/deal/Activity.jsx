@@ -4,18 +4,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { addActivity } from "../../state/features/dealFeatures/activitySlice";
 import Loader from "../global/Loader";
 
-const Activity = () => {
+const Activity = ({ selectedInfo, setIsOpen }) => {
   const { data, loading, error, success } = useSelector((state) => state.deals);
   const [title, setTitle] = useState("call");
   const [type, setType] = useState("call");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(
+    selectedInfo ? selectedInfo.startStr : ""
+  );
+  const [endDate, setEndDate] = useState(
+    selectedInfo ? selectedInfo.endStr : ""
+  );
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [holder, setHolder] = useState("asdfasdfasdfasdfsadfsadfas");
-
+  console.log(selectedInfo);
   const dispatch = useDispatch();
   const [activityOptions, setActivityOptions] = useState([
     {
@@ -82,6 +86,7 @@ const Activity = () => {
     setEndTime("");
     setLocation("");
     setDescription("");
+    setIsOpen(false);
   }
   return (
     data &&

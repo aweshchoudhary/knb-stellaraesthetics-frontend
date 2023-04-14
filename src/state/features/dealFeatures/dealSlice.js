@@ -17,10 +17,10 @@ export const getDealsByStage = createAsyncThunk("getDealsByStage", async () => {
     return err.message;
   }
 });
-export const createDeal = createAsyncThunk("createDeal", async (data) => {
+export const createDeal = createAsyncThunk("createDeal", async (dealData) => {
   try {
-    const res = await axiosInstance.post("/api/card", data);
-    return res.data.data;
+    const { data } = await axiosInstance.post("/api/card", dealData);
+    return data.data;
   } catch (err) {
     console.log(err);
     return err.message;
@@ -110,11 +110,11 @@ const dealSlice = createSlice({
       state.success = false;
       state.error = null;
     });
-    builder.addCase(createDeal.fulfilled, (state, action) => {
+    builder.addCase(createDeal.fulfilled, (state, { payload }) => {
       state.loading = false;
+      state.data = payload;
       state.success = true;
       state.error = null;
-      state.data = action.payload;
     });
     builder.addCase(createDeal.rejected, (state, action) => {
       state.loading = false;
@@ -147,7 +147,6 @@ const dealSlice = createSlice({
     });
     builder.addCase(getDealById.fulfilled, (state, { payload }) => {
       state.loading = false;
-      state.success = true;
       state.data = payload;
       state.error = null;
     });

@@ -1,61 +1,70 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createDeal } from "../../state/features/dealFeatures/dealSlice";
+import { createClient } from "../../state/features/clientSlice";
 
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import Label from "./label/Label";
-import StageSlider from "./StageSlider";
+import Label from "../deal/label/Label";
+import StageSlider from "../deal/StageSlider";
+import { addTempItemToStage } from "../../state/features/stageSlice";
 
 const AddDeal = ({ setIsOpen }) => {
-  const { loading } = useSelector((state) => state.deals);
+  const { loading, data } = useSelector((state) => state.deals);
+  const stages = useSelector((state) => state.stages);
+  const client = useSelector((state) => state.client);
   const dispatch = useDispatch();
+  const [isFetching, setIsFetching] = useState(false);
 
   const [dealData, setDealData] = useState({
-    clientDetails: {
-      company: null,
-      title: null,
-      contactPerson: null,
-      mobile: null,
-      whatsapp: null,
-      email: null,
-    },
-    value: { value: null, type: "inr" },
-    stage: null,
-    label: null,
-    expectedClosingDate: null,
+    title: "",
+    stage: "",
+    value: { value: "", type: "inr" },
+    label: "",
+    expectedClosingDate: "",
   });
+
+  const [clientDetails, setClientDetails] = useState({
+    company: "",
+    contactPerson: "",
+    mobile: "",
+    whatsapp: "",
+    email: "",
+  });
+
   const [mobile, setMobile] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [sameNumber, setSameNumber] = useState(false);
 
   const region = navigator?.language?.split("-")[1];
 
-  function handleAddDeal() {
-    dispatch(createDeal(dealData));
+  function handleAddClient() {
+    dispatch(createClient(clientDetails));
+    setClientDetails({
+      company: null,
+      title: null,
+      contactPerson: null,
+      mobile: null,
+      whatsapp: null,
+      email: null,
+    });
+    setTimeout(() => setIsFetching(true), 1000);
+  }
+  function handleAddDeal(clientId) {
+    dispatch(createDeal({ ...dealData, clientId }));
     setDealData({
-      clientDetails: {
-        company: null,
-        title: null,
-        contactPerson: null,
-        phone: { number: null, prefix: "91", type: "work" },
-        email: { email: null, type: "work" },
-      },
       value: { value: null, type: "inr" },
       stage: null,
       color: null,
       expectedClosingDate: null,
     });
-    setIsOpen(false);
   }
+
   function fillClientDetails(name, value) {
-    setDealData((prev) => {
+    setClientDetails((prev) => {
       return {
         ...prev,
-        clientDetails: {
-          ...prev.clientDetails,
-          [name]: value,
-        },
+        [name]: value,
       };
     });
   }
@@ -76,28 +85,36 @@ const AddDeal = ({ setIsOpen }) => {
   }
 
   useEffect(() => {
-    setDealData((prev) => {
+    setClientDetails((prev) => {
       return {
         ...prev,
-        clientDetails: {
-          ...prev.clientDetails,
-          mobile,
-        },
+        mobile,
       };
     });
   }, [mobile]);
 
   useEffect(() => {
-    setDealData((prev) => {
+    setClientDetails((prev) => {
       return {
         ...prev,
-        clientDetails: {
-          ...prev.clientDetails,
-          whatsapp: sameNumber ? mobile : whatsapp,
-        },
+        whatsapp: sameNumber ? mobile : whatsapp,
       };
     });
-  }, [whatsapp]);
+  }, [whatsapp, sameNumber]);
+
+  useEffect(() => {
+    if (isFetching && client.data._id) {
+      handleAddDeal(client.data._id);
+    }
+  }, [client.loading, client.data, client.success]);
+
+  useEffect(() => {
+    if (isFetching && data) {
+      dispatch(addTempItemToStage({ stageId: dealData.stage, item: data._id }));
+      setIsFetching(false);
+      setIsOpen(false);
+    }
+  }, [data, isFetching]);
 
   return (
     <>
@@ -113,6 +130,7 @@ const AddDeal = ({ setIsOpen }) => {
               id="contactPerson"
               placeholder="Full Name"
               className="input"
+              value={clientDetails.contactPerson}
               onChange={(e) => fillClientDetails(e.target.name, e.target.value)}
             />
           </div>
@@ -126,6 +144,7 @@ const AddDeal = ({ setIsOpen }) => {
               id="company"
               placeholder="Company Name"
               className="input"
+              value={clientDetails.company}
               onChange={(e) => fillClientDetails(e.target.name, e.target.value)}
             />
           </div>
@@ -139,7 +158,8 @@ const AddDeal = ({ setIsOpen }) => {
               id="title"
               placeholder="Title"
               className="input"
-              onChange={(e) => fillClientDetails(e.target.name, e.target.value)}
+              value={dealData.title}
+              onChange={(e) => fillDealDetails(e.target.name, e.target.value)}
             />
           </div>
           <div className="input-value mb-3">
@@ -183,7 +203,7 @@ const AddDeal = ({ setIsOpen }) => {
               </select>
             </div>
           </div>
-          {/* <div className="input-stage mb-3">
+          <div className="input-stage mb-3">
             <label htmlFor="stage" className="text-textColor block mb-2">
               Stage
             </label>
@@ -204,7 +224,7 @@ const AddDeal = ({ setIsOpen }) => {
                 );
               })}
             </select>
-          </div> */}
+          </div>
           <StageSlider />
           <Label setLabel={setDealData} label={dealData.label} />
           <div className="input-close-date mb-3">
@@ -274,6 +294,7 @@ const AddDeal = ({ setIsOpen }) => {
                 id="email"
                 placeholder="Email"
                 className="input"
+                value={clientDetails.email}
                 onChange={(e) =>
                   fillClientDetails(e.target.name, e.target.value)
                 }
@@ -285,17 +306,17 @@ const AddDeal = ({ setIsOpen }) => {
       <footer className="py-2 px-5 h-[60px] border-t flex items-center justify-end gap-2">
         <button
           className="btn-outlined"
-          disabled={loading}
+          disabled={loading || client?.loading}
           onClick={() => setIsOpen(false)}
         >
           cancel
         </button>
         <button
-          onClick={handleAddDeal}
-          disabled={loading}
+          onClick={handleAddClient}
+          disabled={loading || client?.loading}
           className="btn-filled"
         >
-          {loading ? "Loading..." : "add deal"}
+          {loading || client?.loading ? "Loading..." : "add deal"}
         </button>
       </footer>
     </>

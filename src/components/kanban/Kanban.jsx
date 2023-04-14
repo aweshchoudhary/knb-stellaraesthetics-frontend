@@ -7,12 +7,13 @@ import {
   removeTempItemFromStage,
 } from "../../state/features/stageSlice";
 import { Icon } from "@iconify/react";
-import AddDealModel from "../deal/AddDealModel";
+import AddDealModel from "../models/AddDealModel";
 import Model from "../models/Model";
 import Column from "./Column";
 import { toast } from "react-toastify";
 import CreateKanbanModel from "../models/CreateStageModel";
 import { updateDealStage } from "../../state/features//dealFeatures/dealSlice";
+import Loader from "../global/Loader";
 
 const Kanban = ({ setIsKanBanEdit }) => {
   const dispatch = useDispatch();
@@ -54,7 +55,7 @@ const Kanban = ({ setIsKanBanEdit }) => {
     dispatch(getAllStages());
   }, [error, deals.error]);
 
-  return (
+  return !loading ? (
     <>
       {error && toast.error("Some thing went wrong.")}
       <Models
@@ -67,26 +68,19 @@ const Kanban = ({ setIsKanBanEdit }) => {
       />
       {data.length ? (
         <section className="flex items-center justify-between px-5 py-2 border-b">
-          <div>
-            <button
-              onClick={() => setAddDealModelDisplay(true)}
-              className="btn-filled btn-small"
-            >
-              <Icon icon={"uil:plus"} className="text-xl" />
-              Deal
-            </button>
-          </div>
-          <div>
-            <div></div>
-            <div>
-              <button
-                className="btn-filled btn-small"
-                onClick={() => setIsKanBanEdit(true)}
-              >
-                edit
-              </button>
-            </div>
-          </div>
+          <button
+            onClick={() => setAddDealModelDisplay(true)}
+            className="btn-filled btn-small"
+          >
+            <Icon icon={"uil:plus"} className="text-xl" />
+            Deal
+          </button>
+          <button
+            className="btn-filled btn-small"
+            onClick={() => setIsKanBanEdit(true)}
+          >
+            edit
+          </button>
         </section>
       ) : null}
       {data.length ? (
@@ -121,6 +115,10 @@ const Kanban = ({ setIsKanBanEdit }) => {
         </section>
       )}
     </>
+  ) : (
+    <section className="h-screen w-full flex items-center justify-center">
+      <Loader />
+    </section>
   );
 };
 

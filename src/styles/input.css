@@ -28,7 +28,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins", sans-serif !important;
   color: var(--text-color);
   background: var(--background);
 }
@@ -61,7 +61,7 @@ option{
   @apply capitalize border border-primary px-4 py-2 text-white flex items-center gap-2 bg-primary rounded hover:opacity-80 transition disabled:bg-paper disabled:border-paper disabled:text-gray-500 disabled:hover:opacity-100;
 }
 .btn-outlined {
-  @apply px-4 py-2 text-textColor hover:border-textColor flex items-center gap-2 border rounded capitalize hover:bg-paper transition disabled:text-paper disabled:hover:bg-transparent;
+  @apply px-4 py-2 text-textColor hover:border-textColor disabled:hover:border-borderColor flex items-center gap-2 border rounded capitalize hover:bg-paper transition disabled:text-paper disabled:hover:bg-transparent;
 }
 .btn-small {
   @apply px-3 py-2 text-sm;
@@ -91,6 +91,11 @@ input {
   background: var(--primary);
   -webkit-animation: progress 1s linear infinite;
   animation: progress 1s linear infinite;
+}
+
+.css-q4cnup-MuiTableHead-root{
+ box-shadow: none !important;
+ border-top: 1px solid var(--border-color);
 }
 
 

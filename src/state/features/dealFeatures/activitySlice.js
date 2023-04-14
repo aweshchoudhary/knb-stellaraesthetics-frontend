@@ -10,6 +10,20 @@ const initialState = {
 
 // API CALLS
 
+export const getAllActivities = createAsyncThunk(
+  "getAllActivities",
+  async () => {
+    try {
+      const { data } = await axiosInstance.get(
+        "/api/activity/get-all-activities"
+      );
+      return data.data;
+    } catch (err) {
+      console.log(err);
+      return err.message;
+    }
+  }
+);
 export const getActivitiesByCardId = createAsyncThunk(
   "getActivitiesByCardId",
   async (cardId) => {
@@ -123,6 +137,23 @@ const activitySlice = createSlice({
       state.error = null;
     });
     builder.addCase(deleteActivity.rejected, (state, { payload }) => {
+      state.loading = false;
+      state.success = false;
+      state.error = payload;
+    });
+
+    // GET DEAL
+    builder.addCase(getAllActivities.pending, (state) => {
+      state.loading = true;
+      state.success = false;
+      state.error = null;
+    });
+    builder.addCase(getAllActivities.fulfilled, (state, { payload }) => {
+      state.loading = false;
+      state.data = payload;
+      state.error = null;
+    });
+    builder.addCase(getAllActivities.rejected, (state, { payload }) => {
       state.loading = false;
       state.success = false;
       state.error = payload;

@@ -1,7 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { lazy } from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
 // import { AuthProvider } from "oidc-react";
 // import { setUser } from "./state/features/authSlice";
@@ -11,6 +13,7 @@ import Layout from "./components/Layout/Layout";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Deals = lazy(() => import("./pages/deals/Deals"));
 const Deal = lazy(() => import("./pages/deals/Deal"));
+const Contacts = lazy(() => import("./pages/Contacts"));
 const Activities = lazy(() => import("./pages/Activities"));
 const Products = lazy(() => import("./pages/Products"));
 const Services = lazy(() => import("./pages/Services"));
@@ -18,7 +21,20 @@ const NotFound = lazy(() => import("./pages/User"));
 const User = lazy(() => import("./pages/User"));
 
 const App = () => {
+  const darkMode = useSelector((state) => state.global.darkMode);
   const dispatch = useDispatch();
+
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? "dark" : "light",
+      primary: {
+        main: "#571168",
+      },
+    },
+    typography: {
+      fontFamily: ["Poppins", "Roboto"].join(","),
+    },
+  });
 
   // const zitadelConfig = {
   //   onSignIn: async (response) => {
@@ -33,7 +49,8 @@ const App = () => {
   // };
   return (
     // <AuthProvider {...zitadelConfig}>
-    <>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <ToastContainer />
       <BrowserRouter>
         <Routes>
@@ -43,6 +60,7 @@ const App = () => {
             <Route path="/deals" element={<Deals />} />
             <Route path="/deals/:id" element={<Deal />} />
             <Route path="/activities" element={<Activities />} />
+            <Route path="/contacts" element={<Contacts />} />
             <Route path="/products" element={<Products />} />
             <Route path="/services" element={<Services />} />
             <Route path="/user" element={<User />} />
@@ -50,7 +68,7 @@ const App = () => {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </ThemeProvider>
     // </AuthProvider>
   );
 };

@@ -3,9 +3,20 @@ import FileInput from "../customFields/Fields/FileInput";
 import Accordian, { AccordianBody } from "../global/Accordian";
 import formatNumber from "../functions/formatNumber";
 import moment from "moment";
+import Loader from "../global/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getClientById } from "../../state/features/clientSlice";
 
 const DealSideBar = ({ data }) => {
-  return (
+  const client = useSelector((state) => state.client);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (data.clientId) {
+      dispatch(getClientById(data.clientId));
+    }
+  }, [data]);
+  return client.data && data ? (
     <aside className="w-[350px] shrink-0 h-full overflow-y-auto">
       <Accordian title={"Summary"}>
         <AccordianBody>
@@ -13,7 +24,7 @@ const DealSideBar = ({ data }) => {
             <div className="money/value flex items-center gap-4 mb-4">
               <Icon icon="ph:money" className="text-2xl" />
               <p>
-                {formatNumber(data.value.value, {
+                {formatNumber(data?.value?.value, {
                   country: "en-IN",
                   type: "INR",
                 })}
@@ -25,11 +36,11 @@ const DealSideBar = ({ data }) => {
             </div>
             <div className="expected-close-date flex items-center gap-4 mb-4">
               <Icon icon="uil:user" className="text-2xl" />
-              <p>{data.clientDetails.contactPerson}</p>
+              <p>{client.data.contactPerson}</p>
             </div>
             <div className="expected-close-date flex items-center gap-4 mb-4">
               <Icon icon="uil:building" className="text-2xl" />
-              <p>{data.clientDetails.company}</p>
+              <p>{client.data.company}</p>
             </div>
           </div>
         </AccordianBody>
@@ -64,6 +75,8 @@ const DealSideBar = ({ data }) => {
         </AccordianBody>
       </Accordian>
     </aside>
+  ) : (
+    <Loader />
   );
 };
 

@@ -18,15 +18,18 @@ import Loader from "../../components/global/Loader";
 import moment from "moment";
 import ActivitiesDisplay from "../../components/deal/ActivitiesDisplay";
 import FocusActivities from "../../components/deal/FocusActivities";
+import { getClientById } from "../../state/features/clientSlice";
 
 const Deal = () => {
   const { data, loading } = useSelector((state) => state.deals);
   const stages = useSelector((state) => state.stages);
+
   const params = useParams();
+  const { id } = params;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { id } = params;
   const tabs = [
     {
       id: 1,
@@ -74,19 +77,14 @@ const Deal = () => {
     isMounted && dispatch(getAllStages());
     return () => (isMounted = false);
   }, [id]);
-  return data &&
-    data.clientDetails &&
-    !loading &&
-    !stages.loading &&
-    stages.data ? (
+
+  return data && !loading && !stages.loading && stages.data ? (
     <>
       <Header title={"Deal"} />
       <section className="header border-b border-collapse px-5 py-3 h-[120px]">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h1 className="text-2xl font-semibold">
-              {data.clientDetails.title}
-            </h1>
+            <h1 className="text-2xl font-semibold">{data.title}</h1>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex gap-1">
@@ -101,7 +99,7 @@ const Deal = () => {
             </div>
           </div>
         </div>
-        <div className="w-full flex gap-1">
+        {/* <div className="w-full flex gap-1">
           {stages.data &&
             stages.data.map((stage, index) => {
               return (
@@ -129,7 +127,7 @@ const Deal = () => {
                 </button>
               );
             })}
-        </div>
+        </div> */}
       </section>
       <section className="flex min-h-[calc(100%-180px)] items-stretch">
         <DealSideBar data={data} />

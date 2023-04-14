@@ -18,7 +18,7 @@ const Layout = () => {
       <SideBar setIsOpen={setIsSideBarOpen} isOpen={isSideBarOpen} />
       <main
         className={`${
-          isSideBarOpen ? "w-[calc(100vw-230px)]" : "w-[calc(100vw-90px)]"
+          isSideBarOpen ? "w-[calc(100vw-230px)]" : "w-[calc(100vw-70px)]"
         } h-full overflow-y-auto`}
       >
         <article>

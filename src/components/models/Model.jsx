@@ -1,12 +1,20 @@
 import { Icon } from "@iconify/react";
+import { Box, Modal, Typography } from "@mui/material";
 
 const Model = ({ children, isOpen, setIsOpen, title }) => {
   return (
     isOpen && (
-      <>
-        <div className="lg:w-1/2 md:w-[70%] sm:w-4/5 w-full absolute max-h-[90%] bg-bg z-[99] top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col">
+      <Modal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        className="h-screen flex items-center"
+      >
+        <Box
+          sx={{ mx: "auto", width: { md: "50%" }, outline: "none" }}
+          className="bg-bg"
+        >
           <header className="bg-primary text-white flex items-center justify-between h-[50px] py-3 px-5">
-            <h4 className="title font-medium">{title}</h4>
+            <Typography fontWeight={"400"}>{title}</Typography>
             <button
               onClick={() => setIsOpen(false)}
               className="hover:bg-gray-500 p-2 rounded-full"
@@ -14,12 +22,9 @@ const Model = ({ children, isOpen, setIsOpen, title }) => {
               <Icon icon={"uil:times"} className="text-2xl" />
             </button>
           </header>
-          <div className="body h-[calc(100%-50px)] overflow-y-auto overflow-x-hidden">
-            {children}
-          </div>
-        </div>
-        <div className="black-screen fixed inset-0 h-full w-full bg-black z-[89] opacity-40"></div>
-      </>
+          {children}
+        </Box>
+      </Modal>
     )
   );
 };
