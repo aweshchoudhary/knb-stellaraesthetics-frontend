@@ -1,7 +1,7 @@
 import Header from "../../components/global/Header";
 import Tabs from "../../components/global/Tabs";
 import Notes from "../../components/deal/Notes";
-import Activity from "../../components/deal/Activity";
+import Activity from "../../components/activity/Activity";
 import File from "../../components/deal/File";
 import Email from "../../components/deal/Email";
 import DealSideBar from "../../components/deal/DealSideBar";
@@ -15,10 +15,8 @@ import {
 } from "../../state/features/dealFeatures/dealSlice";
 import { getAllStages } from "../../state/features/stageSlice";
 import Loader from "../../components/global/Loader";
-import moment from "moment";
-import ActivitiesDisplay from "../../components/deal/ActivitiesDisplay";
+import ActivitiesDisplay from "../../components/activity/ActivitiesDisplay";
 import FocusActivities from "../../components/deal/FocusActivities";
-import { getClientById } from "../../state/features/clientSlice";
 
 const Deal = () => {
   const { data, loading } = useSelector((state) => state.deals);

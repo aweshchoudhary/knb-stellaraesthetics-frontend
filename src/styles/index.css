@@ -737,6 +737,10 @@ input {
   border-top: 1px solid var(--border-color);
 }
 
+thead.css-120bgvu-MuiTableHead-root{
+  border-top: 1px solid var(--border-color);
+}
+
 @keyframes progress {
   0% {
     left: -130%;
@@ -963,6 +967,10 @@ input {
   height: 100vh;
 }
 
+.h-\[18px\] {
+  height: 18px;
+}
+
 .min-h-\[100px\] {
   min-height: 100px;
 }
@@ -1047,6 +1055,10 @@ input {
   width: 100vw;
 }
 
+.w-\[18px\] {
+  width: 18px;
+}
+
 .min-w-\[200px\] {
   min-width: 200px;
 }
@@ -1061,6 +1073,10 @@ input {
 
 .shrink-0 {
   flex-shrink: 0;
+}
+
+.shrink {
+  flex-shrink: 1;
 }
 
 .grow-0 {
@@ -1231,6 +1247,11 @@ input {
 
 .bg-transparent {
   background-color: transparent;
+}
+
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
 .object-cover {
@@ -1412,6 +1433,10 @@ input {
   color: rgb(234 179 8 / var(--tw-text-opacity));
 }
 
+.text-primary {
+  color: var(--primary);
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -1462,6 +1487,15 @@ input {
 
 .hover\:border-textColor:hover {
   border-color: var(--text-color);
+}
+
+.hover\:border-bg:hover {
+  border-color: var(--background);
+}
+
+.hover\:border-white:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .hover\:bg-bg:hover {

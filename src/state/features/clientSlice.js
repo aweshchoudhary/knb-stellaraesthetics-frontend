@@ -31,7 +31,7 @@ export const createClient = createAsyncThunk(
 );
 export const updateClient = createAsyncThunk("updateClient", async (data) => {
   try {
-    await axiosInstance.put("/api/client/update", data);
+    await axiosInstance.put("/api/client/update/" + data.id, data.updateData);
     return "Deal stage has updated";
   } catch (err) {
     console.log(err);

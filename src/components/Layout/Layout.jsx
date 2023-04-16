@@ -16,12 +16,12 @@ const Layout = () => {
   return (
     <div className="flex relative w-screen h-screen">
       <SideBar setIsOpen={setIsSideBarOpen} isOpen={isSideBarOpen} />
-      <main
-        className={`${
-          isSideBarOpen ? "w-[calc(100vw-230px)]" : "w-[calc(100vw-70px)]"
-        } h-full overflow-y-auto`}
-      >
-        <article>
+      <main>
+        <article
+          className={`${
+            isSideBarOpen ? "w-[calc(100vw-230px)]" : "w-[calc(100vw-70px)]"
+          } h-full overflow-y-auto`}
+        >
           <Suspense
             fallback={
               <section className="h-screen w-full flex items-center justify-center">
