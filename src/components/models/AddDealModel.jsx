@@ -6,7 +6,6 @@ import { createClient } from "../../state/features/clientSlice";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Label from "../deal/label/Label";
-import StageSlider from "../deal/StageSlider";
 import { addTempItemToStage } from "../../state/features/stageSlice";
 
 const AddDeal = ({ setIsOpen }) => {
@@ -48,7 +47,7 @@ const AddDeal = ({ setIsOpen }) => {
       whatsapp: null,
       email: null,
     });
-    setTimeout(() => setIsFetching(true), 1000);
+    setIsFetching(true);
   }
   function handleAddDeal(clientId) {
     dispatch(createDeal({ ...dealData, clientId }));
@@ -103,11 +102,14 @@ const AddDeal = ({ setIsOpen }) => {
   }, [whatsapp, sameNumber]);
 
   useEffect(() => {
+    console.log("working");
     if (isFetching && client.data._id) {
+      console.log("working");
       handleAddDeal(client.data._id);
     }
   }, [client.loading, client.data, client.success]);
 
+  // After Add Deal Function
   useEffect(() => {
     if (isFetching && data) {
       dispatch(addTempItemToStage({ stageId: dealData.stage, item: data._id }));
@@ -119,7 +121,7 @@ const AddDeal = ({ setIsOpen }) => {
   return (
     <>
       <div className="container sm:flex h-full">
-        <div className="sm:w-1/2 shrink-0 border-r h-full p-3">
+        <div className="sm:w-1/2 shrink-0 h-full p-5">
           <div className="input-fname mb-3">
             <label htmlFor="personName" className="text-textColor block  mb-2">
               Contact Person
@@ -225,7 +227,7 @@ const AddDeal = ({ setIsOpen }) => {
               })}
             </select>
           </div>
-          <StageSlider />
+          {/* <StageSlider /> */}
           <Label setLabel={setDealData} label={dealData.label} />
           <div className="input-close-date mb-3">
             <label htmlFor="close-date" className="text-textColor block mb-2">
@@ -303,7 +305,7 @@ const AddDeal = ({ setIsOpen }) => {
           </div>
         </div>
       </div>
-      <footer className="py-2 px-5 h-[60px] border-t flex items-center justify-end gap-2">
+      <footer className="modal-footer">
         <button
           className="btn-outlined"
           disabled={loading || client?.loading}

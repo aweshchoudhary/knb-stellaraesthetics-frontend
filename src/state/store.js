@@ -7,9 +7,11 @@ import noteSlice from "./features/dealFeatures/noteSlice";
 import activitySlice from "./features/dealFeatures/activitySlice";
 import labelSlice from "./features/labelSlice";
 import clientSlice from "./features/clientSlice";
+import { dealApi } from "../services/deal/dealApi";
 
 const store = configureStore({
   reducer: {
+    [dealApi.reducerPath]: dealApi.reducer,
     deals: dealSlice,
     note: noteSlice,
     activity: activitySlice,
@@ -19,6 +21,8 @@ const store = configureStore({
     label: labelSlice,
     client: clientSlice,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(dealApi.middleware),
 });
 
 export default store;

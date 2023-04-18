@@ -40,12 +40,8 @@ export const updateDealStage = createAsyncThunk(
 );
 export const getDealById = createAsyncThunk("getDealById", async (id) => {
   try {
-    const res = await axiosInstance.get("/api/get-card", {
-      params: {
-        id,
-      },
-    });
-    return res.data.data;
+    const { data } = await axiosInstance.get("/api/get-card/" + id);
+    return data.data;
   } catch (err) {
     console.log(err);
     return err.message;

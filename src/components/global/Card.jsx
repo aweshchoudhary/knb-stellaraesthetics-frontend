@@ -1,52 +1,51 @@
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../config/axiosInstance";
 import useAxios from "../../hooks/useAxios";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
-import axiosInstance from "../../config/axiosInstance";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getClientById } from "../../state/features/clientSlice";
-import Loader from "./Loader";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
+import { useGetCardQuery } from "../../services/deal/dealApi";
 
 const Card = ({ id }) => {
   const client = useSelector((state) => state.client);
   const [card, setCard] = useState({});
-  const [label, setLabel] = useState({});
-  const [response, loading] = useAxios({
-    method: "GET",
-    url: "/api/get-card",
-    config: {
-      params: {
-        id,
-      },
-    },
-  });
   const dispatch = useDispatch();
+  const [label, setLabel] = useState({});
+  const { isError, isLoading, isSuccess, isFetching, data, error } =
+    useGetCardQuery(id);
+
+  const fetchLabel = async (id) => {
+    try {
+      const res = await axiosInstance.get("/api/label/get-label/" + id);
+      setLabel(res.data.data);
+    } catch (err) {
+      toast.error(err.response);
+    }
+  };
 
   useEffect(() => {
-    if (response.data) {
-      setCard(response.data);
-      dispatch(getClientById(response.data.clientId));
+    if (data?.data) {
+      setCard(data.data);
     }
-  }, [response]);
+  }, [data]);
+
   useEffect(() => {
-    const fetchLabel = async (id) => {
-      try {
-        const { data } = await axiosInstance.get("/api/label/get-label/" + id);
-        setLabel(data.data);
-      } catch (err) {
-        toast.error(err.response);
-      }
-    };
-    if (card.label) {
-      fetchLabel(card.label);
+    if (card?.label) {
+      fetchLabel(card?.label);
     }
+    if (card?.clientId) dispatch(getClientById(card?.clientId));
   }, [card]);
 
-  return !loading && card.title && client.data.contactPerson ? (
+  useEffect(() => {
+    if (isError) toast.error(error);
+  }, [isError]);
+
+  return !isLoading && !isFetching && isSuccess ? (
     <Link
       to={"/deals/" + card._id}
       className={
@@ -91,7 +90,8 @@ const Card = ({ id }) => {
     <Skeleton
       variant="rectangular"
       height={100}
-      sx={{ width: "100%", my: "5px" }}
+      sx={{ width: "100%" }}
+      className="mb-1"
     />
   );
 };

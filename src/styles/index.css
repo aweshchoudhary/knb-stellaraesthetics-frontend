@@ -580,7 +580,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -705,6 +705,23 @@ option {
 
 .input:focus {
   border-color: var(--text-color);
+}
+
+.modal-footer {
+  position: sticky;
+  bottom: 0px;
+  left: 0px;
+  display: flex;
+  height: 60px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  border-top-width: 1px;
+  background-color: var(--background);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
 input {
@@ -919,6 +936,10 @@ thead.css-120bgvu-MuiTableHead-root{
   height: 15px;
 }
 
+.h-\[18px\] {
+  height: 18px;
+}
+
 .h-\[20px\] {
   height: 20px;
 }
@@ -967,8 +988,8 @@ thead.css-120bgvu-MuiTableHead-root{
   height: 100vh;
 }
 
-.h-\[18px\] {
-  height: 18px;
+.max-h-\[90\%\] {
+  max-height: 90%;
 }
 
 .min-h-\[100px\] {
@@ -997,6 +1018,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .w-\[15px\] {
   width: 15px;
+}
+
+.w-\[18px\] {
+  width: 18px;
 }
 
 .w-\[20\%\] {
@@ -1055,10 +1080,6 @@ thead.css-120bgvu-MuiTableHead-root{
   width: 100vw;
 }
 
-.w-\[18px\] {
-  width: 18px;
-}
-
 .min-w-\[200px\] {
   min-width: 200px;
 }
@@ -1073,10 +1094,6 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .shrink-0 {
   flex-shrink: 0;
-}
-
-.shrink {
-  flex-shrink: 1;
 }
 
 .grow-0 {
@@ -1414,6 +1431,10 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
+.text-primary {
+  color: var(--primary);
+}
+
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity));
@@ -1433,10 +1454,6 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(234 179 8 / var(--tw-text-opacity));
 }
 
-.text-primary {
-  color: var(--primary);
-}
-
 .underline {
   text-decoration-line: underline;
 }
@@ -1453,10 +1470,6 @@ thead.css-120bgvu-MuiTableHead-root{
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.outline {
-  outline-style: solid;
 }
 
 .filter {
@@ -1487,10 +1500,6 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .hover\:border-textColor:hover {
   border-color: var(--text-color);
-}
-
-.hover\:border-bg:hover {
-  border-color: var(--background);
 }
 
 .hover\:border-white:hover {
@@ -1575,6 +1584,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
   .md\:hidden {
     display: none;
+  }
+
+  .md\:w-\[60\%\] {
+    width: 60%;
   }
 
   .md\:w-\[70px\] {

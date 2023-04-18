@@ -5,14 +5,24 @@ import {
   deleteActivity,
   updateActivity,
 } from "../../state/features/dealFeatures/activitySlice";
+import { useState } from "react";
 
 const ActivityPanel = ({ data }) => {
+  const custom = data?.event?.extendedProps;
+  const [markDone, setMarkDone] = useState(custom.markDone);
   const dispatch = useDispatch();
-  console.log(data);
   function handleMarkAsDone() {
-    dispatch(updateActivity({ id: data.event.id, update: { markDone: true } }));
+    dispatch(
+      updateActivity({
+        id: data.event.id,
+        update: { markDone: !markDone },
+      })
+    );
+    setMarkDone(!markDone);
   }
-  function deleteActivity() {}
+  function handleDeleteActivity() {
+    dispatch(deleteActivity(data.event.id));
+  }
 
   return (
     <div>
@@ -40,10 +50,10 @@ const ActivityPanel = ({ data }) => {
       </ul>
       <footer className="px-5 py-2 border-t flex justify-between">
         <button className="btn-outlined btn-small" onClick={handleMarkAsDone}>
-          Mark As Done
+          {markDone ? "Mark As Undone" : "Mark As Done"}
         </button>
         <div className="flex gap-2 justify-end">
-          <button className="btn-outlined">
+          <button onClick={handleDeleteActivity} className="btn-outlined">
             <Icon icon="uil:trash" className="text-xl" />
           </button>
           <button className="btn-filled">

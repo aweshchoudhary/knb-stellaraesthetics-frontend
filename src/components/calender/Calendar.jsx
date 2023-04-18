@@ -137,12 +137,19 @@ function renderEventContent(eventInfo) {
 }
 
 const EventComponent = ({ eventInfo }) => {
+  const data = eventInfo?.event?.extendedProps;
+  const [markDone, setMarkDone] = useState(data.markDone);
   const [icon, setIcon] = useState("");
-  const data = eventInfo.event.extendedProps;
   const dispatch = useDispatch();
 
   function handleMarkAsDone() {
-    dispatch(updateActivity(eventInfo.event._id, { markDone: !data.markDone }));
+    dispatch(
+      updateActivity({
+        id: eventInfo.event.id,
+        update: { markDone: !markDone },
+      })
+    );
+    setMarkDone(!markDone);
   }
 
   useEffect(() => {
@@ -176,7 +183,7 @@ const EventComponent = ({ eventInfo }) => {
             : eventInfo.event.title}
         </span>
       </div>
-      {data.markDone ? (
+      {markDone ? (
         <span
           onClick={handleMarkAsDone}
           className="w-[18px] h-[18px] rounded-full bg-white text-primary"

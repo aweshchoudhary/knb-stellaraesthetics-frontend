@@ -35,16 +35,7 @@ const columns = [
     header: "Email",
   },
 ];
-const csvOptions = {
-  fieldSeparator: ",",
-  quoteStrings: '"',
-  decimalSeparator: ".",
-  showLabels: true,
-  useBom: true,
-  useKeysAsHeaders: false,
-  headers: columns.map((c) => c.header),
-};
-const fetchSize = 25;
+const fetchSize = 5;
 
 const ContactTable = () => {
   const tableContainerRef = useRef(null);
@@ -62,6 +53,7 @@ const ContactTable = () => {
     useInfiniteQuery({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam = 0 }) => {
+        console.log(pageParam * fetchSize);
         const { data } = await axiosInstance.get("/api/client/get-clients", {
           params: {
             start: pageParam * fetchSize,
@@ -72,15 +64,6 @@ const ContactTable = () => {
           },
         });
         return data;
-        // const url = new URL("/api/client/get-clients", "http://localhost:5000");
-        // url.searchParams.set("start", `${pageParam * fetchSize}`);
-        // url.searchParams.set("size", `${fetchSize}`);
-        // url.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
-        // url.searchParams.set("globalFilter", globalFilter ?? "");
-        // url.searchParams.set("sorting", JSON.stringify(sorting ?? []));
-        // const response = await fetch(url.href);
-        // const json = await response.json();
-        // return json;
       },
       getNextPageParam: (_lastGroup, groups) => groups.length,
       keepPreviousData: true,
@@ -91,8 +74,7 @@ const ContactTable = () => {
     () => data?.pages.flatMap((page) => page.data) ?? [],
     [data]
   );
-
-  const totalDBRowCount = data?.pages?.[0]?.meta?.totalRowCount ?? 0;
+  const totalDBRowCount = data?.pages?.[0]?.meta?.total ?? 0;
   const totalFetched = flatData.length;
 
   //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
@@ -102,7 +84,7 @@ const ContactTable = () => {
         const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
         //once the user has scrolled within 400px of the bottom of the table, fetch more data if we can
         if (
-          scrollHeight - scrollTop - clientHeight < 400 &&
+          scrollHeight - scrollTop - clientHeight < 450 &&
           !isFetching &&
           totalFetched < totalDBRowCount
         ) {
@@ -176,7 +158,7 @@ const ContactTable = () => {
         enableRowActions
         muiTableContainerProps={{
           ref: tableContainerRef, //get access to the table container element
-          sx: { maxHeight: "600px" }, //give the table a max height
+          sx: { maxHeight: "500px" }, //give the table a max height
           onScroll: (
             event //add an event listener to the table container element
           ) => fetchMoreOnBottomReached(event.target),

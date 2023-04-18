@@ -2,12 +2,13 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toggleMobileOpen } from "../../state/features/globalSlice";
 
 const SideBar = ({ setIsOpen, isOpen }) => {
   const isMobileOpen = useSelector((state) => state.global.isMobileOpen);
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
   const menuLinks = [
     {
       label: "Dashboard",
@@ -40,7 +41,7 @@ const SideBar = ({ setIsOpen, isOpen }) => {
       icon: "eva:shopping-bag-outline",
     },
   ];
-  const [active, setActive] = useState({});
+  const [active, setActive] = useState(pathname);
 
   return (
     <aside
@@ -80,9 +81,12 @@ const SideBar = ({ setIsOpen, isOpen }) => {
               <li key={i}>
                 <Link
                   to={item.link}
-                  className={
-                    "flex items-center gap-3 hover:bg-paper px-4 py-3 my-2 rounded"
-                  }
+                  className={`flex items-center gap-3 px-4 py-3 my-2 rounded ${
+                    item.link === active
+                      ? "bg-paper text-primary"
+                      : "hover:bg-paper"
+                  }`}
+                  onClick={() => setActive(item.link)}
                 >
                   <Icon icon={item.icon} className="text-xl mx-auto" />
                   {isOpen && <span className="flex-1">{item.label}</span>}

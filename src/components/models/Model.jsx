@@ -9,10 +9,7 @@ const Model = ({ children, isOpen, setIsOpen, title }) => {
         onClose={() => setIsOpen(false)}
         className="h-screen flex items-center"
       >
-        <Box
-          sx={{ mx: "auto", width: { md: "50%" }, outline: "none" }}
-          className="bg-bg"
-        >
+        <div className="bg-bg md:w-[60%] mx-auto max-h-[90%] flex flex-col relative">
           <header className="bg-primary text-white flex items-center justify-between h-[50px] py-3 px-5">
             <Typography fontWeight={"400"}>{title}</Typography>
             <button
@@ -22,8 +19,8 @@ const Model = ({ children, isOpen, setIsOpen, title }) => {
               <Icon icon={"uil:times"} className="text-2xl" />
             </button>
           </header>
-          {children}
-        </Box>
+          <div className="flex-1 overflow-y-auto">{children}</div>
+        </div>
       </Modal>
     )
   );
