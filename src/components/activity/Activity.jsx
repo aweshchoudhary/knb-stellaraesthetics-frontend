@@ -5,7 +5,8 @@ import { addActivity } from "../../state/features/dealFeatures/activitySlice";
 import Loader from "../global/Loader";
 
 const Activity = ({ selectedInfo, setIsOpen }) => {
-  const { data, loading, error, success } = useSelector((state) => state.deals);
+  const { data, error, isLoading, isFetching, isError, isSuccess } =
+    useGetCardQuery(id);
   const [title, setTitle] = useState("call");
   const [type, setType] = useState("call");
   const [startDate, setStartDate] = useState(
@@ -19,7 +20,6 @@ const Activity = ({ selectedInfo, setIsOpen }) => {
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [holder, setHolder] = useState("asdfasdfasdfasdfsadfsadfas");
-  console.log(selectedInfo);
   const dispatch = useDispatch();
   const [activityOptions, setActivityOptions] = useState([
     {
@@ -90,7 +90,7 @@ const Activity = ({ selectedInfo, setIsOpen }) => {
   }
   return (
     data &&
-    !loading && (
+    !isLoading && (
       <section>
         <div className="container p-5">
           <div className="my-2">
@@ -245,10 +245,10 @@ const Activity = ({ selectedInfo, setIsOpen }) => {
         </div>
         <footer className="flex items-center justify-end border-t mt-2s p-3 gap-2">
           <button className="btn-outlined" onClick={handleCancel}>
-            {loading ? "Loading..." : "cancel"}
+            {isLoading ? "Loading..." : "cancel"}
           </button>
           <button className="btn-filled" onClick={handleSave}>
-            {loading ? "Loading..." : "save"}
+            {isLoading ? "Loading..." : "save"}
           </button>
         </footer>
       </section>

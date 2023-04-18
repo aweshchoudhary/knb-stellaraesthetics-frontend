@@ -50,14 +50,14 @@ const SideBar = ({ setIsOpen, isOpen }) => {
       } border-r md:sticky absolute bg-bg z-50 top-0 left-0 h-screen shrink-0 transition-all`}
     >
       <header
-        className={`flex items-center h-[60px] border-b bg-primary text-white ${
+        className={`flex items-center h-[60px] border-b ${
           isOpen ? "px-5 gap-2 justify-between" : "px-2 justify-center"
         }`}
       >
         {isOpen && <h4 className=" font-semibold">Stellar Aesthetics</h4>}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="text-2xl md:block hidden rounded-full m-0 p-1 hover:bg-slate-800"
+          className="text-2xl md:block hidden rounded-full m-0 p-1"
         >
           <Icon
             icon={
@@ -83,7 +83,7 @@ const SideBar = ({ setIsOpen, isOpen }) => {
                   to={item.link}
                   className={`flex items-center gap-3 px-4 py-3 my-2 rounded ${
                     item.link === active
-                      ? "bg-paper text-primary"
+                      ? "bg-primary text-white"
                       : "hover:bg-paper"
                   }`}
                   onClick={() => setActive(item.link)}

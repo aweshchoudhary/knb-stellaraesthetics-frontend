@@ -9,7 +9,7 @@ import {
 import Loader from "../global/Loader";
 import { toast } from "react-toastify";
 
-const ActivitiesDisplay = () => {
+const ActivitiesDisplay = ({ cardId }) => {
   const [activeTab, setActiveTab] = useState("notes");
   const tabs = ["notes", "files"];
   return (
@@ -29,16 +29,15 @@ const ActivitiesDisplay = () => {
         ))}
       </div>
       <div className="body my-4">
-        <Activites name={activeTab} />
+        <Activites name={activeTab} cardId={cardId} />
       </div>
     </div>
   );
 };
-const Activites = ({ name }) => {
-  const { data } = useSelector((state) => state.deals);
+const Activites = ({ name, cardId }) => {
   return (
     <div>
-      <ul>{name === "notes" ? <Note cardId={data._id} /> : null}</ul>
+      <ul>{name === "notes" ? <Note cardId={cardId} /> : null}</ul>
     </div>
   );
 };

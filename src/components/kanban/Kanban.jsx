@@ -14,12 +14,17 @@ import { toast } from "react-toastify";
 import CreateKanbanModel from "../models/CreateStageModel";
 import { updateDealStage } from "../../state/features//dealFeatures/dealSlice";
 import Loader from "../global/Loader";
+import { useGetStagesQuery } from "../../services/stageApi";
+import { dealApi } from "../../services/dealApi";
 
 const Kanban = ({ setIsKanBanEdit }) => {
   const dispatch = useDispatch();
-  const { data, loading, error, success } = useSelector(
-    (state) => state.stages
-  );
+  // const { data, loading, error, success } = useSelector(
+  //   (state) => state.stages
+  // );
+  const { data, isLoading, isError, isFetching, isSuccess, error, refetch } =
+    useGetStagesQuery();
+
   const deals = useSelector((state) => state.deals);
   const [editDealModelDisplay, setEditDealModelDisplay] = useState(false);
   const [addDealModelDisplay, setAddDealModelDisplay] = useState(false);
@@ -42,22 +47,19 @@ const Kanban = ({ setIsKanBanEdit }) => {
         })
       );
       dispatch(
-        updateDealStage({
+        dealApi.endpoints.updateCardStage.initiate({
           cardId: result.draggableId,
           prevStageId: result.source.droppableId,
           newStageId: result.destination.droppableId,
         })
       );
+      refetch();
     }
   };
 
-  useMemo(() => {
-    dispatch(getAllStages());
-  }, [error, deals.error]);
-
-  return !loading ? (
+  return !isLoading && !isFetching && isSuccess ? (
     <>
-      {error && toast.error("Some thing went wrong.")}
+      {isError && toast.error(error)}
       <Models
         editDealModelDisplay={editDealModelDisplay}
         setEditDealModelDisplay={setEditDealModelDisplay}
@@ -66,7 +68,7 @@ const Kanban = ({ setIsKanBanEdit }) => {
         createStageModelDisplay={createStageModelDisplay}
         setCreateStageModelDisplay={setCreateStageModelDisplay}
       />
-      {data.length ? (
+      {data ? (
         <section className="flex items-center justify-between px-5 py-2 border-b">
           <button
             onClick={() => setAddDealModelDisplay(true)}
@@ -83,7 +85,7 @@ const Kanban = ({ setIsKanBanEdit }) => {
           </button>
         </section>
       ) : null}
-      {data.length ? (
+      {data ? (
         <section className="h-[calc(100vh-120px)]">
           <div className="flex overflow-x-auto w-full h-full">
             <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
@@ -93,7 +95,7 @@ const Kanban = ({ setIsKanBanEdit }) => {
                     <Column
                       stage={stage}
                       key={stage._id}
-                      loading={loading}
+                      loading={isLoading}
                       length={data.length}
                     />
                   );

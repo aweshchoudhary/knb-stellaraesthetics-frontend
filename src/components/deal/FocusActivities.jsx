@@ -2,33 +2,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { Icon } from "@iconify/react";
 import moment from "moment";
 import Loader from "../global/Loader";
-import { toast } from "react-toastify";
 import { useEffect } from "react";
 import {
   getActivitiesByCardId,
   updateActivity,
 } from "../../state/features/dealFeatures/activitySlice";
 import { deleteActivity } from "../../state/features/dealFeatures/activitySlice";
+import { useGetCardQuery } from "../../services/dealApi";
 
-const FocusActivities = () => {
+const FocusActivities = ({ cardId }) => {
   return (
     <div className="my-4">
       <header className="mb-3">
         <h2 className="text-lg font-medium">Focus Activity</h2>
       </header>
-      <Activites />
+      <Activites cardId={cardId} />
     </div>
   );
 };
 
-const Activites = () => {
-  const deal = useSelector((state) => state.deals);
+const Activites = ({ cardId }) => {
+  const { data: deal, isLoading } = useGetCardQuery(cardId);
   const { data, loading, success } = useSelector((state) => state.activity);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getActivitiesByCardId(deal.data._id));
-  }, [deal.data._id, success]);
+    dispatch(getActivitiesByCardId(deal._id));
+  }, [deal._id]);
   return !loading ? (
     <div>
       <ul>

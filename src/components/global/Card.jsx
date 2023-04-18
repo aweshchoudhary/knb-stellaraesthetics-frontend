@@ -1,7 +1,6 @@
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../config/axiosInstance";
-import useAxios from "../../hooks/useAxios";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 import { toast } from "react-toastify";
@@ -9,51 +8,46 @@ import { useDispatch, useSelector } from "react-redux";
 import { getClientById } from "../../state/features/clientSlice";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
-import { useGetCardQuery } from "../../services/deal/dealApi";
+import { useGetCardQuery } from "../../services/dealApi";
+import { labelApi } from "../../services/labelApi";
 
 const Card = ({ id }) => {
-  const client = useSelector((state) => state.client);
-  const [card, setCard] = useState({});
-  const dispatch = useDispatch();
-  const [label, setLabel] = useState({});
   const { isError, isLoading, isSuccess, isFetching, data, error } =
     useGetCardQuery(id);
 
+  const client = useSelector((state) => state.client);
+  const dispatch = useDispatch();
+  const [label, setLabel] = useState({});
+
   const fetchLabel = async (id) => {
     try {
-      const res = await axiosInstance.get("/api/label/get-label/" + id);
-      setLabel(res.data.data);
+      const labelRes = await dispatch(labelApi.endpoints.getLabel.initiate(id));
+      setLabel(labelRes.data.data);
     } catch (err) {
       toast.error(err.response);
     }
   };
 
   useEffect(() => {
-    if (data?.data) {
-      setCard(data.data);
+    if (data?.label) {
+      fetchLabel(data.label);
     }
+    if (data?.clientId) dispatch(getClientById(data?.clientId));
   }, [data]);
-
-  useEffect(() => {
-    if (card?.label) {
-      fetchLabel(card?.label);
-    }
-    if (card?.clientId) dispatch(getClientById(card?.clientId));
-  }, [card]);
 
   useEffect(() => {
     if (isError) toast.error(error);
   }, [isError]);
 
-  return !isLoading && !isFetching && isSuccess ? (
+  return !isLoading && isSuccess ? (
     <Link
-      to={"/deals/" + card._id}
+      to={"/deals/" + data._id}
       className={
         "cursor-pointer w-full bg-bg text-sm relative border mb-1 p-2 flex flex-col gap-2"
       }
     >
       <div className="top">
-        {card.label && (
+        {data.label && (
           <Tooltip title={label.name} className="label mb-1">
             <p
               className="w-[20%] h-[5px]"
@@ -61,7 +55,7 @@ const Card = ({ id }) => {
             ></p>
           </Tooltip>
         )}
-        <h4 className="font-medium">{card.title}</h4>
+        <h4 className="font-medium">{data.title}</h4>
         <p className="text-gray-500 text-xs">{client.data.company}</p>
         <button className="activity absolute top-2 right-2 rounded-full border p-1 flex items-center justify-center hover:bg-gray-100">
           <Icon icon="icon-park-solid:caution" className="text-yellow-500" />
@@ -79,7 +73,7 @@ const Card = ({ id }) => {
           </Tooltip>
         </div>
         <div className="amount flex items-center">
-          {formatNumber(card?.value?.value, {
+          {formatNumber(data?.value?.value, {
             country: "en-IN",
             type: "INR",
           })}

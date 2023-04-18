@@ -8,22 +8,24 @@ import DealSideBar from "../../components/deal/DealSideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import {
-  deleteDealById,
-  getDealById,
-  updateDealStage,
-} from "../../state/features/dealFeatures/dealSlice";
+// import {
+//   deleteDealById,
+//   getDealById,
+//   updateDealStage,
+// } from "../../state/features/dealFeatures/dealSlice";
+import { useGetCardQuery } from "../../services/dealApi";
 import { getAllStages } from "../../state/features/stageSlice";
 import Loader from "../../components/global/Loader";
 import ActivitiesDisplay from "../../components/activity/ActivitiesDisplay";
 import FocusActivities from "../../components/deal/FocusActivities";
 
 const Deal = () => {
-  const { data, loading } = useSelector((state) => state.deals);
-  const stages = useSelector((state) => state.stages);
-
   const params = useParams();
   const { id } = params;
+  // const { data, loading } = useSelector((state) => state.deals);
+  const { data, error, isLoading, isFetching, isError, isSuccess } =
+    useGetCardQuery(id);
+  // const stages = useSelector((state) => state.stages);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ const Deal = () => {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <Activity />,
+      component: <Activity cardId={id} />,
     },
     {
       id: 3,
@@ -69,14 +71,14 @@ const Deal = () => {
     navigate("/deals", { replace: true });
   }
 
-  useEffect(() => {
-    let isMounted = true;
-    isMounted && dispatch(getDealById(id));
-    isMounted && dispatch(getAllStages());
-    return () => (isMounted = false);
-  }, [id]);
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   isMounted && dispatch(getDealById(id));
+  //   isMounted && dispatch(getAllStages());
+  //   return () => (isMounted = false);
+  // }, [id]);
 
-  return data && !loading && !stages.loading && stages.data ? (
+  return !isLoading && !isFetching && isSuccess ? (
     <>
       <Header title={"Deal"} />
       <section className="header border-b border-collapse px-5 py-3 h-[120px]">
@@ -131,8 +133,8 @@ const Deal = () => {
         <DealSideBar data={data} />
         <div className="flex-1 p-5 bg-paper">
           <Tabs tabs={tabs} />
-          <FocusActivities />
-          <ActivitiesDisplay />
+          <FocusActivities cardId={id} />
+          <ActivitiesDisplay cardId={id} />
         </div>
       </section>
     </>
