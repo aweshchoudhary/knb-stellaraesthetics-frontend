@@ -1,23 +1,13 @@
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { createDeal } from "../../state/features/dealFeatures/dealSlice";
-import { createClient } from "../../state/features/clientSlice";
-
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Label from "../deal/label/Label";
-import { addTempItemToStage } from "../../state/features/stageSlice";
 import { useGetStagesQuery } from "../../services/stageApi";
-import { clientApi, useCreateClientMutation } from "../../services/clientApi";
-import { dealApi, useCreateCardMutation } from "../../services/dealApi";
+import { useCreateClientMutation } from "../../services/clientApi";
+import { useCreateCardMutation } from "../../services/dealApi";
+import { useGetPipelinesQuery } from "../../services/pipelineApi";
 
-const AddDeal = ({ setIsOpen }) => {
-  const [setClientStatus] = useState({
-    isLoading: false,
-    isFetching: false,
-    isError: false,
-    isSuccess: false,
-  });
+const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
   const [createCard, { isLoading, isError, isSuccess }] =
     useCreateCardMutation();
   const [
@@ -29,9 +19,8 @@ const AddDeal = ({ setIsOpen }) => {
       isSuccess: isClientSuccess,
     },
   ] = useCreateClientMutation();
-  const { data: stages } = useGetStagesQuery();
-  // const client = useSelector((state) => state.client);
-  const dispatch = useDispatch();
+  const { data: stages } = useGetStagesQuery(pipelineId);
+  const { data: pipelines } = useGetPipelinesQuery();
 
   const [dealData, setDealData] = useState({
     title: "",
@@ -47,6 +36,8 @@ const AddDeal = ({ setIsOpen }) => {
     whatsapp: "",
     email: "",
   });
+
+  const [activePipeline, setActivePipeline] = useState(activePipe);
 
   const [mobile, setMobile] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -65,7 +56,7 @@ const AddDeal = ({ setIsOpen }) => {
       email: null,
     });
   }
-  async function handleAddDeal(clientId) {
+  async function handleCreateDeal(clientId) {
     await createCard({ ...dealData, clientId });
     setDealData({
       value: { value: null, type: "inr" },
@@ -120,9 +111,18 @@ const AddDeal = ({ setIsOpen }) => {
 
   useEffect(() => {
     if (!isClientLoading && isClientSuccess && clientData?.data?._id) {
-      handleAddDeal(clientData.data._id);
+      handleCreateDeal(clientData.data._id);
     }
   }, [isClientLoading, isClientSuccess]);
+  console.log(activePipeline);
+  useEffect(() => {
+    if (pipelines?.length) {
+      const index = pipelines.findIndex(
+        (pipeline) => pipeline._id === pipelineId
+      );
+      setActivePipeline(pipelines[index]);
+    }
+  }, [pipelines]);
 
   return (
     <>
@@ -233,8 +233,42 @@ const AddDeal = ({ setIsOpen }) => {
               })}
             </select>
           </div>
-          {/* <StageSlider /> */}
-          <Label setLabel={setDealData} label={dealData.label} />
+          <div className="input-stage mb-3">
+            <label htmlFor="stage" className="text-textColor block mb-2">
+              Pipeline
+            </label>
+            <select
+              name="stage"
+              id="stage"
+              className="input capitalize"
+              onChange={(e) => fillDealDetails(e.target.name, e.target.value)}
+            >
+              {pipelines?.map((item, i) => {
+                return item._id === pipelineId ? (
+                  <option
+                    key={i}
+                    selected
+                    defaultValue={i}
+                    className="text-black"
+                    value={i}
+                  >
+                    {item.name}
+                  </option>
+                ) : (
+                  <option key={i} className="text-black" value={i}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <div className="input-stage mb-3">
+            <label htmlFor="stage" className="text-textColor block mb-2">
+              Label
+            </label>
+            <Label setLabel={setDealData} label={dealData.label} />
+          </div>
+
           <div className="input-close-date mb-3">
             <label htmlFor="close-date" className="text-textColor block mb-2">
               Expected Close Date
@@ -331,4 +365,4 @@ const AddDeal = ({ setIsOpen }) => {
   );
 };
 
-export default AddDeal;
+export default CreateDealModel;

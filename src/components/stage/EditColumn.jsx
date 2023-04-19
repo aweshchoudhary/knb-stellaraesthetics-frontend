@@ -5,8 +5,8 @@ import { deleteStage, updateStage } from "../../state/features/stageSlice";
 import CreateStageModel from "../models/CreateStageModel";
 import { useDispatch } from "react-redux";
 
-const EditColumn = ({ provided, item }) => {
-  const [isAddStageModelDisplay, setIsAddStageModelDisplay] = useState(false);
+const EditColumn = ({ provided, item, pipelineId }) => {
+  const [isCreateStageModelOpen, setIsCreateStageModelOpen] = useState(false);
   const [stageName, setStageName] = useState(item.name);
   const dispatch = useDispatch();
 
@@ -20,12 +20,13 @@ const EditColumn = ({ provided, item }) => {
     <>
       <Model
         title={"Create Stage"}
-        isOpen={isAddStageModelDisplay}
-        setIsOpen={setIsAddStageModelDisplay}
+        isOpen={isCreateStageModelOpen}
+        setIsOpen={setIsCreateStageModelOpen}
       >
         <CreateStageModel
           position={item.position + 1}
-          setIsOpen={setIsAddStageModelDisplay}
+          setIsOpen={setIsCreateStageModelOpen}
+          pipelineId={pipelineId}
         />
       </Model>
       <div
@@ -82,7 +83,7 @@ const EditColumn = ({ provided, item }) => {
           </button>
         </footer>
         <button
-          onClick={() => setIsAddStageModelDisplay(true)}
+          onClick={() => setIsCreateStageModelOpen(true)}
           className="create-stage btn-filled bg-bg border-black w-[30px] p-0 h-[30px] rounded-full text-textColor flex items-center justify-center text-xl absolute top-0 z-10 -right-[15px]"
         >
           <Icon icon={"uil:plus"} />

@@ -1,26 +1,19 @@
 import { useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import EditColumn from "./EditColumn";
-import { getAllStages, reorderStages } from "../../state/features/stageSlice";
 import Loader from "../global/Loader";
 import {
   useGetStagesQuery,
   useReorderStageMutation,
 } from "../../services/stageApi";
 
-const EditKanban = ({ setIsKanBanEdit }) => {
-  // const { data, isLoading, isError, success } = useSelector(
-  //   (state) => state.stages
-  // );
-  const { data, isLoading, isSuccess, isFetching, isError } =
-    useGetStagesQuery();
+const EditStage = ({ setIsEditStageView, pipeline }) => {
+  const { data, isLoading, isSuccess, isFetching, isError } = useGetStagesQuery(
+    pipeline._id
+  );
   const [reorderStages, { isLoading: isStagesReorderLoading }] =
     useReorderStageMutation();
-  // const [updateStage, {isLoading: isStagesReorderLoading}] = useReorderStageMutation()
-  const dispatch = useDispatch();
-
   const onDragComplete = async (result) => {
     if (!result.destination) return;
     const { destination, draggableId } = result;
@@ -30,14 +23,6 @@ const EditKanban = ({ setIsKanBanEdit }) => {
     });
   };
 
-  function handleEditViewClose() {
-    setIsKanBanEdit(false);
-  }
-
-  // useEffect(() => {
-  //   dispatch(getAllStages());
-  // }, [success]);
-
   useEffect(() => {
     if (isError) {
       toast.error("Something went wrong");
@@ -46,17 +31,6 @@ const EditKanban = ({ setIsKanBanEdit }) => {
 
   return !isLoading && !isFetching && isSuccess ? (
     <>
-      <section className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
-        <h3>Edit Stages</h3>
-        <div className="flex items-center gap-2">
-          <button
-            className="btn-filled btn-small"
-            onClick={handleEditViewClose}
-          >
-            close
-          </button>
-        </div>
-      </section>
       <section className="h-[calc(100%-120px)] bg-paper">
         <DragDropContext onDragEnd={onDragComplete}>
           <div className="overflow-x-auto h-full w-full">
@@ -79,6 +53,7 @@ const EditKanban = ({ setIsKanBanEdit }) => {
                               provided={provided}
                               length={data.length}
                               item={item}
+                              pipelineId={pipeline._id}
                             />
                           )}
                         </Draggable>
@@ -99,4 +74,4 @@ const EditKanban = ({ setIsKanBanEdit }) => {
   );
 };
 
-export default EditKanban;
+export default EditStage;

@@ -5,20 +5,18 @@ import {
   addTempItemToStage,
   removeTempItemFromStage,
 } from "../../state/features/stageSlice";
-import { Icon } from "@iconify/react";
-import AddDealModel from "../models/AddDealModel";
 import Model from "../models/Model";
 import Column from "./Column";
 import { toast } from "react-toastify";
-import CreateKanbanModel from "../models/CreateStageModel";
+import CreateStageModel from "../models/CreateStageModel";
 import Loader from "../global/Loader";
 import { useGetStagesQuery } from "../../services/stageApi";
 import { useUpdateCardStageMutation } from "../../services/dealApi";
 
-const Kanban = ({ setIsKanBanEdit }) => {
+const Stages = ({ pipeline }) => {
   const dispatch = useDispatch();
-  const { data, isLoading, isError, isFetching, isSuccess, error, refetch } =
-    useGetStagesQuery();
+  const { data, isLoading, isError, isFetching, isSuccess, error } =
+    useGetStagesQuery(pipeline._id);
   const [updateCardStage] = useUpdateCardStageMutation();
 
   const [editDealModelDisplay, setEditDealModelDisplay] = useState(false);
@@ -59,24 +57,8 @@ const Kanban = ({ setIsKanBanEdit }) => {
         setAddDealModelDisplay={setAddDealModelDisplay}
         createStageModelDisplay={createStageModelDisplay}
         setCreateStageModelDisplay={setCreateStageModelDisplay}
+        pipeline={pipeline}
       />
-      {data.length ? (
-        <section className="flex items-center justify-between px-5 py-2 border-b">
-          <button
-            onClick={() => setAddDealModelDisplay(true)}
-            className="btn-filled btn-small"
-          >
-            <Icon icon={"uil:plus"} className="text-xl" />
-            Deal
-          </button>
-          <button
-            className="btn-filled btn-small"
-            onClick={() => setIsKanBanEdit(true)}
-          >
-            edit view
-          </button>
-        </section>
-      ) : null}
       {data.length ? (
         <section className="h-[calc(100vh-120px)]">
           <div className="flex overflow-x-auto w-full h-full">
@@ -123,16 +105,10 @@ const Models = ({
   setAddDealModelDisplay,
   setCreateStageModelDisplay,
   createStageModelDisplay,
+  pipeline,
 }) => {
   return (
     <>
-      <Model
-        title={"Add Deal"}
-        isOpen={addDealModelDisplay}
-        setIsOpen={setAddDealModelDisplay}
-      >
-        <AddDealModel setIsOpen={setAddDealModelDisplay} />
-      </Model>
       <Model
         title={"Edit Deal"}
         isOpen={editDealModelDisplay}
@@ -143,10 +119,13 @@ const Models = ({
         isOpen={createStageModelDisplay}
         setIsOpen={setCreateStageModelDisplay}
       >
-        <CreateKanbanModel setIsOpen={setCreateStageModelDisplay} />
+        <CreateStageModel
+          pipelineId={pipeline._id}
+          setIsOpen={setCreateStageModelDisplay}
+        />
       </Model>
     </>
   );
 };
 
-export default Kanban;
+export default Stages;

@@ -15,7 +15,7 @@ export const stageApi = createApi({
       invalidatesTags: ["stage"],
     }),
     getStages: builder.query({
-      query: () => "/stage/get-stages/",
+      query: (pipelineId) => "/stage/get-stages/" + pipelineId,
       providesTags: ["stage"],
       transformResponse: (response) => {
         return response.data;

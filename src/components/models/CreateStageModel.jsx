@@ -1,16 +1,15 @@
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useCreateStageMutation } from "../../services/stageApi";
 
-const CreateStageModel = ({ setIsOpen, position }) => {
+const CreateStageModel = ({ setIsOpen, position, pipelineId }) => {
   const [createStage, { isLoading, isError, isSuccess }] =
     useCreateStageMutation();
-  const dispatch = useDispatch();
   const [stageName, setStageName] = useState("");
 
   async function createStageFn() {
-    await createStage({ name: stageName, position });
+    if (!pipelineId) return toast.error("Pipeline ID is required");
+    await createStage({ name: stageName, position, pipelineId });
     discardStage();
   }
   function discardStage() {
