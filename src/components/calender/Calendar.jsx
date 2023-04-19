@@ -5,25 +5,22 @@ import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import { useEffect, useState } from "react";
 import Model from "../models/Model";
-import Activity from "../activity/Activity";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addActivity,
-  updateActivity,
-  deleteActivity,
-  getAllActivities,
-} from "../../state/features/dealFeatures/activitySlice";
-import moment from "moment";
+import { updateActivity } from "../../state/features/dealFeatures/activitySlice";
 import { Icon } from "@iconify/react";
-import ActivityPanel from "../activity/ActivityPanel";
+import ActivityEditPanel from "../tabs/ActivityEditPanel";
+import { useGetAllActivitiesQuery } from "../../services/activityApi";
+import Loader from "../global/Loader";
+import { useDispatch } from "react-redux";
 
 const Calendar = () => {
   const [isActivityModelOpen, setIsActivityModelOpen] = useState(false);
   const [clickedActivityData, setClickedActivityData] = useState({});
-  const { data, loading, success, error } = useSelector(
-    (state) => state.activity
-  );
-  const dispatch = useDispatch();
+  const {
+    data = [],
+    isLoading,
+    isFetching,
+    isSuccess,
+  } = useGetAllActivitiesQuery();
 
   // const events = [{ title: "Meeting", start: "2023-04-17" }];
   const [events, setEvents] = useState([]);
@@ -64,26 +61,23 @@ const Calendar = () => {
   };
 
   useEffect(() => {
-    dispatch(getAllActivities());
-  }, [dispatch]);
-
-  useEffect(() => {
     const filteredActivities = [];
-    data.forEach((event) => {
-      filteredActivities.push({
-        id: event._id,
-        title: event.title,
-        start: event.startDate,
-        // end: event.endDate,
-        // startTime: event.startTime,
-        // endTime: event.endTime,
-        type: event.type,
-        markDone: event.markDone,
+    data.length &&
+      data.forEach((event) => {
+        filteredActivities.push({
+          id: event._id,
+          title: event.title,
+          start: event.startDate,
+          // end: event.endDate,
+          // startTime: event.startTime,
+          // endTime: event.endTime,
+          type: event.type,
+          markDone: event.markDone,
+        });
       });
-    });
     setEvents(filteredActivities);
   }, [data]);
-  return (
+  return !isLoading && !isFetching && isSuccess ? (
     <>
       {/* <Model
         isOpen={isActivityModelOpen}
@@ -100,7 +94,7 @@ const Calendar = () => {
         isOpen={isActivityModelOpen}
         setIsOpen={setIsActivityModelOpen}
       >
-        <ActivityPanel
+        <ActivityEditPanel
           data={clickedActivityData}
           setIsOpen={setIsActivityModelOpen}
         />
@@ -128,6 +122,10 @@ const Calendar = () => {
         />
       </section>
     </>
+  ) : (
+    <section className="flex items-center justify-center h-screen w-full">
+      <Loader />
+    </section>
   );
 };
 

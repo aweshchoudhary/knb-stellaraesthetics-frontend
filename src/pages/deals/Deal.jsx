@@ -1,34 +1,22 @@
+import { lazy } from "react";
 import Header from "../../components/global/Header";
 import Tabs from "../../components/global/Tabs";
-import Notes from "../../components/deal/Notes";
-import Activity from "../../components/activity/Activity";
-import File from "../../components/deal/File";
-import Email from "../../components/deal/Email";
 import DealSideBar from "../../components/deal/DealSideBar";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-// import {
-//   deleteDealById,
-//   getDealById,
-//   updateDealStage,
-// } from "../../state/features/dealFeatures/dealSlice";
+import { useParams } from "react-router-dom";
 import { useGetCardQuery } from "../../services/dealApi";
-import { getAllStages } from "../../state/features/stageSlice";
 import Loader from "../../components/global/Loader";
-import ActivitiesDisplay from "../../components/activity/ActivitiesDisplay";
-import FocusActivities from "../../components/deal/FocusActivities";
+import ActivitiesTabs from "../../components/tabs/ActivitiesTabs";
+import FocusActivitiesTabs from "../../components/tabs/FocusActivitiesTabs";
+
+import Notes from "../../components/tabs/Notes";
+import Activity from "../../components/tabs/Activity";
+import File from "../../components/tabs/File";
+import Email from "../../components/tabs/Email";
 
 const Deal = () => {
   const params = useParams();
   const { id } = params;
-  // const { data, loading } = useSelector((state) => state.deals);
-  const { data, error, isLoading, isFetching, isError, isSuccess } =
-    useGetCardQuery(id);
-  // const stages = useSelector((state) => state.stages);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { data, isLoading, isFetching, isSuccess } = useGetCardQuery(id);
 
   const tabs = [
     {
@@ -57,27 +45,6 @@ const Deal = () => {
     },
   ];
 
-  function updateDealStageFn(cardId, prevStageId, newStageId) {
-    dispatch(
-      updateDealStage({
-        cardId,
-        prevStageId,
-        newStageId,
-      })
-    );
-  }
-  function handleDeleteDeal() {
-    dispatch(deleteDealById(id));
-    navigate("/deals", { replace: true });
-  }
-
-  // useEffect(() => {
-  //   let isMounted = true;
-  //   isMounted && dispatch(getDealById(id));
-  //   isMounted && dispatch(getAllStages());
-  //   return () => (isMounted = false);
-  // }, [id]);
-
   return !isLoading && !isFetching && isSuccess ? (
     <>
       <Header title={"Deal"} />
@@ -92,7 +59,7 @@ const Deal = () => {
               <button className="btn-filled bg-red-600 border-0">Lost</button>
               <button
                 className="btn-outlined text-red-600 ml-2"
-                onClick={handleDeleteDeal}
+                // onClick={handleDeleteDeal}
               >
                 Delete
               </button>
@@ -133,8 +100,8 @@ const Deal = () => {
         <DealSideBar data={data} />
         <div className="flex-1 p-5 bg-paper">
           <Tabs tabs={tabs} />
-          <FocusActivities cardId={id} />
-          <ActivitiesDisplay cardId={id} />
+          <FocusActivitiesTabs cardId={id} />
+          <ActivitiesTabs cardId={id} />
         </div>
       </section>
     </>

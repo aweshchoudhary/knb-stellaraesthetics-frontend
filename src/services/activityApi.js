@@ -10,12 +10,26 @@ export const activityApi = createApi({
       query: (data) => ({
         url: "/activity/add",
         method: "POST",
-        body: data.body,
+        body: data,
       }),
       invalidatesTags: ["activity"],
     }),
     getActivity: builder.query({
       query: (id) => "/activity/get-activity/" + id,
+      providesTags: ["activity"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
+    getActivitiesByCardId: builder.query({
+      query: (cardId) => "/activity/get-activities/" + cardId,
+      providesTags: ["activity"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
+    getAllActivities: builder.query({
+      query: () => "/activity/get-all-activities",
       providesTags: ["activity"],
       transformResponse: (response) => {
         return response.data;
@@ -39,4 +53,11 @@ export const activityApi = createApi({
   }),
 });
 
-export const { useGetActivityQuery } = activityApi;
+export const {
+  useGetActivityQuery,
+  useCreateActivityMutation,
+  useDeleteActivityMutation,
+  useUpdateActivityMutation,
+  useGetAllActivitiesQuery,
+  useGetActivitiesByCardIdQuery,
+} = activityApi;

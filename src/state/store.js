@@ -12,6 +12,8 @@ import { labelApi } from "../services/labelApi";
 import { stageApi } from "../services/stageApi";
 import { clientApi } from "../services/clientApi";
 import { pipelineApi } from "../services/pipelineApi";
+import { activityApi } from "../services/activityApi";
+import { noteApi } from "../services/noteApi";
 
 const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ const store = configureStore({
     [stageApi.reducerPath]: stageApi.reducer,
     [clientApi.reducerPath]: clientApi.reducer,
     [pipelineApi.reducerPath]: pipelineApi.reducer,
+    [activityApi.reducerPath]: activityApi.reducer,
+    [noteApi.reducerPath]: noteApi.reducer,
     deals: dealSlice,
     note: noteSlice,
     activity: activitySlice,
@@ -35,7 +39,9 @@ const store = configureStore({
       .concat(stageApi.middleware)
       .concat(clientApi.middleware)
       .concat(labelApi.middleware)
-      .concat(pipelineApi.middleware),
+      .concat(pipelineApi.middleware)
+      .concat(noteApi.middleware)
+      .concat(activityApi.middleware),
 });
 
 export default store;

@@ -1,13 +1,12 @@
 import { Icon } from "@iconify/react";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteNote,
-  getNotesByCardId,
-} from "../../state/features/dealFeatures/noteSlice";
+import { useState } from "react";
 import Loader from "../global/Loader";
 import { toast } from "react-toastify";
+import {
+  useDeleteNoteMutation,
+  useGetNotesByCardIdQuery,
+} from "../../services/noteApi";
 
 const ActivitiesDisplay = ({ cardId }) => {
   const [activeTab, setActiveTab] = useState("notes");
@@ -41,24 +40,16 @@ const Activites = ({ name, cardId }) => {
     </div>
   );
 };
-
 const Note = ({ cardId }) => {
-  let { loading, data, error, success } = useSelector((state) => state.note);
-  const dispatch = useDispatch();
-  function deleteNoteFn(id) {
-    dispatch(deleteNote(id));
+  const { data, isLoading, isSuccess, isFetching } =
+    useGetNotesByCardIdQuery(cardId);
+  const [deleteNote] = useDeleteNoteMutation();
+
+  async function handlDeleteDeal(id) {
+    await deleteNote(id);
+    toast.success("Note deleted successfully");
   }
-
-  useEffect(() => {
-    dispatch(getNotesByCardId(cardId));
-  }, [cardId, success]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-  return !loading ? (
+  return !isLoading && !isFetching && isSuccess ? (
     data.length ? (
       <>
         {data.map((note, index) => {
@@ -81,7 +72,7 @@ const Note = ({ cardId }) => {
                       <Icon icon={"uil:pen"} />
                     </button>
                     <button
-                      onClick={() => deleteNoteFn(note._id)}
+                      onClick={() => handlDeleteDeal(note._id)}
                       className="btn-outlined btn-small"
                     >
                       <Icon icon={"uil:trash"} />

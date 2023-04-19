@@ -9,6 +9,10 @@ import {
 } from "../../state/features/dealFeatures/activitySlice";
 import { deleteActivity } from "../../state/features/dealFeatures/activitySlice";
 import { useGetCardQuery } from "../../services/dealApi";
+import {
+  useGetActivitiesByCardIdQuery,
+  useGetAllActivitiesQuery,
+} from "../../services/activityApi";
 
 const FocusActivities = ({ cardId }) => {
   return (
@@ -22,14 +26,10 @@ const FocusActivities = ({ cardId }) => {
 };
 
 const Activites = ({ cardId }) => {
-  const { data: deal, isLoading } = useGetCardQuery(cardId);
-  const { data, loading, success } = useSelector((state) => state.activity);
-  const dispatch = useDispatch();
+  const { data, isLoading, isFetching, isSuccess } =
+    useGetActivitiesByCardIdQuery(cardId);
 
-  useEffect(() => {
-    dispatch(getActivitiesByCardId(deal._id));
-  }, [deal._id]);
-  return !loading ? (
+  return !isLoading && !isFetching && isSuccess ? (
     <div>
       <ul>
         {data.length ? (

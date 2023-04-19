@@ -36,86 +36,88 @@ const Kanban = ({}) => {
       >
         <CreatePipelineModel setIsOpen={isCreatePipelineModelOpen} />
       </Model>
-      {isStageEditView ? (
-        <>
-          <section className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
-            <h3>Edit Stages</h3>
-            <div className="flex items-center gap-2">
-              <button
-                className="btn-filled btn-small"
-                onClick={handleStageEditViewClose}
-              >
-                close
-              </button>
-            </div>
-          </section>
-        </>
-      ) : (
-        <>
-          <Model
-            title={"Add Deal"}
-            isOpen={isCreateDealModelOpen}
-            setIsOpen={setIsCreateDealModelOpen}
-          >
-            <CreateDealModel
-              activePipe={activePipeline}
-              pipelineId={activePipeline?._id}
+      {data.length ? (
+        isStageEditView ? (
+          <>
+            <section className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
+              <h3>Edit Stages</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  className="btn-filled btn-small"
+                  onClick={handleStageEditViewClose}
+                >
+                  close
+                </button>
+              </div>
+            </section>
+          </>
+        ) : (
+          <>
+            <Model
+              title={"Add Deal"}
+              isOpen={isCreateDealModelOpen}
               setIsOpen={setIsCreateDealModelOpen}
-            />
-          </Model>
-          <section className="px-5 py-3 flex justify-between items-center border-b">
-            <div className="flex items-stretch gap-2">
-              <button
-                className="btn-filled btn-small"
-                onClick={() => setIsCreateDealModelOpen(true)}
-              >
-                New Deal
-              </button>
-              <button
-                className="btn-filled btn-small"
-                onClick={() => setIsCreatePipelineModelOpen(true)}
-              >
-                New Pipeline
-              </button>
-              <button className="btn-outlined btn-small">Refresh</button>
-            </div>
-            <div className="flex items-stretch gap-2">
-              <select
-                name="pipeline-select"
-                className="input w-[200px]"
-                id="pipeline-select"
-                // onSelect={(e) =>
-                //   setActivePipeline((prev) => prev[e.target.value])
-                // }
-                onChange={(e) => setActivePipeline(data[e.target.value])}
-              >
-                {data.map((pipe, index) => {
-                  return pipe?._id === activePipeline?._id ? (
-                    <option
-                      key={index}
-                      selected
-                      defaultValue={pipe._id}
-                      value={pipe._id}
-                    >
-                      {pipe.name}
-                    </option>
-                  ) : (
-                    <option key={index} value={index}>
-                      {pipe.name}
-                    </option>
-                  );
-                })}
-              </select>
-              <button
-                className="btn-outlined"
-                onClick={() => setIsEditStageView(true)}
-              >
-                <Icon icon="uil:pen" />
-              </button>
-            </div>
-          </section>
-        </>
-      )}
+            >
+              <CreateDealModel
+                activePipe={activePipeline}
+                pipelineId={activePipeline?._id}
+                setIsOpen={setIsCreateDealModelOpen}
+              />
+            </Model>
+            <section className="px-5 py-3 flex justify-between items-center border-b">
+              <div className="flex items-stretch gap-2">
+                <button
+                  className="btn-filled btn-small"
+                  onClick={() => setIsCreateDealModelOpen(true)}
+                >
+                  New Deal
+                </button>
+                <button
+                  className="btn-filled btn-small"
+                  onClick={() => setIsCreatePipelineModelOpen(true)}
+                >
+                  New Pipeline
+                </button>
+                <button className="btn-outlined btn-small">Refresh</button>
+              </div>
+              <div className="flex items-stretch gap-2">
+                <select
+                  name="pipeline-select"
+                  className="input w-[200px]"
+                  id="pipeline-select"
+                  // onSelect={(e) =>
+                  //   setActivePipeline((prev) => prev[e.target.value])
+                  // }
+                  onChange={(e) => setActivePipeline(data[e.target.value])}
+                >
+                  {data.map((pipe, index) => {
+                    return pipe?._id === activePipeline?._id ? (
+                      <option
+                        key={index}
+                        selected
+                        defaultValue={pipe._id}
+                        value={pipe._id}
+                      >
+                        {pipe.name}
+                      </option>
+                    ) : (
+                      <option key={index} value={index}>
+                        {pipe.name}
+                      </option>
+                    );
+                  })}
+                </select>
+                <button
+                  className="btn-outlined"
+                  onClick={() => setIsEditStageView(true)}
+                >
+                  <Icon icon="uil:pen" />
+                </button>
+              </div>
+            </section>
+          </>
+        )
+      ) : null}
       {data.length && activePipeline ? (
         <>
           {isStageEditView ? (

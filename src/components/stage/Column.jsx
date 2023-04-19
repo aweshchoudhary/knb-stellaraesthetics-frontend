@@ -1,8 +1,12 @@
 import { Droppable } from "react-beautiful-dnd";
 import Card from "../global/Card";
 import Row from "./Row";
+import { useGetCardsByStageQuery } from "../../services/dealApi";
 
 const Column = ({ stage, loading }) => {
+  const { data, isLoading, isFetching, isSuccess } = useGetCardsByStageQuery(
+    stage._id
+  );
   return (
     <div className={"border-r shrink-0 flex flex-col w-1/3"} key={stage._id}>
       <header
@@ -31,13 +35,10 @@ const Column = ({ stage, loading }) => {
                 }`}
               >
                 {!loading &&
-                  stage?.items?.map((item, index) => {
+                  data?.map((card, index) => {
                     return (
-                      <Row itemId={item} index={index} key={item}>
-                        <Card
-                          // setEditDealModelDisplay={setEditDealModelDisplay}
-                          id={item}
-                        />
+                      <Row itemId={card._id} index={index} key={index}>
+                        <Card card={card} />
                       </Row>
                     );
                   })}

@@ -21,6 +21,13 @@ export const dealApi = createApi({
         return response.data;
       },
     }),
+    getCardsByStage: builder.query({
+      query: (stageId) => "/card/get-cards/" + stageId,
+      providesTags: ["deal"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
     updateCard: builder.mutation({
       query: (data) => ({
         url: "/card/update/" + data.id,
@@ -35,7 +42,7 @@ export const dealApi = createApi({
         method: "PUT",
         body: data,
       }),
-      // invalidatesTags: ["deal"],
+      invalidatesTags: ["deal"],
     }),
     deleteCard: builder.mutation({
       query: (id) => ({
@@ -53,4 +60,5 @@ export const {
   useDeleteCardMutation,
   useUpdateCardMutation,
   useUpdateCardStageMutation,
+  useGetCardsByStageQuery,
 } = dealApi;

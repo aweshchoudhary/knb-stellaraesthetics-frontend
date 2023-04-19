@@ -10,10 +10,7 @@ import { useGetCardQuery } from "../../services/dealApi";
 import { labelApi } from "../../services/labelApi";
 import { clientApi } from "../../services/clientApi";
 
-const Card = ({ id }) => {
-  const { isError, isLoading, isSuccess, isFetching, data, error } =
-    useGetCardQuery(id);
-
+const Card = ({ card }) => {
   const dispatch = useDispatch();
   const [label, setLabel] = useState({});
   const [client, setClient] = useState({});
@@ -28,25 +25,25 @@ const Card = ({ id }) => {
   };
 
   useEffect(() => {
-    if (data?.label) {
-      fetchLabel(data.label);
+    if (card?.label) {
+      fetchLabel(card.label);
     }
-    if (data?.clientId) fetchClient(data.clientId);
-  }, [data]);
+    if (card?.clientId) fetchClient(card.clientId);
+  }, [card]);
 
-  useEffect(() => {
-    if (isError) toast.error(error);
-  }, [isError]);
+  // useEffect(() => {
+  //   if (isError) toast.error(error);
+  // }, [isError]);
 
-  return !isLoading && !isFetching && isSuccess && label && client ? (
+  return card && label && client ? (
     <Link
-      to={"/deals/" + data._id}
+      to={"/deals/" + card._id}
       className={
         "cursor-pointer w-full bg-bg text-sm relative border mb-1 p-2 flex flex-col gap-2"
       }
     >
       <div className="top">
-        {data.label && (
+        {card.label && (
           <Tooltip title={label.name} className="label mb-1">
             <p
               className="w-[20%] h-[5px]"
@@ -54,7 +51,7 @@ const Card = ({ id }) => {
             ></p>
           </Tooltip>
         )}
-        <h4 className="font-medium">{data.title}</h4>
+        <h4 className="font-medium">{card.title}</h4>
         <p className="text-gray-500 text-xs">{client.company}</p>
         <button className="activity absolute top-2 right-2 rounded-full border p-1 flex items-center justify-center hover:bg-gray-100">
           <Icon icon="icon-park-solid:caution" className="text-yellow-500" />
@@ -72,7 +69,7 @@ const Card = ({ id }) => {
           </Tooltip>
         </div>
         <div className="amount flex items-center">
-          {formatNumber(data?.value?.value, {
+          {formatNumber(card?.value?.value, {
             country: "en-IN",
             type: "INR",
           })}

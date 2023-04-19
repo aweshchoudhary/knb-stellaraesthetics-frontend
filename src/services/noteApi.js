@@ -10,12 +10,19 @@ export const noteApi = createApi({
       query: (data) => ({
         url: "/note/add",
         method: "POST",
-        body: data.body,
+        body: data,
       }),
       invalidatesTags: ["note"],
     }),
     getNote: builder.query({
       query: (id) => "/note/get-note/" + id,
+      providesTags: ["note"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
+    getNotesByCardId: builder.query({
+      query: (cardId) => "/note/get-notes/" + cardId,
       providesTags: ["note"],
       transformResponse: (response) => {
         return response.data;
@@ -39,4 +46,10 @@ export const noteApi = createApi({
   }),
 });
 
-export const { useGetNoteQuery } = noteApi;
+export const {
+  useGetNoteQuery,
+  useUpdateNoteMutation,
+  useCreateNoteMutation,
+  useDeleteNoteMutation,
+  useGetNotesByCardIdQuery,
+} = noteApi;
