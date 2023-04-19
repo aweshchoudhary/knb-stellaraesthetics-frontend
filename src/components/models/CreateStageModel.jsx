@@ -1,28 +1,30 @@
 import { useDispatch, useSelector } from "react-redux";
-import { createStage } from "../../state/features/stageSlice";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useCreateStageMutation } from "../../services/stageApi";
 
 const CreateStageModel = ({ setIsOpen, position }) => {
-  const { loading, error, success } = useSelector((state) => state.stages);
+  const [createStage, { isLoading, isError, isSuccess }] =
+    useCreateStageMutation();
   const dispatch = useDispatch();
   const [stageName, setStageName] = useState("");
 
-  function createStageFn() {
-    dispatch(createStage({ name: stageName, position }));
-    setIsOpen(false);
+  async function createStageFn() {
+    await createStage({ name: stageName, position });
+    discardStage();
   }
   function discardStage() {
     setIsOpen(false);
+    setStageName("");
   }
   useEffect(() => {
-    if (error) {
+    if (isError) {
       toast.error("Something went wrong!");
     }
-    if (success && stageName > 4) {
+    if (isSuccess && stageName > 4) {
       toast.success(stageName + " has been created.");
     }
-  }, [success, error]);
+  }, [isSuccess, isError]);
 
   return (
     <section className="p-5">
@@ -43,16 +45,16 @@ const CreateStageModel = ({ setIsOpen, position }) => {
           <button
             className="btn-outlined"
             onClick={discardStage}
-            disabled={loading}
+            disabled={isLoading}
           >
             discard
           </button>
           <button
             className="btn-filled"
             onClick={createStageFn}
-            disabled={loading || stageName.length < 4}
+            disabled={isLoading || stageName.length < 4}
           >
-            {loading ? "Loading..." : "create"}
+            {isLoading ? "Loading..." : "create"}
           </button>
         </div>
       </div>

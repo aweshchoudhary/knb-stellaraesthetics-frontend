@@ -1,45 +1,44 @@
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
-import axiosInstance from "../../config/axiosInstance";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { getClientById } from "../../state/features/clientSlice";
+import { useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
 import { useGetCardQuery } from "../../services/dealApi";
 import { labelApi } from "../../services/labelApi";
+import { clientApi } from "../../services/clientApi";
 
 const Card = ({ id }) => {
   const { isError, isLoading, isSuccess, isFetching, data, error } =
     useGetCardQuery(id);
 
-  const client = useSelector((state) => state.client);
   const dispatch = useDispatch();
   const [label, setLabel] = useState({});
+  const [client, setClient] = useState({});
 
   const fetchLabel = async (id) => {
-    try {
-      const labelRes = await dispatch(labelApi.endpoints.getLabel.initiate(id));
-      setLabel(labelRes.data.data);
-    } catch (err) {
-      toast.error(err.response);
-    }
+    const { data } = await dispatch(labelApi.endpoints.getLabel.initiate(id));
+    setLabel(data);
+  };
+  const fetchClient = async (id) => {
+    const { data } = await dispatch(clientApi.endpoints.getClient.initiate(id));
+    setClient(data);
   };
 
   useEffect(() => {
     if (data?.label) {
       fetchLabel(data.label);
     }
-    if (data?.clientId) dispatch(getClientById(data?.clientId));
+    if (data?.clientId) fetchClient(data.clientId);
   }, [data]);
 
   useEffect(() => {
     if (isError) toast.error(error);
   }, [isError]);
 
-  return !isLoading && isSuccess ? (
+  return !isLoading && !isFetching && isSuccess && label && client ? (
     <Link
       to={"/deals/" + data._id}
       className={
@@ -56,19 +55,19 @@ const Card = ({ id }) => {
           </Tooltip>
         )}
         <h4 className="font-medium">{data.title}</h4>
-        <p className="text-gray-500 text-xs">{client.data.company}</p>
+        <p className="text-gray-500 text-xs">{client.company}</p>
         <button className="activity absolute top-2 right-2 rounded-full border p-1 flex items-center justify-center hover:bg-gray-100">
           <Icon icon="icon-park-solid:caution" className="text-yellow-500" />
         </button>
       </div>
       <div className="bottom flex items-center gap-3 text-sm">
         <div className="user">
-          <Tooltip title={client.data.contactPerson}>
+          <Tooltip title={client.contactPerson}>
             <Icon icon={"uil:user"} />
           </Tooltip>
         </div>
         <div className="user">
-          <Tooltip title={client.data.company}>
+          <Tooltip title={client.company}>
             <Icon icon={"uil:building"} />
           </Tooltip>
         </div>

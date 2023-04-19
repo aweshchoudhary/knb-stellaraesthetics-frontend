@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   addTempItemToStage,
-  getAllStages,
   removeTempItemFromStage,
 } from "../../state/features/stageSlice";
 import { Icon } from "@iconify/react";
@@ -12,25 +11,21 @@ import Model from "../models/Model";
 import Column from "./Column";
 import { toast } from "react-toastify";
 import CreateKanbanModel from "../models/CreateStageModel";
-import { updateDealStage } from "../../state/features//dealFeatures/dealSlice";
 import Loader from "../global/Loader";
 import { useGetStagesQuery } from "../../services/stageApi";
-import { dealApi } from "../../services/dealApi";
+import { useUpdateCardStageMutation } from "../../services/dealApi";
 
 const Kanban = ({ setIsKanBanEdit }) => {
   const dispatch = useDispatch();
-  // const { data, loading, error, success } = useSelector(
-  //   (state) => state.stages
-  // );
   const { data, isLoading, isError, isFetching, isSuccess, error, refetch } =
     useGetStagesQuery();
+  const [updateCardStage] = useUpdateCardStageMutation();
 
-  const deals = useSelector((state) => state.deals);
   const [editDealModelDisplay, setEditDealModelDisplay] = useState(false);
   const [addDealModelDisplay, setAddDealModelDisplay] = useState(false);
   const [createStageModelDisplay, setCreateStageModelDisplay] = useState(false);
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     if (!result.destination) return;
     const { source, destination, draggableId } = result;
     if (source.droppableId !== destination.droppableId) {
@@ -46,14 +41,11 @@ const Kanban = ({ setIsKanBanEdit }) => {
           item: draggableId,
         })
       );
-      dispatch(
-        dealApi.endpoints.updateCardStage.initiate({
-          cardId: result.draggableId,
-          prevStageId: result.source.droppableId,
-          newStageId: result.destination.droppableId,
-        })
-      );
-      refetch();
+      await updateCardStage({
+        cardId: result.draggableId,
+        prevStageId: result.source.droppableId,
+        newStageId: result.destination.droppableId,
+      });
     }
   };
 
@@ -68,7 +60,7 @@ const Kanban = ({ setIsKanBanEdit }) => {
         createStageModelDisplay={createStageModelDisplay}
         setCreateStageModelDisplay={setCreateStageModelDisplay}
       />
-      {data ? (
+      {data.length ? (
         <section className="flex items-center justify-between px-5 py-2 border-b">
           <button
             onClick={() => setAddDealModelDisplay(true)}
@@ -81,11 +73,11 @@ const Kanban = ({ setIsKanBanEdit }) => {
             className="btn-filled btn-small"
             onClick={() => setIsKanBanEdit(true)}
           >
-            edit
+            edit view
           </button>
         </section>
       ) : null}
-      {data ? (
+      {data.length ? (
         <section className="h-[calc(100vh-120px)]">
           <div className="flex overflow-x-auto w-full h-full">
             <DragDropContext onDragEnd={(result) => onDragEnd(result)}>

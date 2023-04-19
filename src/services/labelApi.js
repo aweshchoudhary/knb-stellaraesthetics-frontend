@@ -10,13 +10,23 @@ export const labelApi = createApi({
       query: (data) => ({
         url: "/label/add",
         method: "POST",
-        body: data.body,
+        body: data,
       }),
       invalidatesTags: ["label"],
     }),
     getLabel: builder.query({
       query: (id) => "/label/get-label/" + id,
       providesTags: ["label"],
+      transformResponse: (res) => {
+        return res.data;
+      },
+    }),
+    getLabels: builder.query({
+      query: () => "/label/get-labels/",
+      providesTags: ["label"],
+      transformResponse: (res) => {
+        return res.data;
+      },
     }),
     updateLabel: builder.mutation({
       query: (data) => ({
@@ -36,4 +46,10 @@ export const labelApi = createApi({
   }),
 });
 
-export const { useGetLabelQuery } = labelApi;
+export const {
+  useGetLabelQuery,
+  useCreateLabelMutation,
+  useDeleteLabelMutation,
+  useGetLabelsQuery,
+  useUpdateLabelMutation,
+} = labelApi;

@@ -1,19 +1,19 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import CreateLabel from "./CreateLabel";
-import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../global/Loader";
-import { getLabels } from "../../../state/features/labelSlice";
+import { useGetLabelsQuery } from "../../../services/labelApi";
+import { toast } from "react-toastify";
 
 const Label = ({ setLabel, label }) => {
-  const { data, loading, success, error } = useSelector((state) => state.label);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenNewLabelModel, setIsOpenNewLabelModel] = useState(false);
+  const { data, isLoading, isFetching, isSuccess, isError, error } =
+    useGetLabelsQuery();
 
-  const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getLabels());
-  }, [success]);
+    toast.error(error);
+  }, [isError]);
 
   return (
     <div className="relative">
@@ -43,7 +43,7 @@ const Label = ({ setLabel, label }) => {
       </button>
       {isOpen && (
         <ul className="label-list shadow-lg border absolute z-[100] w-full left-0 bg-bg">
-          {!loading ? (
+          {!isLoading && !isFetching && isSuccess ? (
             data.length ? (
               data.map((item, index) => {
                 return (

@@ -10,7 +10,7 @@ export const dealApi = createApi({
       query: (data) => ({
         url: "/card/add",
         method: "POST",
-        body: data.body,
+        body: data,
       }),
       invalidatesTags: ["deal"],
     }),
@@ -35,7 +35,7 @@ export const dealApi = createApi({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["deal"],
+      // invalidatesTags: ["deal"],
     }),
     deleteCard: builder.mutation({
       query: (id) => ({
@@ -47,4 +47,10 @@ export const dealApi = createApi({
   }),
 });
 
-export const { useGetCardQuery } = dealApi;
+export const {
+  useGetCardQuery,
+  useCreateCardMutation,
+  useDeleteCardMutation,
+  useUpdateCardMutation,
+  useUpdateCardStageMutation,
+} = dealApi;

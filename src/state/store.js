@@ -10,12 +10,14 @@ import clientSlice from "./features/clientSlice";
 import { dealApi } from "../services/dealApi";
 import { labelApi } from "../services/labelApi";
 import { stageApi } from "../services/stageApi";
+import { clientApi } from "../services/clientApi";
 
 const store = configureStore({
   reducer: {
     [dealApi.reducerPath]: dealApi.reducer,
     [labelApi.reducerPath]: labelApi.reducer,
     [stageApi.reducerPath]: stageApi.reducer,
+    [clientApi.reducerPath]: clientApi.reducer,
     deals: dealSlice,
     note: noteSlice,
     activity: activitySlice,
@@ -28,7 +30,9 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(dealApi.middleware)
-      .concat(stageApi.middleware),
+      .concat(stageApi.middleware)
+      .concat(clientApi.middleware)
+      .concat(labelApi.middleware),
 });
 
 export default store;

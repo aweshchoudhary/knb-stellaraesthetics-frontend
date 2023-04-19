@@ -5,42 +5,54 @@ import { toast } from "react-toastify";
 import EditColumn from "./EditColumn";
 import { getAllStages, reorderStages } from "../../state/features/stageSlice";
 import Loader from "../global/Loader";
+import {
+  useGetStagesQuery,
+  useReorderStageMutation,
+} from "../../services/stageApi";
 
 const EditKanban = ({ setIsKanBanEdit }) => {
-  const { data, loading, error, success } = useSelector(
-    (state) => state.stages
-  );
+  // const { data, isLoading, isError, success } = useSelector(
+  //   (state) => state.stages
+  // );
+  const { data, isLoading, isSuccess, isFetching, isError } =
+    useGetStagesQuery();
+  const [reorderStages, { isLoading: isStagesReorderLoading }] =
+    useReorderStageMutation();
+  // const [updateStage, {isLoading: isStagesReorderLoading}] = useReorderStageMutation()
   const dispatch = useDispatch();
 
-  const onDragComplete = (result) => {
+  const onDragComplete = async (result) => {
     if (!result.destination) return;
-
-    const { source, destination, draggableId } = result;
-    dispatch(
-      reorderStages({ stageId: draggableId, newPosition: destination.index })
-    );
+    const { destination, draggableId } = result;
+    await reorderStages({
+      stageId: draggableId,
+      newPosition: destination.index,
+    });
   };
 
-  function handleKanBanSave() {
+  function handleEditViewClose() {
     setIsKanBanEdit(false);
   }
 
-  useEffect(() => {
-    dispatch(getAllStages());
-  }, [success]);
+  // useEffect(() => {
+  //   dispatch(getAllStages());
+  // }, [success]);
 
   useEffect(() => {
-    if (error) {
+    if (isError) {
       toast.error("Something went wrong");
     }
-  }, [error]);
+  }, [isError]);
 
-  return !loading && data ? (
+  return !isLoading && !isFetching && isSuccess ? (
     <>
       <section className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
         <h3>Edit Stages</h3>
         <div className="flex items-center gap-2">
-          <button className="btn-filled" onClick={handleKanBanSave}>
+          <button
+            className="btn-filled btn-small"
+            onClick={handleEditViewClose}
+          >
             close
           </button>
         </div>

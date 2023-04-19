@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import MaterialReactTable from "material-react-table";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 import axiosInstance from "../../config/axiosInstance";
 import { Icon } from "@iconify/react";
 import {
@@ -35,7 +36,7 @@ const columns = [
     header: "Email",
   },
 ];
-const fetchSize = 5;
+const fetchSize = 10;
 
 const ContactTable = () => {
   const tableContainerRef = useRef(null);
@@ -189,9 +190,9 @@ const ContactTable = () => {
         rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
         rowVirtualizerProps={{ overscan: 4 }}
         renderRowActions={({ row, table }) => (
-          <Box sx={{ display: "flex", gap: "1rem" }}>
+          <div className="flex gap-1">
             <button
-              className="btn-filled"
+              className="btn-outlined btn-small"
               onClick={() => {
                 setIsContactEditModelOpen(true);
                 setEditRow(row);
@@ -199,7 +200,13 @@ const ContactTable = () => {
             >
               <Icon icon={"uil:pen"} />
             </button>
-          </Box>
+            <Link
+              className="btn-filled btn-small"
+              to={"/contacts/" + row.original._id}
+            >
+              <Icon icon={"uil:eye"} />
+            </Link>
+          </div>
         )}
         enableRowSelection
         renderTopToolbarCustomActions={({ table }) => (

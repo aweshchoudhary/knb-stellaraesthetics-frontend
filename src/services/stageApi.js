@@ -10,7 +10,7 @@ export const stageApi = createApi({
       query: (data) => ({
         url: "/stage/add",
         method: "POST",
-        body: data.body,
+        body: data,
       }),
       invalidatesTags: ["stage"],
     }),
@@ -36,6 +36,14 @@ export const stageApi = createApi({
       }),
       invalidatesTags: ["stage"],
     }),
+    reorderStage: builder.mutation({
+      query: (data) => ({
+        url: "/stage/reorder",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["stage"],
+    }),
     deleteStage: builder.mutation({
       query: (position) => ({
         url: "/stage/delete/" + position,
@@ -46,4 +54,11 @@ export const stageApi = createApi({
   }),
 });
 
-export const { useGetStageQuery, useGetStagesQuery } = stageApi;
+export const {
+  useGetStageQuery,
+  useGetStagesQuery,
+  useCreateStageMutation,
+  useDeleteStageMutation,
+  useUpdateStageMutation,
+  useReorderStageMutation,
+} = stageApi;

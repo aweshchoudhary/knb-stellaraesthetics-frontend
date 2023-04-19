@@ -7,13 +7,31 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Label from "../deal/label/Label";
 import { addTempItemToStage } from "../../state/features/stageSlice";
+import { useGetStagesQuery } from "../../services/stageApi";
+import { clientApi, useCreateClientMutation } from "../../services/clientApi";
+import { dealApi, useCreateCardMutation } from "../../services/dealApi";
 
 const AddDeal = ({ setIsOpen }) => {
-  const { loading, data } = useSelector((state) => state.deals);
-  const stages = useSelector((state) => state.stages);
-  const client = useSelector((state) => state.client);
+  const [setClientStatus] = useState({
+    isLoading: false,
+    isFetching: false,
+    isError: false,
+    isSuccess: false,
+  });
+  const [createCard, { isLoading, isError, isSuccess }] =
+    useCreateCardMutation();
+  const [
+    createClient,
+    {
+      data: clientData,
+      isLoading: isClientLoading,
+      isError: isClientError,
+      isSuccess: isClientSuccess,
+    },
+  ] = useCreateClientMutation();
+  const { data: stages } = useGetStagesQuery();
+  // const client = useSelector((state) => state.client);
   const dispatch = useDispatch();
-  const [isFetching, setIsFetching] = useState(false);
 
   const [dealData, setDealData] = useState({
     title: "",
@@ -22,7 +40,6 @@ const AddDeal = ({ setIsOpen }) => {
     label: "",
     expectedClosingDate: "",
   });
-
   const [clientDetails, setClientDetails] = useState({
     company: "",
     contactPerson: "",
@@ -37,8 +54,8 @@ const AddDeal = ({ setIsOpen }) => {
 
   const region = navigator?.language?.split("-")[1];
 
-  function handleAddClient() {
-    dispatch(createClient(clientDetails));
+  async function handleAddClient() {
+    createClient(clientDetails);
     setClientDetails({
       company: null,
       title: null,
@@ -47,16 +64,16 @@ const AddDeal = ({ setIsOpen }) => {
       whatsapp: null,
       email: null,
     });
-    setIsFetching(true);
   }
-  function handleAddDeal(clientId) {
-    dispatch(createDeal({ ...dealData, clientId }));
+  async function handleAddDeal(clientId) {
+    await createCard({ ...dealData, clientId });
     setDealData({
       value: { value: null, type: "inr" },
       stage: null,
       color: null,
       expectedClosingDate: null,
     });
+    setIsOpen(false);
   }
 
   function fillClientDetails(name, value) {
@@ -102,21 +119,10 @@ const AddDeal = ({ setIsOpen }) => {
   }, [whatsapp, sameNumber]);
 
   useEffect(() => {
-    console.log("working");
-    if (isFetching && client.data._id) {
-      console.log("working");
-      handleAddDeal(client.data._id);
+    if (!isClientLoading && isClientSuccess && clientData?.data?._id) {
+      handleAddDeal(clientData.data._id);
     }
-  }, [client.loading, client.data, client.success]);
-
-  // After Add Deal Function
-  useEffect(() => {
-    if (isFetching && data) {
-      dispatch(addTempItemToStage({ stageId: dealData.stage, item: data._id }));
-      setIsFetching(false);
-      setIsOpen(false);
-    }
-  }, [data, isFetching]);
+  }, [isClientLoading, isClientSuccess]);
 
   return (
     <>
@@ -218,7 +224,7 @@ const AddDeal = ({ setIsOpen }) => {
               <option className="text-black" defaultValue={""}>
                 Select Stage
               </option>
-              {stages?.data?.map((item, i) => {
+              {stages?.map((item, i) => {
                 return (
                   <option key={i} className="text-black" value={item._id}>
                     {item.name}
@@ -308,17 +314,17 @@ const AddDeal = ({ setIsOpen }) => {
       <footer className="modal-footer">
         <button
           className="btn-outlined"
-          disabled={loading || client?.loading}
+          disabled={isClientLoading || isLoading}
           onClick={() => setIsOpen(false)}
         >
           cancel
         </button>
         <button
           onClick={handleAddClient}
-          disabled={loading || client?.loading}
+          disabled={isClientLoading || isLoading}
           className="btn-filled"
         >
-          {loading || client?.loading ? "Loading..." : "add deal"}
+          {isClientLoading || isLoading ? "Loading..." : "add deal"}
         </button>
       </footer>
     </>

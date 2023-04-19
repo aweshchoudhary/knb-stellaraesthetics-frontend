@@ -1,22 +1,27 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { createLabel } from "../../../state/features/labelSlice";
+import { useEffect, useState } from "react";
+import { useCreateLabelMutation } from "../../../services/labelApi";
+import { toast } from "react-toastify";
 
 const CreateLabel = ({ setIsOpen }) => {
   const [name, setName] = useState("");
-  const colorList = ["#000", "#008502", "#0040d6", "#d6bd00", "#d600ab"];
-  const dispatch = useDispatch();
+  const [createLabel, { isError, error }] = useCreateLabelMutation();
 
-  function createLabelFn() {
-    dispatch(createLabel({ name, color }));
+  const colorList = ["#fc0303", "#008502", "#0040d6", "#d6bd00", "#d600ab"];
+  const [color, setColor] = useState(colorList[0]);
+
+  async function createLabelFn() {
+    await createLabel({ name, color });
     clear();
   }
+
   function clear() {
     setName("");
     setColor(colorList[0]);
     setIsOpen(false);
   }
-  const [color, setColor] = useState(colorList[0]);
+  useEffect(() => {
+    toast.error(error);
+  }, [isError]);
   return (
     <div className="bg-bg border shadow-lg">
       <header className="p-2 bg-paper">
