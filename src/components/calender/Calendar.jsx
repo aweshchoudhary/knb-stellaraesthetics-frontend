@@ -11,10 +11,14 @@ import ActivityEditPanel from "../tabs/ActivityEditPanel";
 import { useGetAllActivitiesQuery } from "../../services/activityApi";
 import Loader from "../global/Loader";
 import { useDispatch } from "react-redux";
+import Activity from "../tabs/Activity";
 
 const Calendar = () => {
   const [isActivityModelOpen, setIsActivityModelOpen] = useState(false);
+  const [isCreateActivityModelOpen, setIsCreateActivityModelOpen] =
+    useState(false);
   const [clickedActivityData, setClickedActivityData] = useState({});
+  const [selectedInfo, setSelectedInfo] = useState(null);
   const {
     data = [],
     isLoading,
@@ -26,20 +30,22 @@ const Calendar = () => {
   const [events, setEvents] = useState([]);
 
   const handleDateSelect = (selectInfo) => {
-    let title = prompt("Please enter a new title for your event");
-    let calendarApi = selectInfo.view.calendar;
+    setIsCreateActivityModelOpen(true);
+    setSelectedInfo(selectInfo);
+    // let title = prompt("Please enter a new title for your event");
+    // let calendarApi = selectInfo.view.calendar;
 
-    calendarApi.unselect(); // clear date selection
+    // calendarApi.unselect(); // clear date selection
 
-    if (title) {
-      calendarApi.addEvent({
-        id: Date.now(),
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay,
-      });
-    }
+    // if (title) {
+    //   calendarApi.addEvent({
+    //     id: Date.now(),
+    //     title,
+    //     start: selectInfo.startStr,
+    //     end: selectInfo.endStr,
+    //     allDay: selectInfo.allDay,
+    //   });
+    // }
   };
 
   const handleEventClick = (clickInfo) => {
@@ -79,16 +85,16 @@ const Calendar = () => {
   }, [data]);
   return !isLoading && !isFetching && isSuccess ? (
     <>
-      {/* <Model
-        isOpen={isActivityModelOpen}
-        setIsOpen={setIsActivityModelOpen}
+      <Model
+        isOpen={isCreateActivityModelOpen}
+        setIsOpen={setIsCreateActivityModelOpen}
         title={"Create Activity"}
       >
         <Activity
           selectedInfo={selectedInfo}
-          setIsOpen={setIsActivityModelOpen}
+          setIsOpen={setIsCreateActivityModelOpen}
         />
-      </Model> */}
+      </Model>
       <Model
         title="Activity Panel"
         isOpen={isActivityModelOpen}

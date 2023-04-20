@@ -4,19 +4,17 @@ import Accordian, { AccordianBody } from "../global/Accordian";
 import formatNumber from "../functions/formatNumber";
 import moment from "moment";
 import Loader from "../global/Loader";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { getClientById } from "../../state/features/clientSlice";
+import { useGetClientQuery } from "../../services/clientApi";
+import { Link } from "react-router-dom";
 
 const DealSideBar = ({ data }) => {
-  const client = useSelector((state) => state.client);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (data.clientId) {
-      dispatch(getClientById(data.clientId));
-    }
-  }, [data]);
-  return client.data && data ? (
+  const {
+    data: client,
+    isLoading,
+    isFetching,
+    isSuccess,
+  } = useGetClientQuery(data.clientId);
+  return !isLoading && !isFetching && isSuccess && data ? (
     <aside className="w-[350px] shrink-0 h-full overflow-y-auto">
       <Accordian title={"Summary"}>
         <AccordianBody>
@@ -36,11 +34,11 @@ const DealSideBar = ({ data }) => {
             </div>
             <div className="expected-close-date flex items-center gap-4 mb-4">
               <Icon icon="uil:user" className="text-2xl" />
-              <p>{client.data.contactPerson}</p>
+              <Link to={"/contacts/" + client._id}>{client.contactPerson}</Link>
             </div>
             <div className="expected-close-date flex items-center gap-4 mb-4">
               <Icon icon="uil:building" className="text-2xl" />
-              <p>{client.data.company}</p>
+              <p>{client.company}</p>
             </div>
           </div>
         </AccordianBody>

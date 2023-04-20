@@ -6,6 +6,7 @@ import { useGetStagesQuery } from "../../services/stageApi";
 import { useCreateClientMutation } from "../../services/clientApi";
 import { useCreateCardMutation } from "../../services/dealApi";
 import { useGetPipelinesQuery } from "../../services/pipelineApi";
+import Address from "../global/Address";
 
 const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
   const [createCard, { isLoading, isError, isSuccess }] =
@@ -42,11 +43,12 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
   const [mobile, setMobile] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [sameNumber, setSameNumber] = useState(false);
+  const [address, setAddress] = useState({});
 
   const region = navigator?.language?.split("-")[1];
 
-  async function handleAddClient() {
-    createClient(clientDetails);
+  async function handlCreateClient() {
+    createClient({ ...clientDetails, address });
     setClientDetails({
       company: null,
       title: null,
@@ -54,6 +56,7 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
       mobile: null,
       whatsapp: null,
       email: null,
+      address: {},
     });
   }
   async function handleCreateDeal(clientId) {
@@ -114,7 +117,7 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
       handleCreateDeal(clientData.data._id);
     }
   }, [isClientLoading, isClientSuccess]);
-  console.log(activePipeline);
+
   useEffect(() => {
     if (pipelines?.length) {
       const index = pipelines.findIndex(
@@ -268,7 +271,6 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
             </label>
             <Label setLabel={setDealData} label={dealData.label} />
           </div>
-
           <div className="input-close-date mb-3">
             <label htmlFor="close-date" className="text-textColor block mb-2">
               Expected Close Date
@@ -343,6 +345,7 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
               />
             </div>
           </div>
+          <Address address={address} setAddress={setAddress} />
         </div>
       </div>
       <footer className="modal-footer">
@@ -354,7 +357,7 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
           cancel
         </button>
         <button
-          onClick={handleAddClient}
+          onClick={handlCreateClient}
           disabled={isClientLoading || isLoading}
           className="btn-filled"
         >

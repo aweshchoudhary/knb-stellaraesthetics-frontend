@@ -59,7 +59,6 @@ const Activity = ({ selectedInfo, setIsOpen }) => {
   }
 
   async function handleCreateActivity() {
-    console.log("worliingasdf");
     const convertedStartDate = new Date(startDate).toISOString();
     const convertedEndDate = new Date(endDate).toISOString();
     await createActivity({
@@ -85,6 +84,7 @@ const Activity = ({ selectedInfo, setIsOpen }) => {
     setEndTime("");
     setLocation("");
     setDescription("");
+    setIsOpen && setIsOpen(false);
   }
   return (
     <section>

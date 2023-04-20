@@ -6,7 +6,6 @@ const Activities = () => {
     <>
       <Header title="Activities" />
       <section>
-        {/* <ActivityList /> */}
         <Calendar />
       </section>
     </>

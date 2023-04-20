@@ -5,27 +5,38 @@ import CreatePipelineModel from "../models/CreatePipelineModel";
 import { Icon } from "@iconify/react";
 import Loader from "../global/Loader";
 import CreateDealModel from "../models/CreateDealModel";
+import { useDispatch, useSelector } from "react-redux";
+import { changePipeline } from "../../state/features/globalSlice";
 
 const Stages = lazy(() => import("../stage/Stages"));
 const EditStages = lazy(() => import("../stage/EditStages"));
 
 const Kanban = ({}) => {
-  const [isStageEditView, setIsEditStageView] = useState(false);
-  const { data, isLoading, isFetching, isSuccess } = useGetPipelinesQuery();
+  const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
+  const dispatch = useDispatch();
+
+  const {
+    data = [],
+    isLoading,
+    isFetching,
+    isSuccess,
+    refetch,
+  } = useGetPipelinesQuery();
+
   const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
     useState(false);
+  const [isStageEditView, setIsEditStageView] = useState(false);
   const [isCreateDealModelOpen, setIsCreateDealModelOpen] = useState(false);
   const [activePipeline, setActivePipeline] = useState(null);
-
   function handleStageEditViewClose() {
     setIsEditStageView(false);
   }
 
   useEffect(() => {
-    if (!isFetching && data.length) {
-      setActivePipeline(data[0]);
+    if (data.length && isSuccess) {
+      setActivePipeline(data[savedPipelineIndex]);
     }
-  }, [data, isFetching]);
+  }, [data, isSuccess]);
 
   return !isLoading && !isFetching && isSuccess ? (
     <>
@@ -78,7 +89,12 @@ const Kanban = ({}) => {
                 >
                   New Pipeline
                 </button>
-                <button className="btn-outlined btn-small">Refresh</button>
+                <button
+                  className="btn-outlined btn-small"
+                  onClick={() => refetch()}
+                >
+                  Refresh
+                </button>
               </div>
               <div className="flex items-stretch gap-2">
                 <select
@@ -88,7 +104,10 @@ const Kanban = ({}) => {
                   // onSelect={(e) =>
                   //   setActivePipeline((prev) => prev[e.target.value])
                   // }
-                  onChange={(e) => setActivePipeline(data[e.target.value])}
+                  onChange={(e) => {
+                    setActivePipeline(data[e.target.value]);
+                    dispatch(changePipeline(e.target.value));
+                  }}
                 >
                   {data.map((pipe, index) => {
                     return pipe?._id === activePipeline?._id ? (
@@ -145,7 +164,7 @@ const Kanban = ({}) => {
       )}
     </>
   ) : (
-    <section className="h-screen w-full justify-center items-center">
+    <section className="h-screen w-full flex justify-center items-center">
       <Loader />
     </section>
   );

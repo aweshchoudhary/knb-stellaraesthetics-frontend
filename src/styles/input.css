@@ -21,6 +21,7 @@ html:root {
   /* transition: all 0.2s ease; */
   accent-color: var(--primary);
   border-color: var(--border-color);
+  outline: transparent;
 }
 
 html,

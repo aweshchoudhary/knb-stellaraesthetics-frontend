@@ -11,7 +11,7 @@ const Column = ({ stage, loading }) => {
     <div className={"border-r shrink-0 flex flex-col w-1/3"} key={stage._id}>
       <header
         className={`${
-          loading ? "opacity-50 " : ""
+          isLoading ? "opacity-50 " : ""
         }border-b px-3 py-1 sticky top-0 left-0 text-white bg-primary`}
       >
         <h2 className="font-medium capitalize text-sm">{stage.name}</h2>

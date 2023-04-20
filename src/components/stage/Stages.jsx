@@ -15,7 +15,7 @@ import { useUpdateCardStageMutation } from "../../services/dealApi";
 
 const Stages = ({ pipeline }) => {
   const dispatch = useDispatch();
-  const { data, isLoading, isError, isFetching, isSuccess, error } =
+  const { data, isLoading, isError, isFetching, isSuccess, error, refetch } =
     useGetStagesQuery(pipeline._id);
   const [updateCardStage] = useUpdateCardStageMutation();
 
@@ -27,74 +27,61 @@ const Stages = ({ pipeline }) => {
     if (!result.destination) return;
     const { source, destination, draggableId } = result;
     if (source.droppableId !== destination.droppableId) {
-      dispatch(
-        removeTempItemFromStage({
-          stageId: source.droppableId,
-          itemPosition: source.index,
-        })
-      );
-      dispatch(
-        addTempItemToStage({
-          stageId: destination.droppableId,
-          item: draggableId,
-        })
-      );
       await updateCardStage({
         cardId: result.draggableId,
         prevStageId: result.source.droppableId,
         newStageId: result.destination.droppableId,
       });
+      refetch();
     }
   };
 
-  return !isLoading && !isFetching && isSuccess ? (
-    <>
-      {isError && toast.error(error)}
-      <Models
-        editDealModelDisplay={editDealModelDisplay}
-        setEditDealModelDisplay={setEditDealModelDisplay}
-        addDealModelDisplay={addDealModelDisplay}
-        setAddDealModelDisplay={setAddDealModelDisplay}
-        createStageModelDisplay={createStageModelDisplay}
-        setCreateStageModelDisplay={setCreateStageModelDisplay}
-        pipeline={pipeline}
-      />
-      {data.length ? (
-        <section className="h-[calc(100vh-120px)]">
-          <div className="flex overflow-x-auto w-full h-full">
-            <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-              {data &&
-                data.map((stage) => {
-                  return (
-                    <Column
-                      stage={stage}
-                      key={stage._id}
-                      loading={isLoading}
-                      length={data.length}
-                    />
-                  );
-                })}
-            </DragDropContext>
-          </div>
-        </section>
-      ) : (
-        <section className="md:p-10 p-5">
-          <p>
-            No stages has been created yet.{" "}
-            <button
-              onClick={() => setCreateStageModelDisplay(true)}
-              className="underline"
-            >
-              Create One
-            </button>
-          </p>
-        </section>
-      )}
-    </>
-  ) : (
-    <section className="h-screen w-full flex items-center justify-center">
-      <Loader />
-    </section>
+  return (
+    isSuccess && (
+      <>
+        {isError && toast.error(error)}
+        <Models
+          editDealModelDisplay={editDealModelDisplay}
+          setEditDealModelDisplay={setEditDealModelDisplay}
+          addDealModelDisplay={addDealModelDisplay}
+          setAddDealModelDisplay={setAddDealModelDisplay}
+          createStageModelDisplay={createStageModelDisplay}
+          setCreateStageModelDisplay={setCreateStageModelDisplay}
+          pipeline={pipeline}
+        />
+        {data.length ? (
+          <section className="h-[calc(100vh-120px)]">
+            <div className="flex overflow-x-auto w-full h-full">
+              <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
+                {data &&
+                  data.map((stage) => {
+                    return (
+                      <Column
+                        stage={stage}
+                        key={stage._id}
+                        loading={isLoading}
+                        length={data.length}
+                      />
+                    );
+                  })}
+              </DragDropContext>
+            </div>
+          </section>
+        ) : (
+          <section className="md:p-10 p-5">
+            <p>
+              No stages has been created yet.{" "}
+              <button
+                onClick={() => setCreateStageModelDisplay(true)}
+                className="underline"
+              >
+                Create One
+              </button>
+            </p>
+          </section>
+        )}
+      </>
+    )
   );
 };
 
