@@ -39,7 +39,7 @@ export const activityApi = createApi({
       query: (data) => ({
         url: "/activity/update/" + data.id,
         method: "PUT",
-        body: data.body,
+        body: data.update,
       }),
       invalidatesTags: ["activity"],
     }),

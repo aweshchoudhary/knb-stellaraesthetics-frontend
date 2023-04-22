@@ -14,6 +14,7 @@ import { clientApi } from "../services/clientApi";
 import { pipelineApi } from "../services/pipelineApi";
 import { activityApi } from "../services/activityApi";
 import { noteApi } from "../services/noteApi";
+import { fileApi } from "../services/fileApi";
 
 const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
     [pipelineApi.reducerPath]: pipelineApi.reducer,
     [activityApi.reducerPath]: activityApi.reducer,
     [noteApi.reducerPath]: noteApi.reducer,
+    [fileApi.reducerPath]: fileApi.reducer,
     deals: dealSlice,
     note: noteSlice,
     activity: activitySlice,
@@ -41,7 +43,8 @@ const store = configureStore({
       .concat(labelApi.middleware)
       .concat(pipelineApi.middleware)
       .concat(noteApi.middleware)
-      .concat(activityApi.middleware),
+      .concat(activityApi.middleware)
+      .concat(fileApi.middleware),
 });
 
 export default store;

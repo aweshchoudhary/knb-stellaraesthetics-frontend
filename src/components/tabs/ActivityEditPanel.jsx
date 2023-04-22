@@ -1,27 +1,26 @@
 import { Icon } from "@iconify/react";
 import moment from "moment";
-import { useDispatch } from "react-redux";
-import {
-  deleteActivity,
-  updateActivity,
-} from "../../state/features/dealFeatures/activitySlice";
 import { useState } from "react";
+import {
+  useDeleteActivityMutation,
+  useUpdateActivityMutation,
+} from "../../services/activityApi";
 
 const ActivityPanel = ({ data }) => {
+  const [updateActivity] = useUpdateActivityMutation();
+  const [deleteActivity] = useDeleteActivityMutation();
   const custom = data?.event?.extendedProps;
   const [markDone, setMarkDone] = useState(custom.markDone);
-  const dispatch = useDispatch();
-  function handleMarkAsDone() {
-    dispatch(
-      updateActivity({
-        id: data.event.id,
-        update: { markDone: !markDone },
-      })
-    );
+  console.log(markDone);
+  async function handleMarkAsDone() {
+    await updateActivity({
+      id: data.event.id,
+      update: { markDone: !markDone },
+    });
     setMarkDone(!markDone);
   }
-  function handleDeleteActivity() {
-    dispatch(deleteActivity(data.event.id));
+  async function handleDeleteActivity() {
+    await deleteActivity(data.event.id);
   }
 
   return (

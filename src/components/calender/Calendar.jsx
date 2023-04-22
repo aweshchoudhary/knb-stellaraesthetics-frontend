@@ -2,15 +2,14 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
 import { useEffect, useState } from "react";
 import Model from "../models/Model";
-import { updateActivity } from "../../state/features/dealFeatures/activitySlice";
 import { Icon } from "@iconify/react";
 import ActivityEditPanel from "../tabs/ActivityEditPanel";
-import { useGetAllActivitiesQuery } from "../../services/activityApi";
-import Loader from "../global/Loader";
-import { useDispatch } from "react-redux";
+import {
+  useGetAllActivitiesQuery,
+  useUpdateActivityMutation,
+} from "../../services/activityApi";
 import Activity from "../tabs/Activity";
 
 const Calendar = () => {
@@ -24,6 +23,7 @@ const Calendar = () => {
     isLoading,
     isFetching,
     isSuccess,
+    refetch,
   } = useGetAllActivitiesQuery();
 
   // const events = [{ title: "Meeting", start: "2023-04-17" }];
@@ -66,72 +66,81 @@ const Calendar = () => {
     // setEvents(events);
   };
 
-  useEffect(() => {
-    const filteredActivities = [];
-    data.length &&
-      data.forEach((event) => {
-        filteredActivities.push({
-          id: event._id,
-          title: event.title,
-          start: event.startDate,
-          // end: event.endDate,
-          // startTime: event.startTime,
-          // endTime: event.endTime,
-          type: event.type,
-          markDone: event.markDone,
-        });
+  function filteredActivities() {
+    const filteredActivitiesArr = [];
+    const copyData = [...data];
+    copyData.forEach((event) => {
+      filteredActivitiesArr.push({
+        id: event._id,
+        title: event.title,
+        start: event.startDate,
+        type: event.type,
+        markDone: event.markDone,
       });
-    setEvents(filteredActivities);
+    });
+    setEvents(filteredActivitiesArr);
+    refetch();
+    setIsActivityModelOpen(false);
+  }
+  useEffect(() => {
+    let isMounted = true;
+    data.length > 0 && isMounted && filteredActivities();
+    return () => {
+      isMounted = false;
+    };
   }, [data]);
-  return !isLoading && !isFetching && isSuccess ? (
-    <>
-      <Model
-        isOpen={isCreateActivityModelOpen}
-        setIsOpen={setIsCreateActivityModelOpen}
-        title={"Create Activity"}
-      >
-        <Activity
-          selectedInfo={selectedInfo}
+
+  return (
+    isSuccess && (
+      <>
+        <Model
+          isOpen={isCreateActivityModelOpen}
           setIsOpen={setIsCreateActivityModelOpen}
-        />
-      </Model>
-      <Model
-        title="Activity Panel"
-        isOpen={isActivityModelOpen}
-        setIsOpen={setIsActivityModelOpen}
-      >
-        <ActivityEditPanel
-          data={clickedActivityData}
+          title={"Create Activity"}
+        >
+          <Activity
+            selectedInfo={selectedInfo}
+            setIsOpen={setIsCreateActivityModelOpen}
+          />
+        </Model>
+        <Model
+          title="Activity Panel"
+          isOpen={isActivityModelOpen}
           setIsOpen={setIsActivityModelOpen}
-        />
-      </Model>
-      <section className="py-5 w-full px-5">
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          initialView="dayGridMonth"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          weekends={false}
-          events={events}
-          // initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
-          select={handleDateSelect}
-          eventContent={renderEventContent} // custom render function
-          eventClick={handleEventClick}
-          eventsSet={handleEvents} // called after events are initialized/added/changed/removed
-        />
-      </section>
-    </>
-  ) : (
-    <section className="flex items-center justify-center h-screen w-full">
-      <Loader />
-    </section>
+        >
+          <ActivityEditPanel
+            data={clickedActivityData}
+            setIsOpen={setIsActivityModelOpen}
+          />
+        </Model>
+        <section
+          className={`py-5 w-full px-5 ${
+            !isLoading && !isFetching ? "opacity-100" : "opacity-50"
+          }`}
+        >
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            initialView="dayGridMonth"
+            editable={true}
+            selectable={true}
+            selectMirror={true}
+            dayMaxEvents={true}
+            weekends={false}
+            events={events}
+            // initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+            select={handleDateSelect}
+            eventContent={renderEventContent} // custom render function
+            eventClick={handleEventClick}
+            eventsSet={handleEvents} // called after events are initialized/added/changed/removed
+          />
+        </section>
+      </>
+    )
   );
 };
 
@@ -142,19 +151,7 @@ function renderEventContent(eventInfo) {
 
 const EventComponent = ({ eventInfo }) => {
   const data = eventInfo?.event?.extendedProps;
-  const [markDone, setMarkDone] = useState(data.markDone);
   const [icon, setIcon] = useState("");
-  const dispatch = useDispatch();
-
-  function handleMarkAsDone() {
-    dispatch(
-      updateActivity({
-        id: eventInfo.event.id,
-        update: { markDone: !markDone },
-      })
-    );
-    setMarkDone(!markDone);
-  }
 
   useEffect(() => {
     switch (data.type) {
@@ -183,23 +180,10 @@ const EventComponent = ({ eventInfo }) => {
         </span>
         <span>
           {eventInfo.event.title.length > 20
-            ? eventInfo.event.title.slice(0, 18) + "..."
+            ? eventInfo.event.title.slice(0, 22) + "..."
             : eventInfo.event.title}
         </span>
       </div>
-      {markDone ? (
-        <span
-          onClick={handleMarkAsDone}
-          className="w-[18px] h-[18px] rounded-full bg-white text-primary"
-        >
-          <Icon icon="uil:check" className="text-lg" />
-        </span>
-      ) : (
-        <span
-          onClick={handleMarkAsDone}
-          className="w-[18px] h-[18px] rounded-full border-2 hover:border-white"
-        ></span>
-      )}
     </div>
   );
 };
