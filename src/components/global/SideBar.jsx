@@ -5,42 +5,42 @@ import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { toggleMobileOpen } from "../../state/features/globalSlice";
 
+const menuLinks = [
+  {
+    label: "Dashboard",
+    link: "/dashboard",
+    icon: "material-symbols:grid-view-outline-rounded",
+  },
+  {
+    label: "Deals",
+    link: "/deals",
+    icon: "ph:currency-circle-dollar",
+  },
+  {
+    label: "Activities",
+    link: "/activities",
+    icon: "material-symbols:date-range-outline-rounded",
+  },
+  {
+    label: "Contacts",
+    link: "/contacts",
+    icon: "material-symbols:contacts-outline-rounded",
+  },
+  {
+    label: "Products",
+    link: "/products",
+    icon: "mdi:box-outline",
+  },
+  {
+    label: "Services",
+    link: "/services",
+    icon: "eva:shopping-bag-outline",
+  },
+];
 const SideBar = ({ setIsOpen, isOpen }) => {
   const isMobileOpen = useSelector((state) => state.global.isMobileOpen);
   const dispatch = useDispatch();
   const { pathname } = useLocation();
-  const menuLinks = [
-    {
-      label: "Dashboard",
-      link: "/dashboard",
-      icon: "material-symbols:grid-view-outline-rounded",
-    },
-    {
-      label: "Deals",
-      link: "/deals",
-      icon: "ph:currency-circle-dollar",
-    },
-    {
-      label: "Activities",
-      link: "/activities",
-      icon: "material-symbols:date-range-outline-rounded",
-    },
-    {
-      label: "Contacts",
-      link: "/contacts",
-      icon: "material-symbols:contacts-outline-rounded",
-    },
-    {
-      label: "Products",
-      link: "/products",
-      icon: "mdi:box-outline",
-    },
-    {
-      label: "Services",
-      link: "/services",
-      icon: "eva:shopping-bag-outline",
-    },
-  ];
   const [active, setActive] = useState(pathname);
 
   return (

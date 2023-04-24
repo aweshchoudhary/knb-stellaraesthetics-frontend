@@ -1,7 +1,7 @@
 import Calendar from "../components/calender/Calendar";
 import Header from "../components/global/Header";
 
-const Activities = () => {
+const ActivityCalendar = () => {
   return (
     <>
       <Header title="Activities" />
@@ -12,4 +12,4 @@ const Activities = () => {
   );
 };
 
-export default Activities;
+export default ActivityCalendar;

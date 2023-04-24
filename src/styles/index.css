@@ -567,7 +567,7 @@ html:root {
   /* transition: all 0.2s ease; */
   accent-color: var(--primary);
   border-color: var(--border-color);
-  outline: transparent;
+  outline: transparent !important;
 }
 
 html,
@@ -1272,11 +1272,6 @@ thead.css-120bgvu-MuiTableHead-root{
   background-color: transparent;
 }
 
-.bg-white {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -1441,10 +1436,6 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
-.text-primary {
-  color: var(--primary);
-}
-
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity));
@@ -1472,12 +1463,12 @@ thead.css-120bgvu-MuiTableHead-root{
   opacity: 0;
 }
 
-.opacity-50 {
-  opacity: 0.5;
-}
-
 .opacity-100 {
   opacity: 1;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
 
 .shadow-lg {
@@ -1516,11 +1507,6 @@ thead.css-120bgvu-MuiTableHead-root{
   border-color: var(--text-color);
 }
 
-.hover\:border-white:hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
-
 .hover\:bg-bg:hover {
   background-color: var(--background);
 }
@@ -1528,6 +1514,11 @@ thead.css-120bgvu-MuiTableHead-root{
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-gray-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-500:hover {

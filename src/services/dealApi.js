@@ -21,6 +21,13 @@ export const dealApi = createApi({
         return response.data;
       },
     }),
+    searchCards: builder.query({
+      query: (query) => "/card/search?query=" + query,
+      providesTags: ["deal"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
     getCardsByStage: builder.query({
       query: (stageId) => "/card/get-cards/" + stageId,
       providesTags: ["deal"],
@@ -56,9 +63,11 @@ export const dealApi = createApi({
 
 export const {
   useGetCardQuery,
+  useLazyGetCardQuery,
   useCreateCardMutation,
   useDeleteCardMutation,
   useUpdateCardMutation,
   useUpdateCardStageMutation,
   useGetCardsByStageQuery,
+  useLazySearchCardsQuery,
 } = dealApi;

@@ -5,7 +5,7 @@ import Loader from "../components/global/Loader";
 import { Icon } from "@iconify/react";
 import Email from "../components/tabs/Email";
 import File from "../components/tabs/File";
-import Activity from "../components/tabs/Activity";
+import CreateActivity from "../components/tabs/CreateActivity";
 import Notes from "../components/tabs/Notes";
 import Tabs from "../components/global/Tabs";
 import FocusActivitiesTabs from "../components/tabs/FocusActivitiesTabs";
@@ -27,7 +27,7 @@ const Contact = () => {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <Activity cardId={id} />,
+      component: <CreateActivity cardId={id} />,
     },
     {
       id: 3,

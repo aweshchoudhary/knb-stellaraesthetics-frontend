@@ -6,11 +6,8 @@ import { useEffect, useState } from "react";
 import Model from "../models/Model";
 import { Icon } from "@iconify/react";
 import ActivityEditPanel from "../tabs/ActivityEditPanel";
-import {
-  useGetAllActivitiesQuery,
-  useUpdateActivityMutation,
-} from "../../services/activityApi";
-import Activity from "../tabs/Activity";
+import { useGetAllActivitiesQuery } from "../../services/activityApi";
+import EventHandler from "../tabs/EventHandler";
 
 const Calendar = () => {
   const [isActivityModelOpen, setIsActivityModelOpen] = useState(false);
@@ -98,7 +95,7 @@ const Calendar = () => {
           setIsOpen={setIsCreateActivityModelOpen}
           title={"Create Activity"}
         >
-          <Activity
+          <EventHandler
             selectedInfo={selectedInfo}
             setIsOpen={setIsCreateActivityModelOpen}
           />
@@ -113,6 +110,7 @@ const Calendar = () => {
             setIsOpen={setIsActivityModelOpen}
           />
         </Model>
+
         <section
           className={`py-5 w-full px-5 ${
             !isLoading && !isFetching ? "opacity-100" : "opacity-50"
@@ -173,18 +171,27 @@ const EventComponent = ({ eventInfo }) => {
     }
   }, [data]);
   return (
-    <div className="py-1 px-2 bg-primary w-full text-white flex items-center justify-between gap-2">
-      <div className="flex gap-2">
-        <span>
-          <Icon className="text-lg" icon={icon} />
-        </span>
-        <span>
-          {eventInfo.event.title.length > 20
-            ? eventInfo.event.title.slice(0, 22) + "..."
-            : eventInfo.event.title}
-        </span>
+    <>
+      <div className="py-1 px-2 w-full border flex items-center justify-between hover:bg-gray-50 gap-2">
+        <div className="flex gap-2">
+          <span>
+            <Icon className="text-lg" icon={icon} />
+          </span>
+          <span>
+            {eventInfo.event.title.length > 20
+              ? eventInfo.event.title.slice(0, 18) + "..."
+              : eventInfo.event.title}
+          </span>
+          {data?.markDone ? (
+            <span className="w-[18px] h-[18px] rounded-full bg-primary text-white">
+              <Icon icon="uil:check" className="text-lg" />
+            </span>
+          ) : (
+            <span className="w-[18px] h-[18px] rounded-full border-2"></span>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

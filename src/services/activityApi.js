@@ -60,4 +60,5 @@ export const {
   useUpdateActivityMutation,
   useGetAllActivitiesQuery,
   useGetActivitiesByCardIdQuery,
+  useLazyGetActivityQuery,
 } = activityApi;

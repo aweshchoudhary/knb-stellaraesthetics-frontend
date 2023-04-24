@@ -67,43 +67,49 @@ const File = () => {
 
   useEffect(() => {
     isUploadSuccess && toast.success("File Upload Successful!");
+  }, [isUploadSuccess]);
+  useEffect(() => {
     isDeleteSuccess && toast.success("File Deleted Successful!");
-  }, [isUploadSuccess, isDeleteSuccess]);
+  }, [isDeleteSuccess]);
 
   return (
     <>
       <section className="p-5">
         {!isLoading && !isFetching && isSuccess ? (
           <ul>
-            {files?.map((file, index) => {
-              return (
-                <li
-                  key={index}
-                  id={index}
-                  className="flex items-center justify-between py-1"
-                >
-                  <div className="flex items-center gap-2">
-                    <Icon icon="uil:file" className="text-xl" />
-                    <p className="text-sm">
-                      {file.name} (
-                      {moment(file.createdAt).format("Do MMMM YYYY")})
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p>{formatFileSize(file.size)}</p>
-                    <button onClick={() => handleDownloadFile(file.name)}>
-                      <Icon
-                        icon="material-symbols:download"
-                        className="text-xl"
-                      />
-                    </button>
-                    <button onClick={() => handleDeleteFile(file._id)}>
-                      <Icon icon="uil:trash" className="text-xl" />
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
+            {files.length > 0 ? (
+              files.map((file, index) => {
+                return (
+                  <li
+                    key={index}
+                    id={index}
+                    className="flex items-center justify-between py-1"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Icon icon="uil:file" className="text-xl" />
+                      <p className="text-sm">
+                        {file.name} (
+                        {moment(file.createdAt).format("Do MMMM YYYY")})
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p>{formatFileSize(file.size)}</p>
+                      <button onClick={() => handleDownloadFile(file.name)}>
+                        <Icon
+                          icon="material-symbols:download"
+                          className="text-xl"
+                        />
+                      </button>
+                      <button onClick={() => handleDeleteFile(file._id)}>
+                        <Icon icon="uil:trash" className="text-xl" />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })
+            ) : (
+              <li>No files has been attached</li>
+            )}
           </ul>
         ) : (
           <div>

@@ -1,15 +1,26 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
-const Tabs = ({ tabs }) => {
+const Tabs = ({ tabs = [] }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(tabs[0]);
+
+  // useEffect(() => {
+  //   if (tab) {
+  //     setActiveTab(tabs[tab]);
+  //   }
+  //   console.count("workoing");
+  // }, [tab]);
+
   return (
     <section className="bg-bg">
       <header className="flex border-b">
         {tabs.map((tab, index) => {
           return (
             <button
-              onClick={() => setActiveTab(tab)}
+              onClick={() => setActiveTab(tabs[index])}
               key={index}
               className={`${
                 tab.id === activeTab.id

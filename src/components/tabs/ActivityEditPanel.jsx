@@ -5,13 +5,16 @@ import {
   useDeleteActivityMutation,
   useUpdateActivityMutation,
 } from "../../services/activityApi";
+import Model from "../models/Model";
+import EventHandler from "./EventHandler";
 
 const ActivityPanel = ({ data }) => {
   const [updateActivity] = useUpdateActivityMutation();
   const [deleteActivity] = useDeleteActivityMutation();
   const custom = data?.event?.extendedProps;
   const [markDone, setMarkDone] = useState(custom.markDone);
-  console.log(markDone);
+  const [isActivityUpdateModelOpen, setIsActivityUpdateModelOpen] =
+    useState(false);
   async function handleMarkAsDone() {
     await updateActivity({
       id: data.event.id,
@@ -25,6 +28,17 @@ const ActivityPanel = ({ data }) => {
 
   return (
     <div>
+      <Model
+        title="Activity Panel"
+        isOpen={isActivityUpdateModelOpen}
+        setIsOpen={setIsActivityUpdateModelOpen}
+      >
+        <EventHandler
+          activityId={data.event.id}
+          setIsOpen={setIsActivityUpdateModelOpen}
+          isUpdate={true}
+        />
+      </Model>
       <ul className="p-5">
         <li className="flex items-center gap-5 mb-4">
           <Icon icon="bx:phone" className="text-2xl" />
@@ -55,7 +69,10 @@ const ActivityPanel = ({ data }) => {
           <button onClick={handleDeleteActivity} className="btn-outlined">
             <Icon icon="uil:trash" className="text-xl" />
           </button>
-          <button className="btn-filled">
+          <button
+            className="btn-filled"
+            onClick={() => setIsActivityUpdateModelOpen(true)}
+          >
             <Icon icon="uil:pen" className="" />
           </button>
         </div>

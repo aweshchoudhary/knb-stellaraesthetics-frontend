@@ -1,4 +1,3 @@
-import { lazy } from "react";
 import Header from "../../components/global/Header";
 import Tabs from "../../components/global/Tabs";
 import DealSideBar from "../../components/deal/DealSideBar";
@@ -9,7 +8,7 @@ import ActivitiesTabs from "../../components/tabs/ActivitiesTabs";
 import FocusActivitiesTabs from "../../components/tabs/FocusActivitiesTabs";
 
 import Notes from "../../components/tabs/Notes";
-import Activity from "../../components/tabs/Activity";
+import EventHandler from "../../components/tabs/EventHandler";
 import File from "../../components/tabs/File";
 import Email from "../../components/tabs/Email";
 
@@ -29,7 +28,7 @@ const Deal = () => {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <Activity cardId={id} />,
+      component: <EventHandler cardId={id} />,
     },
     {
       id: 3,
