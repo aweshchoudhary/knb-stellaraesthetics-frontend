@@ -46,6 +46,18 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
   const params = useParams();
   const { id } = params;
   const [query, setQuery] = useState("");
+  const [eventInfo, setEventInfo] = useState({
+    title: "call",
+    type: "call",
+    startDate: selectedInfo ? selectedInfo.startStr : "",
+    endDate: selectedInfo ? selectedInfo.endStr : "",
+    startTime: "",
+    endTime: "",
+    location: "",
+    description: "",
+    cardId: id,
+    holder: "asdfasdfasdfasdfsadfsadfas",
+  });
 
   const [
     getActivityById,
@@ -65,32 +77,9 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
     updateActivity,
     { isLoading: isUpdating, isSuccess: isUpdateSuccess },
   ] = useUpdateActivityMutation();
-  const { data: card } = useGetCardQuery(id);
-
-  const [searchedCards, setSearchedCards] = useState(
-    card ? [{ label: card.title, value: card._id }] : []
-  );
-  const [selectedCard, setSelectedCard] = useState(
-    card
-      ? {
-          label: card.title,
-          value: card._id,
-        }
-      : null
-  );
-
-  const [eventInfo, setEventInfo] = useState({
-    title: "call",
-    type: "call",
-    startDate: selectedInfo ? selectedInfo.startStr : "",
-    endDate: selectedInfo ? selectedInfo.endStr : "",
-    startTime: "",
-    endTime: "",
-    location: "",
-    description: "",
-    cardId: id,
-    holder: "asdfasdfasdfasdfsadfsadfas",
-  });
+  const [getCardById] = useLazyGetCardQuery();
+  const [searchedCards, setSearchedCards] = useState([]);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   const [additionalFields, setAdditionalFields] = useState({
     description: false,
@@ -98,7 +87,8 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
   });
 
   async function handleCreateActivity() {
-    await createActivity(eventInfo);
+    // console.log(eventInfo);
+    await createActivity({ ...eventInfo, cardId: id || selectedCard.value });
     handleCancel();
   }
 
@@ -134,30 +124,30 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
   }
 
   useEffect(() => {
+    let isMounted = true;
     const fetchActivity = async (activityId) => {
       const res = await getActivityById(activityId);
       if (res.data) {
         const activityData = res.data;
-        setTitle(activityData.title);
-        setType(activityData.type);
-        setStartDate(moment(activityData.startDate).format("YYYY-MM-DD"));
-        setStartTime(activityData.startTime);
-        setEndDate(moment(activityData.endDate).format("YYYY-MM-DD"));
-        setEndTime(activityData.endTime);
-        setHolder(activityData.holder);
+        // setTitle(activityData.title);
+        // setType(activityData.type);
+        // setStartDate(moment(activityData.startDate).format("YYYY-MM-DD"));
+        // setStartTime(activityData.startTime);
+        // setEndDate(moment(activityData.endDate).format("YYYY-MM-DD"));
+        // setEndTime(activityData.endTime);
+        // setHolder(activityData.holder);
+        setEventInfo({ ...activityData });
 
         if (activityData?.location) {
           setAdditionalFieldsFn("location");
-          setLocation(activityData.location);
         }
         if (activityData?.description) {
           setAdditionalFieldsFn("description");
-          setDescription(activityData.description);
         }
       }
     };
 
-    if (activityId && isUpdate) fetchActivity(activityId);
+    isMounted && activityId && isUpdate && fetchActivity(activityId);
   }, [activityId]);
   useEffect(() => {
     const searchCardFn = async (query) => {
@@ -166,10 +156,7 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
         const cards = res.data.map((item) => {
           return {
             label: item.title,
-            value: {
-              title: item.title,
-              id: item._id,
-            },
+            value: item._id,
           };
         });
         setSearchedCards(cards);
@@ -177,17 +164,6 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
     };
     query.length > 2 && searchCardFn(query);
   }, [query]);
-  // useEffect(() => {
-  //   const fetchCardById = async (cardId) => {
-  //     const res = await getCardById(cardId);
-  //     if (res.data) {
-  //       const cardData = res.data;
-  //       setSelectedCard(cardData.title);
-  //       setSearchedCards((prev) => [...prev, cardData.title]);
-  //     }
-  //   };
-  //   id.length > 2 && !isGetCardSuccess && fetchCardById(id);
-  // }, [id]);
   useEffect(() => {
     if (isCreateSuccess) toast.success("Activity has been created");
   }, [isCreateSuccess]);
@@ -195,7 +171,20 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
     if (isUpdateSuccess) toast.success("Activity has been updated");
   }, [isUpdateSuccess]);
 
-  console.log(eventInfo.startTime);
+  useEffect(() => {
+    const fetchCardById = async () => {
+      const res = await getCardById(eventInfo.cardId);
+      if (res.data) {
+        setSelectedCard({
+          label: res.data.title,
+          value: res.data._id,
+        });
+      }
+    };
+    if (eventInfo.cardId || id) {
+      fetchCardById(eventInfo.cardId || id);
+    }
+  }, [eventInfo.cardId, id]);
 
   return (
     <section>
@@ -240,15 +229,15 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
               <input
                 type="date"
                 className="input flex-1"
-                name="start-date"
-                id="start-time"
+                name="startDate"
+                id="start-date"
                 onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
                 value={eventInfo.startDate}
               />
               <input
                 type="time"
                 className="input flex-1"
-                name="start-time"
+                name="startTime"
                 id="start-time"
                 onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
                 value={eventInfo.startTime}
@@ -260,7 +249,7 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
               <input
                 type="time"
                 className="input flex-1"
-                name="end-time"
+                name="endTime"
                 id="end-time"
                 onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
                 value={eventInfo.endTime}
@@ -268,7 +257,7 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
               <input
                 type="date"
                 className="input flex-1"
-                name="end-date"
+                name="endDate"
                 id="end-date"
                 onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
                 value={eventInfo.endDate}
@@ -344,10 +333,8 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
             value={selectedCard}
             placeholder="Search Deal"
             onChange={(value) => {
-              if (value) {
-                setSelectedCard(value.title);
-                fillEventInfo("cardId", value.id);
-              }
+              setSelectedCard(value);
+              fillEventInfo("cardId", value.value);
             }}
             onInputChange={(value) => setQuery(value)}
             className="mb-2 text-sm"

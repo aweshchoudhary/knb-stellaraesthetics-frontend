@@ -1,26 +1,21 @@
 import { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
-import { useDispatch } from "react-redux";
-import {
-  addTempItemToStage,
-  removeTempItemFromStage,
-} from "../../state/features/stageSlice";
 import Model from "../models/Model";
 import Column from "./Column";
 import { toast } from "react-toastify";
 import CreateStageModel from "../models/CreateStageModel";
-import Loader from "../global/Loader";
 import { useGetStagesQuery } from "../../services/stageApi";
 import { useUpdateCardStageMutation } from "../../services/dealApi";
 
 const Stages = ({ pipeline }) => {
-  const dispatch = useDispatch();
   const { data, isLoading, isError, isFetching, isSuccess, error, refetch } =
     useGetStagesQuery(pipeline._id);
-  const [updateCardStage] = useUpdateCardStageMutation();
+  const [
+    updateCardStage,
+    { isLoading: isUpdatingStage, isSuccess: isUpdateSuccess },
+  ] = useUpdateCardStageMutation();
 
   const [editDealModelDisplay, setEditDealModelDisplay] = useState(false);
-  const [addDealModelDisplay, setAddDealModelDisplay] = useState(false);
   const [createStageModelDisplay, setCreateStageModelDisplay] = useState(false);
 
   const onDragEnd = async (result) => {
@@ -28,9 +23,9 @@ const Stages = ({ pipeline }) => {
     const { source, destination, draggableId } = result;
     if (source.droppableId !== destination.droppableId) {
       await updateCardStage({
-        cardId: result.draggableId,
-        prevStageId: result.source.droppableId,
-        newStageId: result.destination.droppableId,
+        cardId: draggableId,
+        prevStageId: source.droppableId,
+        newStageId: destination.droppableId,
       });
       refetch();
     }
@@ -43,14 +38,16 @@ const Stages = ({ pipeline }) => {
         <Models
           editDealModelDisplay={editDealModelDisplay}
           setEditDealModelDisplay={setEditDealModelDisplay}
-          addDealModelDisplay={addDealModelDisplay}
-          setAddDealModelDisplay={setAddDealModelDisplay}
           createStageModelDisplay={createStageModelDisplay}
           setCreateStageModelDisplay={setCreateStageModelDisplay}
           pipeline={pipeline}
         />
         {data.length ? (
-          <section className="h-[calc(100vh-120px)]">
+          <section
+            className={`h-[calc(100vh-120px)] ${
+              isUpdatingStage && !isUpdateSuccess ? "opacity-50" : null
+            }`}
+          >
             <div className="flex overflow-x-auto w-full h-full">
               <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
                 {data &&
@@ -59,7 +56,7 @@ const Stages = ({ pipeline }) => {
                       <Column
                         stage={stage}
                         key={stage._id}
-                        loading={isLoading}
+                        loading={isLoading || isFetching}
                         length={data.length}
                       />
                     );
@@ -88,8 +85,6 @@ const Stages = ({ pipeline }) => {
 const Models = ({
   editDealModelDisplay,
   setEditDealModelDisplay,
-  addDealModelDisplay,
-  setAddDealModelDisplay,
   setCreateStageModelDisplay,
   createStageModelDisplay,
   pipeline,

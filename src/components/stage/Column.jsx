@@ -26,7 +26,7 @@ const Column = ({ stage, loading }) => {
         totalRevenue,
       });
     };
-    isMounted && data.length > 0 && calculateData();
+    isMounted && data?.length > 0 && calculateData();
     return () => {
       isMounted = false;
     };

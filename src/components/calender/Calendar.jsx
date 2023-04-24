@@ -73,6 +73,8 @@ const Calendar = () => {
         start: event.startDate,
         type: event.type,
         markDone: event.markDone,
+        location: event.location,
+        description: event.description,
       });
     });
     setEvents(filteredActivitiesArr);
@@ -182,14 +184,14 @@ const EventComponent = ({ eventInfo }) => {
               ? eventInfo.event.title.slice(0, 18) + "..."
               : eventInfo.event.title}
           </span>
-          {data?.markDone ? (
-            <span className="w-[18px] h-[18px] rounded-full bg-primary text-white">
-              <Icon icon="uil:check" className="text-lg" />
-            </span>
-          ) : (
-            <span className="w-[18px] h-[18px] rounded-full border-2"></span>
-          )}
         </div>
+        {data?.markDone ? (
+          <span className="w-[18px] h-[18px] rounded-full bg-primary text-white">
+            <Icon icon="uil:check" className="text-lg" />
+          </span>
+        ) : (
+          <span className="w-[18px] h-[18px] rounded-full border-2"></span>
+        )}
       </div>
     </>
   );

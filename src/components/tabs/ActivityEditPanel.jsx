@@ -39,6 +39,7 @@ const ActivityPanel = ({ data }) => {
           isUpdate={true}
         />
       </Model>
+
       <ul className="p-5">
         <li className="flex items-center gap-5 mb-4">
           <Icon icon="bx:phone" className="text-2xl" />
@@ -47,19 +48,37 @@ const ActivityPanel = ({ data }) => {
         <li className="flex items-center gap-5 mb-4">
           <span className="flex gap-2 items-center">
             <Icon icon="bx:user" className="text-2xl" />
-            <span>(Holder):</span>
+            <span>Holder:</span>
           </span>
-          <span>Awesh Choudhary</span>
+          <span>Awesh Choudhary (You)</span>
         </li>
         <li className="flex items-center gap-5 mb-4">
           <span className="flex gap-2 items-center">
             <Icon icon="bx:calendar" className="text-2xl" />
-            <span>(Date):</span>
+            <span>Date:</span>
           </span>
           <span>
             {moment(data.event.startStr).format("dddd, MMMM Do YYYY, (H:MM A)")}
           </span>
         </li>
+        {custom.location && (
+          <li className="flex items-center gap-5 mb-4">
+            <span className="flex gap-2 items-center">
+              <Icon icon="material-symbols:location-on" className="text-2xl" />
+              <span>Location:</span>
+            </span>
+            <span>{custom.location}</span>
+          </li>
+        )}
+        {custom.description && (
+          <li className="flex items-center gap-5 mb-4">
+            <span className="flex gap-2 items-center">
+              <Icon icon="uil:bars" className="text-2xl" />
+              <span>Description:</span>
+            </span>
+            <span>{custom.description}</span>
+          </li>
+        )}
       </ul>
       <footer className="px-5 py-2 border-t flex justify-between">
         <button className="btn-outlined btn-small" onClick={handleMarkAsDone}>
