@@ -725,6 +725,46 @@ option {
   padding-right: 1.25rem;
 }
 
+.fc-event-main{
+  color: inherit !important;
+  border: none !important;
+}
+
+.fc-h-event {
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.fc-h-event:hover {
+  background-color: var(--paper);
+}
+
+.fc-h-event{
+  /* background-color: var(--background);
+  border: none !important; */
+}
+
+.fc-event {
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.fc-event:hover {
+  background-color: var(--paper);
+}
+
+.fc-event{
+  background-color: var(--background);
+  border: 1px solid var(--border-color) !important;
+  height: auto;
+}
+
 input {
   outline: none;
 }
@@ -879,6 +919,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.mb-5 {
+  margin-bottom: 1.25rem;
 }
 
 .ml-2 {
@@ -1065,6 +1109,10 @@ thead.css-120bgvu-MuiTableHead-root{
   width: 60px;
 }
 
+.w-\[65px\] {
+  width: 65px;
+}
+
 .w-\[calc\(100vw-230px\)\] {
   width: calc(100vw - 230px);
 }
@@ -1226,6 +1274,11 @@ thead.css-120bgvu-MuiTableHead-root{
 .border-black {
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
+.border-red-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(220 38 38 / var(--tw-border-opacity));
 }
 
 .border-textColor {
@@ -1514,11 +1567,6 @@ thead.css-120bgvu-MuiTableHead-root{
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-gray-50:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-500:hover {

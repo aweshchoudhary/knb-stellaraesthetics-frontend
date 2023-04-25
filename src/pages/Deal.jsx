@@ -1,16 +1,16 @@
-import Header from "../../components/global/Header";
-import Tabs from "../../components/global/Tabs";
-import DealSideBar from "../../components/deal/DealSideBar";
+import Header from "../components/global/Header";
+import Tabs from "../components/global/Tabs";
+import DealSideBar from "../components/deal/DealSideBar";
 import { useParams } from "react-router-dom";
-import { useGetCardQuery } from "../../services/dealApi";
-import Loader from "../../components/global/Loader";
-import ActivitiesTabs from "../../components/tabs/ActivitiesTabs";
-import FocusActivitiesTabs from "../../components/tabs/FocusActivitiesTabs";
+import { useGetCardQuery } from "../services/dealApi";
+import Loader from "../components/global/Loader";
+import ActivitiesTabs from "../components/tabs/ActivitiesTabs";
+import FocusActivitiesTabs from "../components/tabs/FocusActivitiesTabs";
 
-import Notes from "../../components/tabs/Notes";
-import EventHandler from "../../components/tabs/EventHandler";
-import File from "../../components/tabs/File";
-import Email from "../../components/tabs/Email";
+import Notes from "../components/tabs/Notes";
+import EventHandler from "../components/tabs/EventHandler";
+import File from "../components/tabs/File";
+import Email from "../components/tabs/Email";
 
 const Deal = () => {
   const params = useParams();
@@ -28,7 +28,7 @@ const Deal = () => {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <EventHandler cardId={id} />,
+      component: <EventHandler dealData={data} cardId={id} />,
     },
     {
       id: 3,

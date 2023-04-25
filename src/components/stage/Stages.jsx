@@ -8,7 +8,7 @@ import { useGetStagesQuery } from "../../services/stageApi";
 import { useUpdateCardStageMutation } from "../../services/dealApi";
 
 const Stages = ({ pipeline }) => {
-  const { data, isLoading, isError, isFetching, isSuccess, error, refetch } =
+  const { data, isLoading, isError, isFetching, isSuccess, error } =
     useGetStagesQuery(pipeline._id);
   const [
     updateCardStage,
@@ -27,7 +27,6 @@ const Stages = ({ pipeline }) => {
         prevStageId: source.droppableId,
         newStageId: destination.droppableId,
       });
-      refetch();
     }
   };
 

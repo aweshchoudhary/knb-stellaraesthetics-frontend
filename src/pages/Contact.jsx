@@ -1,20 +1,30 @@
-import { useParams } from "react-router-dom";
-import { useGetClientQuery } from "../services/clientApi";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  useDeleteClientMutation,
+  useGetClientQuery,
+  useUpdateClientMutation,
+} from "../services/clientApi";
 import Header from "../components/global/Header";
 import Loader from "../components/global/Loader";
 import { Icon } from "@iconify/react";
 import Email from "../components/tabs/Email";
 import File from "../components/tabs/File";
-import CreateActivity from "../components/tabs/CreateActivity";
+import EventHandler from "../components/tabs/EventHandler";
 import Notes from "../components/tabs/Notes";
 import Tabs from "../components/global/Tabs";
 import FocusActivitiesTabs from "../components/tabs/FocusActivitiesTabs";
 import ActivitiesTabs from "../components/tabs/ActivitiesTabs";
+import { useState } from "react";
 
 const Contact = () => {
   const params = useParams();
   const { id } = params;
   const { data, isLoading, isSuccess, isFetching } = useGetClientQuery(id);
+  const [updateData, setUpdateData] = useState({});
+  const navigate = useNavigate();
+
+  const [deleteClient] = useDeleteClientMutation();
+  const [updateClient] = useUpdateClientMutation();
 
   const tabs = [
     {
@@ -27,7 +37,7 @@ const Contact = () => {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <CreateActivity cardId={id} />,
+      component: <EventHandler cardId={id} />,
     },
     {
       id: 3,
@@ -42,7 +52,15 @@ const Contact = () => {
       component: <Email />,
     },
   ];
-  console.log(data);
+
+  async function handleUpdateClient() {
+    await updateClient({ id, update: updateData });
+  }
+
+  async function handleDeleteClient() {
+    await deleteClient(id);
+    navigate("/", { replace: true });
+  }
 
   return (
     <>
@@ -50,11 +68,20 @@ const Contact = () => {
 
       {!isLoading && !isFetching && isSuccess ? (
         <>
-          <section className="p-5 border-b">
+          <section className="p-5 border-b flex justify-between items-center">
             <h1 className="text-xl font-semibold flex items-center gap-4">
               <Icon icon={"uil:user"} className="text-3xl" />{" "}
               <span>{data.contactPerson}</span>
             </h1>
+            <div className="flex gap-2">
+              <button
+                onClick={handleDeleteClient}
+                className="btn-filled bg-red-600 border-red-600"
+              >
+                Delete
+              </button>
+              <button className="btn-filled">Update</button>
+            </div>
           </section>
           <section className="flex w-full border-b">
             <div className="w-[350px] shrink-0">

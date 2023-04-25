@@ -1,18 +1,16 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { lazy } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 
-// import { AuthProvider } from "oidc-react";
-// import { setUser } from "./state/features/authSlice";
 import "react-toastify/dist/ReactToastify.css";
 
 import Layout from "./components/Layout/Layout";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Deals = lazy(() => import("./pages/deals/Deals"));
-const Deal = lazy(() => import("./pages/deals/Deal"));
+const Pipelines = lazy(() => import("./pages/Pipelines"));
+const Deal = lazy(() => import("./pages/Deal"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const Contact = lazy(() => import("./pages/Contact"));
 const ActivityCalendar = lazy(() => import("./pages/ActivityCalendar"));
@@ -23,7 +21,6 @@ const User = lazy(() => import("./pages/User"));
 
 const App = () => {
   const darkMode = useSelector((state) => state.global.darkMode);
-  const dispatch = useDispatch();
 
   const theme = createTheme({
     palette: {
@@ -58,7 +55,7 @@ const App = () => {
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/deals" element={<Deals />} />
+            <Route path="/pipeline" element={<Pipelines />} />
             <Route path="/deals/:id" element={<Deal />} />
             <Route path="/activities" element={<ActivityCalendar />} />
             <Route path="/contacts" element={<Contacts />} />

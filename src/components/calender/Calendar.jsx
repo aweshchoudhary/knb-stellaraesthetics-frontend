@@ -6,10 +6,18 @@ import { useEffect, useState } from "react";
 import Model from "../models/Model";
 import { Icon } from "@iconify/react";
 import ActivityEditPanel from "../tabs/ActivityEditPanel";
-import { useGetAllActivitiesQuery } from "../../services/activityApi";
+import {
+  useGetAllActivitiesQuery,
+  useUpdateActivityMutation,
+} from "../../services/activityApi";
 import EventHandler from "../tabs/EventHandler";
 
 const Calendar = () => {
+  const [
+    updateActivity,
+    // { isLoading: isActivityUpdating, isSuccess: isActivitySuccess },
+  ] = useUpdateActivityMutation();
+
   const [isActivityModelOpen, setIsActivityModelOpen] = useState(false);
   const [isCreateActivityModelOpen, setIsCreateActivityModelOpen] =
     useState(false);
@@ -22,8 +30,7 @@ const Calendar = () => {
     isSuccess,
     refetch,
   } = useGetAllActivitiesQuery();
-
-  // const events = [{ title: "Meeting", start: "2023-04-17" }];
+  // console.log(data);
   const [events, setEvents] = useState([]);
 
   const handleDateSelect = (selectInfo) => {
@@ -62,6 +69,14 @@ const Calendar = () => {
   const handleEvents = (events) => {
     // setEvents(events);
   };
+  const handleEventDrop = async (eventInfo) => {
+    const event = eventInfo.event;
+    const updateData = {
+      startDate: event.start,
+      endDate: event.end,
+    };
+    await updateActivity({ id: event.id, update: updateData });
+  };
 
   function filteredActivities() {
     const filteredActivitiesArr = [];
@@ -71,6 +86,7 @@ const Calendar = () => {
         id: event._id,
         title: event.title,
         start: event.startDate,
+        end: event.endDate,
         type: event.type,
         markDone: event.markDone,
         location: event.location,
@@ -114,7 +130,7 @@ const Calendar = () => {
         </Model>
 
         <section
-          className={`py-5 w-full px-5 ${
+          className={`py-5 w-full px-5 text-sm ${
             !isLoading && !isFetching ? "opacity-100" : "opacity-50"
           }`}
         >
@@ -125,18 +141,20 @@ const Calendar = () => {
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
-            initialView="dayGridMonth"
+            initialView="timeGridWeek"
             editable={true}
             selectable={true}
             selectMirror={true}
             dayMaxEvents={true}
-            weekends={false}
+            weekends={true}
             events={events}
             // initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
             select={handleDateSelect}
             eventContent={renderEventContent} // custom render function
             eventClick={handleEventClick}
             eventsSet={handleEvents} // called after events are initialized/added/changed/removed
+            eventDrop={handleEventDrop}
+            eventResize={handleEventDrop}
           />
         </section>
       </>
@@ -174,23 +192,23 @@ const EventComponent = ({ eventInfo }) => {
   }, [data]);
   return (
     <>
-      <div className="py-1 px-2 w-full border flex items-center justify-between hover:bg-gray-50 gap-2">
+      <div className="flex justify-between w-full">
         <div className="flex gap-2">
           <span>
             <Icon className="text-lg" icon={icon} />
           </span>
           <span>
             {eventInfo.event.title.length > 20
-              ? eventInfo.event.title.slice(0, 18) + "..."
+              ? eventInfo.event.title.slice(0, 12) + "..."
               : eventInfo.event.title}
           </span>
         </div>
         {data?.markDone ? (
-          <span className="w-[18px] h-[18px] rounded-full bg-primary text-white">
+          <span className="w-[18px] h-[18px] shrink-0 rounded-full bg-primary text-white">
             <Icon icon="uil:check" className="text-lg" />
           </span>
         ) : (
-          <span className="w-[18px] h-[18px] rounded-full border-2"></span>
+          <span className="w-[18px] h-[18px] shrink-0 rounded-full border-2"></span>
         )}
       </div>
     </>

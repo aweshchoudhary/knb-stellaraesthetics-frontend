@@ -12,8 +12,8 @@ const menuLinks = [
     icon: "material-symbols:grid-view-outline-rounded",
   },
   {
-    label: "Deals",
-    link: "/deals",
+    label: "Pipelines",
+    link: "/pipeline",
     icon: "ph:currency-circle-dollar",
   },
   {

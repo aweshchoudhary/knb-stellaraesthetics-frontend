@@ -36,7 +36,7 @@ const Column = ({ stage, loading }) => {
       <header
         className={`${
           isLoading ? "opacity-50 " : ""
-        }border-b px-3 py-1 sticky top-0 left-0 text-white bg-primary`}
+        } border-b px-3 py-1 sticky top-0 left-0 text-white bg-primary`}
       >
         <h2 className="font-medium capitalize text-sm">{stage.name}</h2>
         <p className="text-sm">
@@ -59,6 +59,8 @@ const Column = ({ stage, loading }) => {
                 }`}
               >
                 {!loading &&
+                  !isLoading &&
+                  isSuccess &&
                   data?.map((card, index) => {
                     return (
                       <Row itemId={card._id} index={index} key={index}>

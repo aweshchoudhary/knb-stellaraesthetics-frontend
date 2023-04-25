@@ -8,7 +8,7 @@ import {
   useReorderStageMutation,
 } from "../../services/stageApi";
 
-const EditStage = ({ setIsEditStageView, pipeline }) => {
+const EditStage = ({ pipeline }) => {
   const { data, isLoading, isSuccess, isFetching, isError } = useGetStagesQuery(
     pipeline._id
   );
@@ -29,9 +29,13 @@ const EditStage = ({ setIsEditStageView, pipeline }) => {
     }
   }, [isError]);
 
-  return !isLoading && !isFetching && isSuccess ? (
+  return (
     <>
-      <section className="h-[calc(100%-120px)] bg-paper">
+      <section
+        className={`h-[calc(100%-120px)] bg-paper ${
+          !isLoading && !isFetching && isSuccess ? "opacity-100" : "opacity-50"
+        }`}
+      >
         <DragDropContext onDragEnd={onDragComplete}>
           <div className="overflow-x-auto h-full w-full">
             <Droppable droppableId="drag-drop-list" direction="horizontal">
@@ -67,10 +71,6 @@ const EditStage = ({ setIsEditStageView, pipeline }) => {
         </DragDropContext>
       </section>
     </>
-  ) : (
-    <section className="w-full h-screen flex items-center justify-center">
-      <Loader />
-    </section>
   );
 };
 

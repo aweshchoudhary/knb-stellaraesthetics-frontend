@@ -6,7 +6,6 @@ import {
   useUpdateActivityMutation,
 } from "../../services/activityApi";
 import {
-  useGetCardQuery,
   useLazyGetCardQuery,
   useLazySearchCardsQuery,
 } from "../../services/dealApi";
@@ -14,6 +13,7 @@ import { useParams } from "react-router-dom";
 import moment from "moment";
 import { toast } from "react-toastify";
 import Select from "react-select";
+import { Skeleton } from "@mui/material";
 
 const activityOptions = [
   {
@@ -42,26 +42,36 @@ const activityOptions = [
   },
 ];
 
-const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
+const CreateActivity = ({
+  selectedInfo,
+  setIsOpen,
+  dealData,
+  isUpdate,
+  activityId,
+}) => {
   const params = useParams();
   const { id } = params;
   const [query, setQuery] = useState("");
   const [eventInfo, setEventInfo] = useState({
     title: "call",
     type: "call",
-    startDate: selectedInfo ? selectedInfo.startStr : "",
-    endDate: selectedInfo ? selectedInfo.endStr : "",
-    startTime: "",
-    endTime: "",
+    startDate: selectedInfo ? selectedInfo.start : "",
+    endDate: selectedInfo ? selectedInfo.end : "",
+    // startTime: selectedInfo ? selectedInfo.start : "",
+    // endTime: selectedInfo ? selectedInfo.end : "",
     location: "",
     description: "",
-    cardId: id,
+    cardId: id || "",
     holder: "asdfasdfasdfasdfsadfsadfas",
   });
-
+  console.log(eventInfo);
   const [
     getActivityById,
-    { isLoading: isActivityLoading, isFetching: isActivityFetching },
+    {
+      isLoading: isActivityLoading,
+      isFetching: isActivityFetching,
+      isSuccess: isActivitySuccess,
+    },
   ] = useLazyGetActivityQuery();
   const [
     searchCard,
@@ -79,19 +89,18 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
   ] = useUpdateActivityMutation();
   const [getCardById] = useLazyGetCardQuery();
   const [searchedCards, setSearchedCards] = useState([]);
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(
+    dealData ? { label: dealData.title, value: dealData._id } : null
+  );
 
   const [additionalFields, setAdditionalFields] = useState({
     description: false,
     location: false,
   });
-
   async function handleCreateActivity() {
-    // console.log(eventInfo);
-    await createActivity({ ...eventInfo, cardId: id || selectedCard.value });
+    await createActivity({ ...eventInfo });
     handleCancel();
   }
-
   async function handleUpdateActivity() {
     await updateActivity({
       id: activityId,
@@ -147,8 +156,13 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
       }
     };
 
-    isMounted && activityId && isUpdate && fetchActivity(activityId);
-  }, [activityId]);
+    isMounted &&
+      activityId &&
+      isUpdate &&
+      isUpdate &&
+      fetchActivity(activityId);
+  }, [activityId, isUpdate]);
+
   useEffect(() => {
     const searchCardFn = async (query) => {
       const res = await searchCard(query);
@@ -170,7 +184,7 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
   useEffect(() => {
     if (isUpdateSuccess) toast.success("Activity has been updated");
   }, [isUpdateSuccess]);
-
+  const loading = true;
   useEffect(() => {
     const fetchCardById = async () => {
       const res = await getCardById(eventInfo.cardId);
@@ -181,12 +195,12 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
         });
       }
     };
-    if (eventInfo.cardId || id) {
-      fetchCardById(eventInfo.cardId || id);
+    if (eventInfo.cardId && eventInfo.cardId !== id) {
+      fetchCardById(eventInfo.cardId);
     }
-  }, [eventInfo.cardId, id]);
+  }, [eventInfo.cardId]);
 
-  return (
+  return !isActivityLoading && !isActivityFetching ? (
     <section>
       <div className="container p-5">
         <div className="my-2">
@@ -231,8 +245,13 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
                 className="input flex-1"
                 name="startDate"
                 id="start-date"
-                onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
-                value={eventInfo.startDate}
+                onChange={(e) =>
+                  fillEventInfo(
+                    e.target.name,
+                    moment(e.target.value).toLocaleString()
+                  )
+                }
+                value={moment(eventInfo.startDate).format("YYYY-MM-DD")}
               />
               <input
                 type="time"
@@ -240,7 +259,7 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
                 name="startTime"
                 id="start-time"
                 onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
-                value={eventInfo.startTime}
+                value={moment(eventInfo?.startDate).format("HH:MM")}
               />
             </div>
             <div className="flex flex-1 gap-2 items-center">
@@ -252,15 +271,20 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
                 name="endTime"
                 id="end-time"
                 onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
-                value={eventInfo.endTime}
+                value={moment(eventInfo?.endDate).format("HH:MM")}
               />
               <input
                 type="date"
                 className="input flex-1"
                 name="endDate"
                 id="end-date"
-                onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
-                value={eventInfo.endDate}
+                onChange={(e) =>
+                  fillEventInfo(
+                    e.target.name,
+                    moment(e.target.value).toLocaleString()
+                  )
+                }
+                value={moment(eventInfo.endDate).format("YYYY-MM-DD")}
               />
             </div>
           </div>
@@ -379,6 +403,49 @@ const CreateActivity = ({ selectedInfo, setIsOpen, isUpdate, activityId }) => {
         )}
       </footer>
     </section>
+  ) : (
+    <div className="p-5">
+      <Skeleton
+        variant="rectangular"
+        height={50}
+        sx={{ width: "100%" }}
+        className="mb-3"
+      />
+      <div className="flex gap-3">
+        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+      </div>
+      <Skeleton
+        variant="rectangular"
+        height={50}
+        sx={{ width: "100%" }}
+        className="mb-3"
+      />
+      <div className="flex gap-5">
+        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
+        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
+        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
+        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
+      </div>
+      <Skeleton
+        variant="rectangular"
+        height={50}
+        sx={{ width: "100%" }}
+        className="mb-3"
+      />
+      <div className="flex gap-3">
+        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+      </div>
+      <Skeleton
+        variant="rectangular"
+        height={50}
+        sx={{ width: "100%" }}
+        className="mb-3"
+      />
+    </div>
   );
 };
 

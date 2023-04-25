@@ -74,6 +74,23 @@ option{
   @apply py-2 px-5 h-[60px] border-t flex items-center justify-end gap-2 sticky bottom-0 left-0 bg-bg;
 }
 
+.fc-event-main{
+  color: inherit !important;
+  border: none !important;
+}
+.fc-h-event{
+  @apply py-1 px-2 hover:bg-paper gap-2;
+  /* background-color: var(--background);
+  border: none !important; */
+}
+.fc-event{
+  @apply py-1 px-2 hover:bg-paper gap-2;
+}
+.fc-event{
+  background-color: var(--background);
+  border: 1px solid var(--border-color) !important;
+  height: auto;
+}
 
 input {
   outline: none;

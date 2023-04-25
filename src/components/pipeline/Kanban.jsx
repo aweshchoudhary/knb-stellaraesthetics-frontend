@@ -1,4 +1,4 @@
-import { lazy, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetPipelinesQuery } from "../../services/pipelineApi";
 import Model from "../models/Model";
 import CreatePipelineModel from "../models/CreatePipelineModel";
@@ -7,13 +7,13 @@ import Loader from "../global/Loader";
 import CreateDealModel from "../models/CreateDealModel";
 import { useDispatch, useSelector } from "react-redux";
 import { changePipeline } from "../../state/features/globalSlice";
+import Stages from "../stage/Stages";
+import { Tooltip } from "@mui/material";
 
-const Stages = lazy(() => import("../stage/Stages"));
-const EditStages = lazy(() => import("../stage/EditStages"));
-
-const Kanban = ({}) => {
+const Kanban = ({ setIsOpen }) => {
   const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
   const dispatch = useDispatch();
+  const [activePipeline, setActivePipeline] = useState(null);
 
   const {
     data = [],
@@ -25,12 +25,7 @@ const Kanban = ({}) => {
 
   const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
     useState(false);
-  const [isStageEditView, setIsEditStageView] = useState(false);
   const [isCreateDealModelOpen, setIsCreateDealModelOpen] = useState(false);
-  const [activePipeline, setActivePipeline] = useState(null);
-  function handleStageEditViewClose() {
-    setIsEditStageView(false);
-  }
 
   useEffect(() => {
     if (data.length && isSuccess) {
@@ -47,110 +42,65 @@ const Kanban = ({}) => {
       >
         <CreatePipelineModel setIsOpen={isCreatePipelineModelOpen} />
       </Model>
-      {data.length ? (
-        isStageEditView ? (
-          <>
-            <section className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
-              <h3>Edit Stages</h3>
-              <div className="flex items-center gap-2">
-                <button
-                  className="btn-filled btn-small"
-                  onClick={handleStageEditViewClose}
+      <Model
+        title={"Add Deal"}
+        isOpen={isCreateDealModelOpen}
+        setIsOpen={setIsCreateDealModelOpen}
+      >
+        <CreateDealModel
+          activePipe={activePipeline}
+          pipelineId={activePipeline?._id}
+          setIsOpen={setIsCreateDealModelOpen}
+        />
+      </Model>
+      <section className="px-5 py-3 flex justify-between items-center border-b">
+        <div className="flex items-stretch gap-2">
+          <button
+            className="btn-filled btn-small"
+            onClick={() => setIsCreateDealModelOpen(true)}
+          >
+            <Icon icon="uil:plus" className="text-lg" /> <span>Deal</span>
+          </button>
+          <button className="btn-outlined btn-small" onClick={() => refetch()}>
+            Refresh
+          </button>
+        </div>
+        <div className="flex items-stretch gap-2">
+          <select
+            name="pipeline-select"
+            className="input w-[200px]"
+            id="pipeline-select"
+            onChange={(e) => {
+              setActivePipeline(data[e.target.value]);
+              dispatch(changePipeline(e.target.value));
+            }}
+          >
+            {data?.map((pipe, index) => {
+              return pipe?._id === activePipeline?._id ? (
+                <option
+                  key={index}
+                  selected
+                  defaultValue={pipe._id}
+                  value={pipe._id}
                 >
-                  close
-                </button>
-              </div>
-            </section>
-          </>
-        ) : (
-          <>
-            <Model
-              title={"Add Deal"}
-              isOpen={isCreateDealModelOpen}
-              setIsOpen={setIsCreateDealModelOpen}
-            >
-              <CreateDealModel
-                activePipe={activePipeline}
-                pipelineId={activePipeline?._id}
-                setIsOpen={setIsCreateDealModelOpen}
-              />
-            </Model>
-            <section className="px-5 py-3 flex justify-between items-center border-b">
-              <div className="flex items-stretch gap-2">
-                <button
-                  className="btn-filled btn-small"
-                  onClick={() => setIsCreateDealModelOpen(true)}
-                >
-                  New Deal
-                </button>
-                <button
-                  className="btn-filled btn-small"
-                  onClick={() => setIsCreatePipelineModelOpen(true)}
-                >
-                  New Pipeline
-                </button>
-                <button
-                  className="btn-outlined btn-small"
-                  onClick={() => refetch()}
-                >
-                  Refresh
-                </button>
-              </div>
-              <div className="flex items-stretch gap-2">
-                <select
-                  name="pipeline-select"
-                  className="input w-[200px]"
-                  id="pipeline-select"
-                  // onSelect={(e) =>
-                  //   setActivePipeline((prev) => prev[e.target.value])
-                  // }
-                  onChange={(e) => {
-                    setActivePipeline(data[e.target.value]);
-                    dispatch(changePipeline(e.target.value));
-                  }}
-                >
-                  {data.map((pipe, index) => {
-                    return pipe?._id === activePipeline?._id ? (
-                      <option
-                        key={index}
-                        selected
-                        defaultValue={pipe._id}
-                        value={pipe._id}
-                      >
-                        {pipe.name}
-                      </option>
-                    ) : (
-                      <option key={index} value={index}>
-                        {pipe.name}
-                      </option>
-                    );
-                  })}
-                </select>
-                <button
-                  className="btn-outlined"
-                  onClick={() => setIsEditStageView(true)}
-                >
-                  <Icon icon="uil:pen" />
-                </button>
-              </div>
-            </section>
-          </>
-        )
-      ) : null}
+                  {pipe.name}
+                </option>
+              ) : (
+                <option key={index} value={index}>
+                  {pipe.name}
+                </option>
+              );
+            })}
+          </select>
+          <Tooltip title="Edit Pipeline" arrow>
+            <button className="btn-outlined" onClick={() => setIsOpen(true)}>
+              <Icon icon="uil:pen" />
+            </button>
+          </Tooltip>
+        </div>
+      </section>
       {data.length && activePipeline ? (
-        <>
-          {isStageEditView ? (
-            <EditStages
-              pipeline={activePipeline}
-              setIsEditStageView={setIsEditStageView}
-            />
-          ) : (
-            <Stages
-              pipeline={activePipeline}
-              setIsEditStageView={setIsEditStageView}
-            />
-          )}
-        </>
+        <Stages pipeline={activePipeline} setIsEditStageView={setIsOpen} />
       ) : (
         <p className="p-10">
           No pipeline has been created yet.{" "}
