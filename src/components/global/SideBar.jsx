@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
@@ -43,6 +43,9 @@ const SideBar = ({ setIsOpen, isOpen }) => {
   const { pathname } = useLocation();
   const [active, setActive] = useState(pathname);
 
+  useEffect(() => {
+    setActive(pathname);
+  }, [pathname]);
   return (
     <aside
       className={`${isOpen ? "w-[230px]" : "md:w-[70px] w-[230px]"} ${

@@ -2,13 +2,12 @@ import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
-import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
-import { useGetCardQuery } from "../../services/dealApi";
 import { labelApi } from "../../services/labelApi";
 import { clientApi } from "../../services/clientApi";
+import ActivityStatus from "../deal/ActivityStatus";
 
 const Card = ({ card }) => {
   const dispatch = useDispatch();
@@ -53,9 +52,9 @@ const Card = ({ card }) => {
         )}
         <h4 className="font-medium">{card.title}</h4>
         <p className="text-gray-500 text-xs">{client.company}</p>
-        <button className="activity absolute top-2 right-2 rounded-full border p-1 flex items-center justify-center hover:bg-gray-100">
-          <Icon icon="icon-park-solid:caution" className="text-yellow-500" />
-        </button>
+        <div className="activity absolute top-2 right-2">
+          <ActivityStatus cardId={card._id} />
+        </div>
       </div>
       <div className="bottom flex items-center gap-3 text-sm">
         <div className="user">

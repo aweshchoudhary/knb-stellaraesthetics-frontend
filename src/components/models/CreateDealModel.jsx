@@ -236,7 +236,7 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
               })}
             </select>
           </div>
-          <div className="input-stage mb-3">
+          <div className="input-pipeline mb-3">
             <label htmlFor="stage" className="text-textColor block mb-2">
               Pipeline
             </label>
@@ -265,7 +265,7 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
               })}
             </select>
           </div>
-          <div className="input-stage mb-3">
+          <div className="input-label mb-3">
             <label htmlFor="stage" className="text-textColor block mb-2">
               Label
             </label>
@@ -345,7 +345,9 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
               />
             </div>
           </div>
-          <Address address={address} setAddress={setAddress} />
+          <div className="input-address mb-3">
+            <Address address={address} setAddress={setAddress} />
+          </div>
         </div>
       </div>
       <footer className="modal-footer">

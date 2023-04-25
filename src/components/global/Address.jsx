@@ -36,7 +36,7 @@ export default function Address({ address, setAddress }) {
       };
     });
   return (
-    <div className="input-group mb-3">
+    <div className="text-sm">
       <label htmlFor="personName" className="text-textColor block  mb-2">
         Address
       </label>
