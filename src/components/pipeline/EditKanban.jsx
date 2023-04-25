@@ -8,15 +8,16 @@ import CreatePipelineModel from "../models/CreatePipelineModel";
 import Loader from "../global/Loader";
 import { useSelector } from "react-redux";
 import EditStages from "../stage/EditStages";
+import { useNavigate } from "react-router-dom";
 
 const EditKanban = ({ setIsOpen }) => {
   const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
+  const navigate = useNavigate();
   const {
     data = [],
     isLoading,
     isFetching,
     isSuccess,
-    refetch,
   } = useGetPipelinesQuery();
   const [
     deletePipeline,
@@ -30,9 +31,9 @@ const EditKanban = ({ setIsOpen }) => {
   function handleStageEditViewClose() {
     setIsOpen(false);
   }
-  async function handleDeletePipeline(id) {
-    await deletePipeline(id);
-    refetch();
+  async function handleDeletePipeline() {
+    await deletePipeline(activePipeline._id);
+    navigate("/dashboard", { replace: true });
   }
 
   useEffect(() => {

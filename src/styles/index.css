@@ -1503,9 +1503,9 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.text-yellow-500 {
+.text-yellow-600 {
   --tw-text-opacity: 1;
-  color: rgb(234 179 8 / var(--tw-text-opacity));
+  color: rgb(202 138 4 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -1562,11 +1562,6 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .hover\:bg-bg:hover {
   background-color: var(--background);
-}
-
-.hover\:bg-gray-100:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-500:hover {
