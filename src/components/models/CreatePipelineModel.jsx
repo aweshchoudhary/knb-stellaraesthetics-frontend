@@ -30,7 +30,7 @@ const CreatePipelineModel = ({ setIsOpen }) => {
         className="input"
       />
       <footer className="flex justify-end gap-2 mt-4">
-        <button className="btn-outlined" disabled={isLoading}>
+        <button className="btn-outlined" onClick={clear} disabled={isLoading}>
           cancel
         </button>
         <button

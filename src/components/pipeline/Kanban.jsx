@@ -40,7 +40,7 @@ const Kanban = ({ setIsOpen }) => {
         isOpen={isCreatePipelineModelOpen}
         setIsOpen={setIsCreatePipelineModelOpen}
       >
-        <CreatePipelineModel setIsOpen={isCreatePipelineModelOpen} />
+        <CreatePipelineModel setIsOpen={setIsCreatePipelineModelOpen} />
       </Model>
       <Model
         title={"Add Deal"}
@@ -62,8 +62,14 @@ const Kanban = ({ setIsOpen }) => {
             <Icon icon="uil:plus" className="text-lg" /> <span>Deal</span>
           </button>
           <button className="btn-outlined btn-small" onClick={() => refetch()}>
-            Refresh
+            <Icon icon="tabler:reload" className="text-lg" />
+            <span>Refresh</span>
           </button>
+        </div>
+        <div>
+          <h2 className="text-xl capitalize font-semibold">
+            {activePipeline?.name}
+          </h2>
         </div>
         <div className="flex items-stretch gap-2">
           <select
@@ -93,8 +99,19 @@ const Kanban = ({ setIsOpen }) => {
             })}
           </select>
           <Tooltip title="Edit Pipeline" arrow>
-            <button className="btn-outlined" onClick={() => setIsOpen(true)}>
+            <button
+              className="btn-outlined btn-small"
+              onClick={() => setIsOpen(true)}
+            >
               <Icon icon="uil:pen" />
+            </button>
+          </Tooltip>
+          <Tooltip title="Create Pipeline" arrow>
+            <button
+              className="btn-outlined btn-small"
+              onClick={() => setIsCreatePipelineModelOpen(true)}
+            >
+              <Icon icon="uil:plus" className="text-lg" />
             </button>
           </Tooltip>
         </div>

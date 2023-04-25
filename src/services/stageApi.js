@@ -30,9 +30,9 @@ export const stageApi = createApi({
     }),
     updateStage: builder.mutation({
       query: (data) => ({
-        url: "/stage/update/" + data.id,
+        url: "/stage/update/" + data.stageId,
         method: "PUT",
-        body: data.body,
+        body: { name: data.name },
       }),
       invalidatesTags: ["stage"],
     }),
@@ -46,7 +46,7 @@ export const stageApi = createApi({
     }),
     deleteStage: builder.mutation({
       query: (position) => ({
-        url: "/stage/delete/" + position,
+        url: "/stage/" + position,
         method: "DELETE",
       }),
       invalidatesTags: ["stage"],

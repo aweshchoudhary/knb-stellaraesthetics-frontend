@@ -407,41 +407,41 @@ const CreateActivity = ({
     <div className="p-5">
       <Skeleton
         variant="rectangular"
-        height={50}
+        height={35}
         sx={{ width: "100%" }}
         className="mb-3"
       />
       <div className="flex gap-3">
-        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
-        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
-        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
-        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 w-[65px]" />
       </div>
       <Skeleton
         variant="rectangular"
-        height={50}
+        height={35}
         sx={{ width: "100%" }}
         className="mb-3"
       />
       <div className="flex gap-5">
-        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
-        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
-        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
-        <Skeleton variant="rectangular" height={50} className="mb-5 flex-1" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 flex-1" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 flex-1" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 flex-1" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 flex-1" />
       </div>
       <Skeleton
         variant="rectangular"
-        height={50}
+        height={35}
         sx={{ width: "100%" }}
         className="mb-3"
       />
       <div className="flex gap-3">
-        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
-        <Skeleton variant="rectangular" height={50} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 w-[65px]" />
+        <Skeleton variant="rectangular" height={35} className="mb-5 w-[65px]" />
       </div>
       <Skeleton
         variant="rectangular"
-        height={50}
+        height={35}
         sx={{ width: "100%" }}
         className="mb-3"
       />

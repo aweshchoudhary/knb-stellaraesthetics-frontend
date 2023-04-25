@@ -1,21 +1,32 @@
 import { Icon } from "@iconify/react";
 import Model from "../models/Model";
-import { useState } from "react";
-import { deleteStage, updateStage } from "../../state/features/stageSlice";
+import { useEffect, useState } from "react";
 import CreateStageModel from "../models/CreateStageModel";
-import { useDispatch } from "react-redux";
+import {
+  useDeleteStageMutation,
+  useUpdateStageMutation,
+} from "../../services/stageApi";
 
 const EditColumn = ({ provided, item, pipelineId }) => {
+  const [
+    updateStage,
+    { isLoading: isUpdateLoading, isSuccess: isUpdateSuccess },
+  ] = useUpdateStageMutation();
+  const [
+    deleteStage,
+    { isLoading: isDeleteLoading, isSuccess: isDeleteSuccess },
+  ] = useDeleteStageMutation();
+
   const [isCreateStageModelOpen, setIsCreateStageModelOpen] = useState(false);
   const [stageName, setStageName] = useState(item.name);
-  const dispatch = useDispatch();
 
-  function handleUpdateStage() {
-    dispatch(updateStage({ name: stageName, stageId: item._id }));
+  async function handleUpdateStage() {
+    await updateStage({ name: stageName, stageId: item._id });
   }
-  function handleDeleteStage() {
-    dispatch(deleteStage(item.position));
+  async function handleDeleteStage() {
+    await deleteStage(item.position);
   }
+
   return (
     <>
       <Model
@@ -59,16 +70,20 @@ const EditColumn = ({ provided, item, pipelineId }) => {
             <div className="flex mt-5 gap-2">
               <button
                 className="btn-outlined py-1 px-3"
-                disabled={item.name === stageName}
+                disabled={
+                  item.name === stageName || isDeleteLoading || isUpdateLoading
+                }
               >
                 cancel
               </button>
               <button
                 className="btn-filled py-1 px-3"
                 onClick={handleUpdateStage}
-                disabled={item.name === stageName}
+                disabled={
+                  item.name === stageName || isDeleteLoading || isUpdateLoading
+                }
               >
-                save
+                {isDeleteLoading || isUpdateLoading ? "Loading..." : "save"}
               </button>
             </div>
           </div>
