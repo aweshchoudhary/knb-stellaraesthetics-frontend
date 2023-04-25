@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 import Loader from "../global/Loader";
 import CreateDealModel from "../models/CreateDealModel";
 import { useDispatch, useSelector } from "react-redux";
-import { changePipeline } from "../../state/features/globalSlice";
+import { addPipeline } from "../../state/features/globalSlice";
 import Stages from "../stage/Stages";
 import { Tooltip } from "@mui/material";
 
@@ -29,6 +29,11 @@ const Kanban = ({ setIsOpen }) => {
 
   useEffect(() => {
     if (data.length && isSuccess) {
+      if (!savedPipelineIndex) {
+        dispatch(addPipeline(0));
+        setActivePipeline(data[0]);
+        return;
+      }
       setActivePipeline(data[savedPipelineIndex]);
     }
   }, [data, isSuccess]);
@@ -78,7 +83,7 @@ const Kanban = ({ setIsOpen }) => {
             id="pipeline-select"
             onChange={(e) => {
               setActivePipeline(data[e.target.value]);
-              dispatch(changePipeline(e.target.value));
+              dispatch(addPipeline(e.target.value));
             }}
           >
             {data?.map((pipe, index) => {

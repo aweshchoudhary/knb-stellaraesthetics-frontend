@@ -17,13 +17,17 @@ const globalSlice = createSlice({
     toggleMobileOpen(state) {
       state.isMobileOpen = !state.isMobileOpen;
     },
-    changePipeline(state, { payload }) {
+    addPipeline(state, { payload }) {
       state.pipelineIndex = payload;
       localStorage.setItem("pipelineIndex", payload);
+    },
+    removePipeline(state) {
+      state.pipelineIndex = "";
+      localStorage.removeItem("pipelineIndex");
     },
   },
 });
 
-export const { toggleDarkMode, toggleMobileOpen, changePipeline } =
+export const { toggleDarkMode, toggleMobileOpen, addPipeline, removePipeline } =
   globalSlice.actions;
 export default globalSlice.reducer;

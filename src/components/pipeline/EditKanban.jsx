@@ -6,23 +6,25 @@ import {
 import Model from "../models/Model";
 import CreatePipelineModel from "../models/CreatePipelineModel";
 import Loader from "../global/Loader";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EditStages from "../stage/EditStages";
-import { useNavigate } from "react-router-dom";
+import { addPipeline, removePipeline } from "../../state/features/globalSlice";
 
 const EditKanban = ({ setIsOpen }) => {
   const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
-  const navigate = useNavigate();
   const {
     data = [],
     isLoading,
     isFetching,
     isSuccess,
+    refetch: refetchPipelines,
   } = useGetPipelinesQuery();
   const [
     deletePipeline,
     { isLoading: isPiplineDeleting, isSuccess: isPipelineDeleteSuccess },
   ] = useDeletePipelineMutation();
+
+  const dispatch = useDispatch();
 
   const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
     useState(false);
@@ -33,11 +35,16 @@ const EditKanban = ({ setIsOpen }) => {
   }
   async function handleDeletePipeline() {
     await deletePipeline(activePipeline._id);
-    navigate("/dashboard", { replace: true });
+    dispatch(removePipeline());
+    refetchPipelines();
   }
 
   useEffect(() => {
     if (data.length && isSuccess) {
+      if (!savedPipelineIndex) {
+        addPipeline(0);
+        setActivePipeline(data[0]);
+      }
       setActivePipeline(data[savedPipelineIndex]);
     }
   }, [data, isSuccess]);
