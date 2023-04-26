@@ -95,8 +95,8 @@ const Contact = () => {
                   <p>Whatsapp Number:{data.whatsapp}</p>
                   <p>Email: {data.email}</p>
                   <p>
-                    Address: {data.address.city.name}, {data.address.state.name}
-                    , {data.address.country.name}
+                    Address: {data?.address?.city?.name},{" "}
+                    {data?.address?.state?.name}, {data?.address?.country?.name}
                   </p>
                 </div>
               </div>
