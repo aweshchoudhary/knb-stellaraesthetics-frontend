@@ -9,6 +9,7 @@ import Loader from "../global/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import EditStages from "../stage/EditStages";
 import { addPipeline, removePipeline } from "../../state/features/globalSlice";
+import EditPipelineName from "./EditPipelineName";
 
 const EditKanban = ({ setIsOpen }) => {
   const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
@@ -59,7 +60,7 @@ const EditKanban = ({ setIsOpen }) => {
         <CreatePipelineModel setIsOpen={isCreatePipelineModelOpen} />
       </Model>
       <section className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
-        <h3>Edit Stages</h3>
+        <EditPipelineName name={activePipeline?.name} />
         <div className="flex items-center gap-2">
           <button
             className="btn-filled bg-red-600 border-red-600 btn-small"

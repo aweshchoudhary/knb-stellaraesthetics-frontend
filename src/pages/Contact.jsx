@@ -94,7 +94,10 @@ const Contact = () => {
                   <p>Mobile Number: {data.mobile}</p>
                   <p>Whatsapp Number:{data.whatsapp}</p>
                   <p>Email: {data.email}</p>
-                  <p>Address: Not Specified</p>
+                  <p>
+                    Address: {data.address.city.name}, {data.address.state.name}
+                    , {data.address.country.name}
+                  </p>
                 </div>
               </div>
               <div className="flex-1 border-r">

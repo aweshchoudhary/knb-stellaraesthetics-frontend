@@ -32,7 +32,7 @@ export const pipelineApi = createApi({
       query: (data) => ({
         url: "/pipeline/update/" + data.id,
         method: "PUT",
-        body: data.body,
+        body: data.update,
       }),
       invalidatesTags: ["pipeline"],
     }),
