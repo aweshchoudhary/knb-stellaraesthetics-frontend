@@ -1,18 +1,10 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Icon } from "@iconify/react";
 import moment from "moment";
 import Loader from "../global/Loader";
-import { useEffect } from "react";
-import {
-  getActivitiesByCardId,
-  updateActivity,
-} from "../../state/features/dealFeatures/activitySlice";
+import { updateActivity } from "../../state/features/dealFeatures/activitySlice";
 import { deleteActivity } from "../../state/features/dealFeatures/activitySlice";
-import { useGetCardQuery } from "../../services/dealApi";
-import {
-  useGetActivitiesByCardIdQuery,
-  useGetAllActivitiesQuery,
-} from "../../services/activityApi";
+import { useGetActivitiesByCardIdQuery } from "../../services/activityApi";
 
 const FocusActivities = ({ cardId }) => {
   return (

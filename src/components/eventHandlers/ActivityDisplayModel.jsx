@@ -6,7 +6,7 @@ import {
   useUpdateActivityMutation,
 } from "../../services/activityApi";
 import Model from "../models/Model";
-import EventHandler from "./EventHandler";
+import EventHandler from "./ActivityHandler";
 
 const ActivityPanel = ({ data }) => {
   const [updateActivity] = useUpdateActivityMutation();

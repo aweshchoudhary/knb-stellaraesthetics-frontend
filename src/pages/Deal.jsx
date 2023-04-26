@@ -4,13 +4,14 @@ import DealSideBar from "../components/deal/DealSideBar";
 import { useParams } from "react-router-dom";
 import { useGetCardQuery } from "../services/dealApi";
 import Loader from "../components/global/Loader";
-import ActivitiesTabs from "../components/tabs/ActivitiesTabs";
-import FocusActivitiesTabs from "../components/tabs/FocusActivitiesTabs";
 
-import Notes from "../components/tabs/Notes";
-import EventHandler from "../components/tabs/EventHandler";
-import File from "../components/tabs/File";
-import Email from "../components/tabs/Email";
+import EventTabsContainer from "../components/eventHandlers/EventTabsContainer";
+import FocusActivitiesTabs from "../components/eventHandlers/ActivitiesTabs";
+
+import ActivityHandler from "../components/eventHandlers/ActivityHandler";
+import NoteHandler from "../components/eventHandlers/NoteHandler";
+import FileHandler from "../components/eventHandlers/FileHandler";
+import EmailHandler from "../components/eventHandlers/EmailHandler";
 
 const Deal = () => {
   const params = useParams();
@@ -22,25 +23,25 @@ const Deal = () => {
       id: 1,
       name: "notes",
       icon: "material-symbols:sticky-note-2-outline",
-      component: <Notes cardId={id} />,
+      component: <NoteHandler cardId={id} />,
     },
     {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <EventHandler dealData={data} cardId={id} />,
+      component: <ActivityHandler dealData={data} cardId={id} />,
     },
     {
       id: 3,
       name: "File",
       icon: "material-symbols:attach-file",
-      component: <File />,
+      component: <FileHandler />,
     },
     {
       id: 4,
       name: "Email",
       icon: "uil:envelope",
-      component: <Email />,
+      component: <EmailHandler />,
     },
   ];
 
@@ -100,7 +101,7 @@ const Deal = () => {
         <div className="flex-1 p-5 bg-paper">
           <Tabs tabs={tabs} />
           <FocusActivitiesTabs cardId={id} />
-          <ActivitiesTabs cardId={id} />
+          <EventTabsContainer cardId={id} />
         </div>
       </section>
     </>

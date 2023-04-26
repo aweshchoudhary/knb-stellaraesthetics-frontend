@@ -1,6 +1,7 @@
 import { useState } from "react";
 import RichTextEditor from "../global/RichTextEditor";
 import { useCreateNoteMutation } from "../../services/noteApi";
+import DealSelect from "./DealSelect";
 
 const Notes = ({ cardId }) => {
   const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
@@ -16,6 +17,7 @@ const Notes = ({ cardId }) => {
   return (
     <section className="p-5">
       <div>
+        <DealSelect />
         <RichTextEditor setContent={setNoteBody} />
         <div className="flex items-center mt-3 gap-2">
           <button

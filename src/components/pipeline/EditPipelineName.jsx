@@ -7,7 +7,6 @@ const EditPipelineName = ({ name, id }) => {
   const [pipelineName, setPipelineName] = useState(name);
   const [updatePipeline, { isLoading, isSuccess }] =
     useUpdatePipelineMutation();
-
   async function handleUpdatePipelineName() {
     await updatePipeline({ id, update: { name: pipelineName } });
   }
@@ -19,8 +18,13 @@ const EditPipelineName = ({ name, id }) => {
 
   return (
     <div className="flex-1 flex gap-1">
-      <input type="text" value={name} className="input w-1/4" />
-      {pipelineName !== name && (
+      <input
+        type="text"
+        value={pipelineName}
+        className="input w-1/4"
+        onChange={(e) => setPipelineName(e.target.value)}
+      />
+      {pipelineName === name ? (
         <div className="btns flex items-stretch gap-1">
           <button className="btn-filled btn-small">
             <Icon icon="uil:check" className="text-xl" />
@@ -29,7 +33,7 @@ const EditPipelineName = ({ name, id }) => {
             <Icon icon="uil:times" className="text-xl" />
           </button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

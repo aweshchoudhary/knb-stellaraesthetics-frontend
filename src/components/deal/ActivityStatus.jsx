@@ -44,10 +44,10 @@ const ActivityStatus = ({ cardId }) => {
         )}
         {status === "overdue" && (
           <Tooltip title="Overdue Activity">
-            <button className="border p-1 flex items-center justify-center bg-red-600 rounded-full">
+            <button className="p-1 flex items-center justify-center bg-red-600 rounded-full">
               <Icon
                 icon="material-symbols:keyboard-arrow-left"
-                className="text-white text-lg"
+                className="text-white"
               />
             </button>
           </Tooltip>
@@ -57,7 +57,7 @@ const ActivityStatus = ({ cardId }) => {
             <button className="border p-1 flex items-center justify-center bg-green-600 rounded-full">
               <Icon
                 icon="material-symbols:keyboard-arrow-right"
-                className="text-white text-lg"
+                className="text-white"
               />
             </button>
           </Tooltip>

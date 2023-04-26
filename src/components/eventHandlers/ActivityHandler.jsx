@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useCreateActivityMutation,
   useLazyGetActivityQuery,
@@ -64,7 +64,6 @@ const CreateActivity = ({
     cardId: id || "",
     holder: "asdfasdfasdfasdfsadfsadfas",
   });
-  console.log(eventInfo);
   const [
     getActivityById,
     {
