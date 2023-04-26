@@ -1,2 +1,2 @@
-const baseurl = "http://u92x7hCo3FVb.stellaraesthetics.in/api";
+const baseurl = "https://u92x7hCo3FVb.stellaraesthetics.in/api";
 export default baseurl;
