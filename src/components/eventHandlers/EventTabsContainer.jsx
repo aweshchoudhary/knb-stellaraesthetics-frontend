@@ -8,7 +8,7 @@ import {
   useGetNotesByCardIdQuery,
 } from "../../services/noteApi";
 
-const ActivitiesDisplay = ({ cardId }) => {
+const EventTabsContainer = ({ cardId }) => {
   const [activeTab, setActiveTab] = useState("notes");
   const tabs = ["notes", "files"];
   return (
@@ -116,4 +116,4 @@ const Note = ({ cardId }) => {
   );
 };
 
-export default ActivitiesDisplay;
+export default EventTabsContainer;

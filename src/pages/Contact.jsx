@@ -7,15 +7,17 @@ import {
 import Header from "../components/global/Header";
 import Loader from "../components/global/Loader";
 import { Icon } from "@iconify/react";
-import Email from "../components/tabs/Email";
-import File from "../components/tabs/File";
-import EventHandler from "../components/tabs/EventHandler";
-import Notes from "../components/tabs/Notes";
 import Tabs from "../components/global/Tabs";
-import FocusActivitiesTabs from "../components/tabs/FocusActivitiesTabs";
-import ActivitiesTabs from "../components/tabs/ActivitiesTabs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+
+import EventTabsContainer from "../components/eventHandlers/EventTabsContainer";
+import ActivitiesTabs from "../components/eventHandlers/ActivitiesTabs";
+
+import ActivityHandler from "../components/eventHandlers/ActivityHandler";
+import NoteHandler from "../components/eventHandlers/NoteHandler";
+import FileHandler from "../components/eventHandlers/FileHandler";
+import EmailHandler from "../components/eventHandlers/EmailHandler";
 
 const Contact = () => {
   const params = useParams();
@@ -33,25 +35,25 @@ const Contact = () => {
       id: 1,
       name: "notes",
       icon: "material-symbols:sticky-note-2-outline",
-      component: <Notes cardId={id} />,
+      component: <NoteHandler />,
     },
     {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <EventHandler cardId={id} />,
+      component: <ActivityHandler />,
     },
     {
       id: 3,
       name: "File",
       icon: "material-symbols:attach-file",
-      component: <File />,
+      component: <FileHandler />,
     },
     {
       id: 4,
       name: "Email",
       icon: "uil:envelope",
-      component: <Email />,
+      component: <EmailHandler />,
     },
   ];
 
@@ -167,7 +169,7 @@ const Contact = () => {
             <div className="flex flex-1">
               <div className="flex-1 p-5 bg-paper">
                 <Tabs tabs={tabs} />
-                <FocusActivitiesTabs cardId={id} />
+                <EventTabsContainer cardId={id} />
                 <ActivitiesTabs cardId={id} />
               </div>
             </div>

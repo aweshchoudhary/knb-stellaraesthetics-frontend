@@ -5,14 +5,9 @@ import {
   useLazyGetActivityQuery,
   useUpdateActivityMutation,
 } from "../../services/activityApi";
-import {
-  useLazyGetCardQuery,
-  useLazySearchCardsQuery,
-} from "../../services/dealApi";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import { toast } from "react-toastify";
-import Select from "react-select";
 import { Skeleton } from "@mui/material";
 import DealSelect from "./DealSelect";
 
