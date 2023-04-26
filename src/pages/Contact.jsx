@@ -14,7 +14,8 @@ import Notes from "../components/tabs/Notes";
 import Tabs from "../components/global/Tabs";
 import FocusActivitiesTabs from "../components/tabs/FocusActivitiesTabs";
 import ActivitiesTabs from "../components/tabs/ActivitiesTabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const Contact = () => {
   const params = useParams();
@@ -23,7 +24,8 @@ const Contact = () => {
   const [updateData, setUpdateData] = useState({});
   const navigate = useNavigate();
 
-  const [deleteClient] = useDeleteClientMutation();
+  const [deleteClient, { isSuccess: isDeleteSuccess }] =
+    useDeleteClientMutation();
   const [updateClient] = useUpdateClientMutation();
 
   const tabs = [
@@ -59,8 +61,13 @@ const Contact = () => {
 
   async function handleDeleteClient() {
     await deleteClient(id);
-    navigate("/", { replace: true });
+    navigate("/contacts", { replace: true });
   }
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      toast.success("Contact Deleted Successfully");
+    }
+  }, [isDeleteSuccess]);
 
   return (
     <>
