@@ -3,21 +3,28 @@ import RichTextEditor from "../global/RichTextEditor";
 import { useCreateNoteMutation } from "../../services/noteApi";
 import DealSelect from "./DealSelect";
 
-const Notes = ({ cardId }) => {
+const Notes = ({ card }) => {
   const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
+  const [deals, setDeals] = useState([card]);
 
   async function handleCreateNote() {
-    await createNote({ noteBody, cardId });
+    const selectedDeals = deals.filter((item) => item.value);
+    await createNote({ noteBody, cardId: selectedDeals });
     handleClear();
   }
   function handleClear() {
     setNoteBody("");
   }
+
   return (
     <section className="p-5">
       <div>
-        <DealSelect />
+        <DealSelect
+          selectedData={deals}
+          setSelectedData={setDeals}
+          compare={[card]}
+        />
         <RichTextEditor setContent={setNoteBody} />
         <div className="flex items-center mt-3 gap-2">
           <button

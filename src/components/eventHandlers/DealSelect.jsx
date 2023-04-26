@@ -2,21 +2,40 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import { useLazySearchCardsQuery } from "../../services/dealApi";
 
-const DealSelect = ({ data, selectedData, searchedData, setSearchedData }) => {
+const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
+  const [searchedData, setSearchedData] = useState([]);
+
   const [query, setQuery] = useState("");
   const [searchCard, { isLoading, isFetching }] = useLazySearchCardsQuery();
+
+  const handleChange = async (selectedOptions) => {
+    setSelectedData(selectedOptions);
+  };
 
   useEffect(() => {
     const searchDataFn = async (query) => {
       const res = await searchCard(query);
+      const mainOptions = { label: "Open Deals", options: [] };
+      const otherOptions = { label: "Other Deals", options: [] };
       if (res.data) {
-        const cards = res.data.map((item) => {
-          return {
+        res.data.map((item) => {
+          const option = {
             label: item.title,
             value: item._id,
           };
+          if (!compare.length > 0) {
+            otherOptions.options.push(option);
+            return;
+          }
+          compare.forEach((comp) => {
+            if (item._id === comp.value) {
+              mainOptions.options.push(option);
+            } else {
+              otherOptions.options.push(option);
+            }
+          });
         });
-        setSearchedData(cards);
+        setSearchedData(compare ? [mainOptions, otherOptions] : [otherOptions]);
       }
     };
     query.length > 2 && searchDataFn(query);
@@ -29,15 +48,13 @@ const DealSelect = ({ data, selectedData, searchedData, setSearchedData }) => {
         name="deal"
         label="deal"
         isMulti
-        options={searchedData}
         value={selectedData}
+        isLoading={isFetching || isLoading}
+        options={searchedData}
         placeholder="Search Deal"
-        onChange={(value) => {
-          setSearchedData(value);
-          fillEventInfo("cardId", value.value);
-        }}
+        onChange={handleChange}
         onInputChange={(value) => setQuery(value)}
-        className="mb-2 text-sm"
+        className="mb-2"
       ></Select>
     </div>
   );

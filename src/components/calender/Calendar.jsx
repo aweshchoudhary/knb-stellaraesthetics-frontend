@@ -5,12 +5,12 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useEffect, useState } from "react";
 import Model from "../models/Model";
 import { Icon } from "@iconify/react";
-import ActivityEditPanel from "../tabs/ActivityEditPanel";
+import ActivityDisplayPanel from "../eventHandlers/ActivityDisplayModel";
 import {
   useGetAllActivitiesQuery,
   useUpdateActivityMutation,
 } from "../../services/activityApi";
-import EventHandler from "../tabs/EventHandler";
+import ActivityHandler from "../eventHandlers/ActivityHandler";
 
 const Calendar = () => {
   const [
@@ -113,7 +113,7 @@ const Calendar = () => {
           setIsOpen={setIsCreateActivityModelOpen}
           title={"Create Activity"}
         >
-          <EventHandler
+          <ActivityHandler
             selectedInfo={selectedInfo}
             setIsOpen={setIsCreateActivityModelOpen}
           />
@@ -123,7 +123,7 @@ const Calendar = () => {
           isOpen={isActivityModelOpen}
           setIsOpen={setIsActivityModelOpen}
         >
-          <ActivityEditPanel
+          <ActivityDisplayPanel
             data={clickedActivityData}
             setIsOpen={setIsActivityModelOpen}
           />

@@ -1,11 +1,20 @@
 import { useState } from "react";
 import RichTextEditor from "../global/RichTextEditor";
+import DealSelect from "./DealSelect";
 
-const Email = () => {
+const Email = ({ card }) => {
   const [emailBody, setEmailBody] = useState("");
+  const [selectedDeals, setSelectedDeals] = useState([card]);
   return (
     <section>
       <div className="p-5">
+        <div className="deals-select mb-3">
+          <DealSelect
+            selectedData={selectedDeals}
+            setSelectedData={setSelectedDeals}
+            compare={card}
+          />
+        </div>
         <div className="sender-email mb-3">
           <input
             type="email"

@@ -14,6 +14,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import { Skeleton } from "@mui/material";
+import DealSelect from "./DealSelect";
 
 const activityOptions = [
   {
@@ -48,10 +49,11 @@ const CreateActivity = ({
   dealData,
   isUpdate,
   activityId,
+  card,
 }) => {
   const params = useParams();
   const { id } = params;
-  const [query, setQuery] = useState("");
+  const [selectedDeals, setSelectedDeals] = useState([card]);
   const [eventInfo, setEventInfo] = useState({
     title: "call",
     type: "call",
@@ -61,9 +63,10 @@ const CreateActivity = ({
     // endTime: selectedInfo ? selectedInfo.end : "",
     location: "",
     description: "",
-    cardId: id || "",
+    cardId: [],
     holder: "asdfasdfasdfasdfsadfsadfas",
   });
+
   const [
     getActivityById,
     {
@@ -72,25 +75,12 @@ const CreateActivity = ({
       isSuccess: isActivitySuccess,
     },
   ] = useLazyGetActivityQuery();
-  const [
-    searchCard,
-    {
-      isLoading: isSearching,
-      isFetching: isSearchFetching,
-      isSuccess: isSearchSuccess,
-    },
-  ] = useLazySearchCardsQuery();
   const [createActivity, { isLoading, isCreateSuccess }] =
     useCreateActivityMutation();
   const [
     updateActivity,
     { isLoading: isUpdating, isSuccess: isUpdateSuccess },
   ] = useUpdateActivityMutation();
-  const [getCardById] = useLazyGetCardQuery();
-  const [searchedCards, setSearchedCards] = useState([]);
-  const [selectedCard, setSelectedCard] = useState(
-    dealData ? { label: dealData.title, value: dealData._id } : null
-  );
 
   const [additionalFields, setAdditionalFields] = useState({
     description: false,
@@ -163,46 +153,24 @@ const CreateActivity = ({
   }, [activityId, isUpdate]);
 
   useEffect(() => {
-    const searchCardFn = async (query) => {
-      const res = await searchCard(query);
-      if (res.data) {
-        const cards = res.data.map((item) => {
-          return {
-            label: item.title,
-            value: item._id,
-          };
-        });
-        setSearchedCards(cards);
-      }
-    };
-    query.length > 2 && searchCardFn(query);
-  }, [query]);
-  useEffect(() => {
     if (isCreateSuccess) toast.success("Activity has been created");
   }, [isCreateSuccess]);
   useEffect(() => {
     if (isUpdateSuccess) toast.success("Activity has been updated");
   }, [isUpdateSuccess]);
-  const loading = true;
-  useEffect(() => {
-    const fetchCardById = async () => {
-      const res = await getCardById(eventInfo.cardId);
-      if (res.data) {
-        setSelectedCard({
-          label: res.data.title,
-          value: res.data._id,
-        });
-      }
-    };
-    if (eventInfo.cardId && eventInfo.cardId !== id) {
-      fetchCardById(eventInfo.cardId);
-    }
-  }, [eventInfo.cardId]);
 
   return !isActivityLoading && !isActivityFetching ? (
     <section>
       <div className="container p-5">
+        <div className="mb-3">
+          <DealSelect
+            selectedData={selectedDeals}
+            setSelectedData={setSelectedDeals}
+            compare={card}
+          />
+        </div>
         <div className="my-2">
+          <h2 className="mb-1">Activity Title</h2>
           <input
             type="text"
             name="title"
@@ -346,23 +314,6 @@ const CreateActivity = ({
             </div>
           )}
         </div>
-        <div className="my-2">
-          <h2 className="mb-1">Deal</h2>
-          <Select
-            id="deal"
-            name="deal"
-            label="deal"
-            options={searchedCards}
-            value={selectedCard}
-            placeholder="Search Deal"
-            onChange={(value) => {
-              setSelectedCard(value);
-              fillEventInfo("cardId", value.value);
-            }}
-            onInputChange={(value) => setQuery(value)}
-            className="mb-2 text-sm"
-          ></Select>
-        </div>
         <div className="task-performer">
           <h3 className="text-lg mb-3 font-medium">Activity Performer</h3>
           <div className="flex items-center gap-2">
@@ -375,7 +326,7 @@ const CreateActivity = ({
           </div>
         </div>
       </div>
-      <footer className="flex items-center justify-end border-t mt-2s p-3 gap-2">
+      <footer className="flex items-center justify-end border-t mt-2 p-3 gap-2">
         <button
           className="btn-outlined"
           disabled={isLoading}

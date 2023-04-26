@@ -23,25 +23,30 @@ const Deal = () => {
       id: 1,
       name: "notes",
       icon: "material-symbols:sticky-note-2-outline",
-      component: <NoteHandler cardId={id} />,
+      component: <NoteHandler card={{ value: id, label: data?.title }} />,
     },
     {
       id: 2,
       name: "activity",
       icon: "material-symbols:calendar-month-outline",
-      component: <ActivityHandler dealData={data} cardId={id} />,
+      component: (
+        <ActivityHandler
+          dealData={data}
+          card={{ value: id, label: data?.title }}
+        />
+      ),
     },
     {
       id: 3,
       name: "File",
       icon: "material-symbols:attach-file",
-      component: <FileHandler />,
+      component: <FileHandler card={{ value: id, label: data?.title }} />,
     },
     {
       id: 4,
       name: "Email",
       icon: "uil:envelope",
-      component: <EmailHandler />,
+      component: <EmailHandler card={{ value: id, label: data?.title }} />,
     },
   ];
 
