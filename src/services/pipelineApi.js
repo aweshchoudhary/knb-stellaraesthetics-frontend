@@ -52,4 +52,5 @@ export const {
   useUpdatePipelineMutation,
   useDeletePipelineMutation,
   useGetPipelinesQuery,
+  useLazyGetPipelinesQuery,
 } = pipelineApi;

@@ -61,4 +61,5 @@ export const {
   useDeleteStageMutation,
   useUpdateStageMutation,
   useReorderStageMutation,
+  useLazyGetStagesQuery,
 } = stageApi;

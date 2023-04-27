@@ -11,21 +11,75 @@ import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import { Icon } from "@iconify/react";
 
+const CreateContactModel = ({
+  setIsOpen,
+  handleComplete,
+  selectedContacts,
+  setSelectedContacts,
+}) => {
+  const [createNewContactSectionDisplay, setCreateNewContactSectionDisplay] =
+    useState(false);
+
+  function handleAddClient() {
+    handleComplete && handleComplete(selectedContacts);
+  }
+
+  return (
+    <section>
+      <div className="p-5 pb-0">
+        <div className="Search-Contacts mb-3">
+          <label className="text-textColor block  mb-2">Search Contacts</label>
+          <SearchContact
+            selectedContacts={selectedContacts}
+            setSelectedContacts={setSelectedContacts}
+          />
+        </div>
+      </div>
+      {!createNewContactSectionDisplay && (
+        <button
+          type="button"
+          className="btn-filled btn-small m-5"
+          onClick={() => setCreateNewContactSectionDisplay(true)}
+        >
+          <Icon icon="uil:plus" className="text-lg" /> New Contact
+        </button>
+      )}
+
+      {createNewContactSectionDisplay && (
+        <CreateContactForm
+          setSelectedContacts={setSelectedContacts}
+          setIsOpen={setCreateNewContactSectionDisplay}
+        />
+      )}
+      <footer className="modal-footer">
+        <button
+          className="btn-outlined"
+          type="button"
+          // disabled={isLoading}
+          onClick={() => setIsOpen(false)}
+        >
+          cancel
+        </button>
+        <button
+          // disabled={isLoading}
+          className="btn-filled"
+          onClick={handleAddClient}
+          disabled={!selectedContacts?.length}
+        >
+          add contacts
+        </button>
+      </footer>
+    </section>
+  );
+};
+
 const validationSchema = Yup.object({
-  company: Yup.string().min(3, "Must be at least 3 characters"),
   contactPerson: Yup.string()
     .min(3, "Must be at least 3 characters")
     .required("Required"),
-  mobile: Yup.string()
-    .matches(/^[0-9]+$/, "Must be a number")
-    .min(10, "Must be at least 10 digits")
-    .max(10, "Must not exceed 10 digits")
-    .required("Required"),
-  whatsapp: Yup.string()
-    .matches(/^[0-9]+$/, "Must be a number")
-    .min(10, "Must be at least 10 digits")
-    .max(10, "Must not exceed 10 digits")
-    .required("Required"),
+  company: Yup.string().min(3, "Must be at least 3 characters"),
+  mobile: Yup.string().min(10, "Must be at least 10 digits"),
+  whatsapp: Yup.string().min(10, "Must be at least 10 digits"),
   email: Yup.string().email("Invalid email address"),
   address: Yup.object({
     line1: Yup.string(),
@@ -40,9 +94,7 @@ const validationSchema = Yup.object({
   }),
 });
 
-const CreateContactModel = ({ setIsOpen, handleComplete }) => {
-  const [selectedContacts, setSelectedContacts] = useState([]);
-
+export const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
   let clientDetails = {
     company: "",
     contactPerson: "",
@@ -62,9 +114,38 @@ const CreateContactModel = ({ setIsOpen, handleComplete }) => {
   const region = navigator?.language?.split("-")[1];
 
   async function handlCreateClient(values) {
-    console.log(values);
-    await createClient({ ...clientDetails, address });
-    handleComplete && handleComplete();
+    if (!clientDetails.mobile.length && !clientDetails.whatsapp.length) {
+      return toast.error("Please enter Mobile or Whatsapp Number");
+    }
+
+    const newClientData = {
+      ...values,
+      mobile: clientDetails.mobile,
+      whatsapp: clientDetails.whatsapp,
+      address,
+    };
+    console.log(newClientData);
+    const res = await createClient(newClientData);
+
+    if (setSelectedContacts && res.data) {
+      setSelectedContacts((prev) => [
+        ...prev,
+        {
+          label: `${res.data.contactPerson} - ${res.data.company}`,
+          value: res.data._id,
+        },
+      ]);
+    }
+    handleClearForm();
+  }
+  function handleClearForm() {
+    clientDetails = {
+      company: "",
+      contactPerson: "",
+      mobile: "",
+      whatsapp: "",
+      email: "",
+    };
   }
 
   // function fillClientDetails(name, value) {
@@ -108,21 +189,6 @@ const CreateContactModel = ({ setIsOpen, handleComplete }) => {
       ...city,
     }));
 
-  // const fillAddressInputs = (name, value) =>
-  //   setAddress((prev) => {
-  //     return {
-  //       ...prev,
-  //       [name]: value,
-  //     };
-  //   });
-
-  useEffect(() => {
-    clientDetails = {
-      ...clientDetails,
-      mobile,
-    };
-  }, [mobile]);
-
   useEffect(() => {
     clientDetails = {
       ...clientDetails,
@@ -153,16 +219,10 @@ const CreateContactModel = ({ setIsOpen, handleComplete }) => {
     >
       {(formik) => (
         <Form className="h-full">
-          <section className="p-5">
-            <div className="input-fname mb-3">
-              <label className="text-textColor block  mb-2">
-                Search Contacts
-              </label>
-              <SearchContact
-                selectedContacts={selectedContacts}
-                setSelectedContacts={setSelectedContacts}
-              />
-            </div>
+          <section className="p-5 pt-0">
+            <h2 className="text-xl font-medium mb-4 border-b py-3">
+              Create New Contact
+            </h2>
             <div className="input-fname mb-3">
               <label
                 htmlFor="personName"
@@ -363,13 +423,8 @@ const CreateContactModel = ({ setIsOpen, handleComplete }) => {
                       name="country"
                       label="country"
                       options={updatedCountries}
-                      // value={currentCountry}
+                      value={currentCountry}
                       placeholder="Country"
-                      // onChange={value => {
-                      //   setFieldValue("country", value);
-                      //   setFieldValue("state", null);
-                      //   setFieldValue("city", null);
-                      // }}
                       className="mb-2"
                       onChange={(value) => {
                         setCurrentCountry(value);
@@ -395,7 +450,7 @@ const CreateContactModel = ({ setIsOpen, handleComplete }) => {
                       id="state"
                       name="state"
                       options={updatedStates(currentCountry?.value || null)}
-                      // value={currentState}
+                      value={currentState}
                       onChange={(value) => {
                         setAddress((prev) => {
                           return {
@@ -426,7 +481,7 @@ const CreateContactModel = ({ setIsOpen, handleComplete }) => {
                         currentCountry?.value,
                         currentState?.value
                       )}
-                      // value={currentCity}
+                      value={currentCity}
                       onChange={(value) => {
                         setAddress((prev) => {
                           return {
@@ -453,17 +508,27 @@ const CreateContactModel = ({ setIsOpen, handleComplete }) => {
               </div>
             </div>
           </section>
-          <footer className="modal-footer">
+          <footer className="flex items-center p-5 pt-0 gap-2">
             <button
-              className="btn-outlined"
+              className="btn-outlined btn-small"
               type="button"
-              disabled={isLoading}
+              // disabled={isLoading}
               onClick={() => setIsOpen(false)}
             >
               cancel
             </button>
-            <button disabled={isLoading} className="btn-filled" type="submit">
-              {isLoading ? "Loading..." : "add deal"}
+            <button
+              disabled={isLoading}
+              type="submit"
+              className="btn-filled btn-small"
+            >
+              {isLoading ? (
+                "Loading..."
+              ) : (
+                <>
+                  <Icon icon="uil:plus" className="text-lg" /> New Contact
+                </>
+              )}
             </button>
           </footer>
         </Form>
@@ -490,7 +555,6 @@ const SearchContact = ({ selectedContacts, setSelectedContacts }) => {
           label: `${item.contactPerson} - ${item.company}`,
           value: item._id,
         }));
-        console.log(contacts);
         setSearchedContacts(contacts);
       }
     };

@@ -48,17 +48,19 @@ const Kanban = ({ setIsOpen }) => {
       >
         <CreatePipelineModel setIsOpen={setIsCreatePipelineModelOpen} />
       </Model>
-      <Model
-        title={"Add Deal"}
-        isOpen={isCreateDealModelOpen}
-        setIsOpen={setIsCreateDealModelOpen}
-      >
-        <CreateDealModel
-          activePipe={activePipeline}
-          pipelineId={activePipeline?._id}
+      {activePipeline && (
+        <Model
+          title={"Add Deal"}
+          isOpen={isCreateDealModelOpen}
           setIsOpen={setIsCreateDealModelOpen}
-        />
-      </Model>
+        >
+          <CreateDealModel
+            activePipe={activePipeline}
+            pipelineId={activePipeline?._id}
+            setIsOpen={setIsCreateDealModelOpen}
+          />
+        </Model>
+      )}
       <header className="px-5 py-3 flex justify-between items-center border-b">
         <div className="flex items-stretch gap-2">
           <button

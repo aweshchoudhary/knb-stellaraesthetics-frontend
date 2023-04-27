@@ -885,6 +885,10 @@ thead.css-120bgvu-MuiTableHead-root{
   margin: 0px;
 }
 
+.m-5 {
+  margin: 1.25rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -1412,6 +1416,10 @@ thead.css-120bgvu-MuiTableHead-root{
   padding-bottom: 1.25rem;
 }
 
+.pb-0 {
+  padding-bottom: 0px;
+}
+
 .pr-2 {
   padding-right: 0.5rem;
 }
@@ -1619,10 +1627,6 @@ thead.css-120bgvu-MuiTableHead-root{
 
   .md\:left-0 {
     left: 0px;
-  }
-
-  .md\:m-10 {
-    margin: 2.5rem;
   }
 
   .md\:block {

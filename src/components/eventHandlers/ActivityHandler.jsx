@@ -5,11 +5,10 @@ import {
   useLazyGetActivityQuery,
   useUpdateActivityMutation,
 } from "../../services/activityApi";
-import { useParams } from "react-router-dom";
-import moment from "moment";
 import { toast } from "react-toastify";
 import { Skeleton } from "@mui/material";
 import DealSelect from "./DealSelect";
+import ReactDatePicker from "react-datepicker";
 
 const activityOptions = [
   {
@@ -41,24 +40,19 @@ const activityOptions = [
 const CreateActivity = ({
   selectedInfo,
   setIsOpen,
-  dealData,
   isUpdate,
   activityId,
   card,
 }) => {
-  const params = useParams();
-  const { id } = params;
   const [selectedDeals, setSelectedDeals] = useState([card]);
   const [eventInfo, setEventInfo] = useState({
     title: "call",
     type: "call",
-    startDate: selectedInfo ? selectedInfo.start : "",
-    endDate: selectedInfo ? selectedInfo.end : "",
-    // startTime: selectedInfo ? selectedInfo.start : "",
-    // endTime: selectedInfo ? selectedInfo.end : "",
+    startDateTime: selectedInfo ? selectedInfo.start : new Date(),
+    endDateTime: selectedInfo ? selectedInfo.end : new Date(),
     location: "",
     description: "",
-    cardId: [],
+    cardId: selectedDeals,
     holder: "asdfasdfasdfasdfsadfsadfas",
   });
 
@@ -82,7 +76,8 @@ const CreateActivity = ({
     location: false,
   });
   async function handleCreateActivity() {
-    await createActivity({ ...eventInfo });
+    const filterCardId = eventInfo.cardId.map((item) => item.value);
+    await createActivity({ ...eventInfo, cardId: filterCardId });
     handleCancel();
   }
   async function handleUpdateActivity() {
@@ -101,13 +96,11 @@ const CreateActivity = ({
     setEventInfo({
       title: "call",
       type: "call",
-      startDate: selectedInfo ? selectedInfo.startStr : "",
-      endDate: selectedInfo ? selectedInfo.endStr : "",
-      startTime: "",
-      endTime: "",
+      startDateTime: selectedInfo ? selectedInfo.start : new Date(),
+      endDateTime: selectedInfo ? selectedInfo.end : new Date(),
       location: "",
       description: "",
-      cardId: id,
+      cardId: selectedDeals,
       holder: "asdfasdfasdfasdfsadfsadfas",
     });
     setIsOpen && setIsOpen(false);
@@ -199,54 +192,34 @@ const CreateActivity = ({
           })}
         </div>
         <div className="my-5">
-          <h2 className="mb-3">Date and Time</h2>
-          <div className="flex">
-            <div className="flex flex-1 gap-2 pr-2">
-              <input
-                type="date"
-                className="input flex-1"
-                name="startDate"
-                id="start-date"
-                onChange={(e) =>
-                  fillEventInfo(
-                    e.target.name,
-                    moment(e.target.value).toLocaleString()
-                  )
-                }
-                value={moment(eventInfo.startDate).format("YYYY-MM-DD")}
-              />
-              <input
-                type="time"
-                className="input flex-1"
-                name="startTime"
-                id="start-time"
-                onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
-                value={moment(eventInfo?.startDate).format("HH:MM")}
+          <h3 className="text-lg font-medium mb-3">Date and Time</h3>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <h2 className="mb-1">Start Date and Time</h2>
+              <ReactDatePicker
+                selected={eventInfo.startDateTime}
+                onChange={(date) => fillEventInfo("startDateTime", date)}
+                className="input"
+                minDate={new Date()}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                placeholderText="Select date and time"
               />
             </div>
-            <div className="flex flex-1 gap-2 items-center">
-              {" "}
-              -{" "}
-              <input
-                type="time"
-                className="input flex-1"
-                name="endTime"
-                id="end-time"
-                onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
-                value={moment(eventInfo?.endDate).format("HH:MM")}
-              />
-              <input
-                type="date"
-                className="input flex-1"
-                name="endDate"
-                id="end-date"
-                onChange={(e) =>
-                  fillEventInfo(
-                    e.target.name,
-                    moment(e.target.value).toLocaleString()
-                  )
-                }
-                value={moment(eventInfo.endDate).format("YYYY-MM-DD")}
+            <div className="flex-1">
+              <h2 className="mb-1">End Date and Time</h2>
+              <ReactDatePicker
+                selected={eventInfo.endDateTime}
+                onChange={(date) => fillEventInfo("endDateTime", date)}
+                minDate={new Date()}
+                className="input"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                placeholderText="Select date and time"
               />
             </div>
           </div>

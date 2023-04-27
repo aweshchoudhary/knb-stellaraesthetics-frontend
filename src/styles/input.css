@@ -70,6 +70,9 @@ option{
 .input {
   @apply border focus:border-textColor hover:border-textColor bg-transparent px-3 py-2 rounded w-full outline-0 outline-none text-sm;
 }
+
+
+
 .modal-footer {
   @apply py-2 px-5 h-[60px] border-t flex items-center justify-end gap-2 sticky bottom-0 left-0 bg-bg;
 }

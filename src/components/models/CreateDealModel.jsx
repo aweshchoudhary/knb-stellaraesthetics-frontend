@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Label from "../deal/label/Label";
-import { useGetStagesQuery } from "../../services/stageApi";
+import { useLazyGetStagesQuery } from "../../services/stageApi";
 import { useCreateCardMutation } from "../../services/dealApi";
 import { useGetPipelinesQuery } from "../../services/pipelineApi";
 import "react-phone-number-input/style.css";
@@ -12,12 +12,14 @@ import Step from "@mui/material/Step";
 
 import CreateContactModel from "./CreateContactModel";
 import { StepLabel } from "@mui/material";
+import ReactDatePicker from "react-datepicker";
 
 const steps = ["Create Contact", "Create Deal"];
 
-const CreateDealModel = ({ setIsOpen }) => {
+const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
+  const [selectedContacts, setSelectedContacts] = useState([]);
 
   const totalSteps = () => {
     return steps.length;
@@ -44,8 +46,14 @@ const CreateDealModel = ({ setIsOpen }) => {
         : activeStep + 1;
     setActiveStep(newActiveStep);
   };
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
-  const handleComplete = () => {
+  const handleComplete = (selectedData) => {
+    if (selectedData) {
+      setSelectedContacts(selectedData);
+    }
     const newCompleted = completed;
     newCompleted[activeStep] = true;
     setCompleted(newCompleted);
@@ -67,9 +75,19 @@ const CreateDealModel = ({ setIsOpen }) => {
             <CreateContactModel
               setIsOpen={setIsOpen}
               handleComplete={handleComplete}
+              selectedContacts={selectedContacts}
+              setSelectedContacts={setSelectedContacts}
             />
           ) : (
-            <CreateDeal setIsOpen={setIsOpen} />
+            <CreateDeal
+              pipelineId={pipelineId}
+              activePipe={activePipe}
+              selectedContacts={selectedContacts}
+              setSelectedContacts={setSelectedContacts}
+              setIsOpen={setIsOpen}
+              handleBack={handleBack}
+              activeStep={activeStep}
+            />
           )}
         </Box>
       </Box>
@@ -77,29 +95,28 @@ const CreateDealModel = ({ setIsOpen }) => {
   );
 };
 
-const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
+const CreateDeal = ({ setIsOpen, pipelineId, selectedContacts }) => {
+  const [getStages, { data = [] }] = useLazyGetStagesQuery();
+  const [dealData, setDealData] = useState({
+    title: "",
+    value: "",
+    currentStage: "",
+    label: "",
+    expectedClosingDate: new Date(),
+  });
+
+  const [pipeId, setPipeId] = useState(pipelineId);
+
   const [createCard, { isLoading, isError, error, isSuccess }] =
     useCreateCardMutation();
 
-  const { data = [] } = useGetStagesQuery(pipelineId);
   const { data: pipelines } = useGetPipelinesQuery();
 
-  const [dealData, setDealData] = useState({
-    title: "",
-    stage: data[0] || "",
-    value: { value: "", type: "inr" },
-    label: "",
-    expectedClosingDate: "",
-  });
+  async function handleCreateDeal() {
+    const contacts = selectedContacts.map((item) => item.value);
+    const newCard = { ...dealData, contacts };
 
-  async function handleCreateDeal(clientId) {
-    await createCard({ ...dealData, clientId });
-    setDealData({
-      value: { value: null, type: "inr" },
-      stage: null,
-      color: null,
-      expectedClosingDate: null,
-    });
+    await createCard(newCard);
     setIsOpen(false);
   }
 
@@ -113,11 +130,28 @@ const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
   }
 
   useEffect(() => {
+    const fetchStages = async () => {
+      await getStages(pipeId);
+    };
+    if (pipeId) fetchStages();
+  }, [pipeId]);
+  // console.log(Country.getAllCountries());
+  useEffect(() => {
     if (isSuccess) toast.success("Deal has been created");
   }, [isSuccess]);
+
   useEffect(() => {
     if (isError) toast.error(error);
   }, [isError]);
+
+  useEffect(() => {
+    if (data.length) {
+      setDealData((prev) => ({
+        ...prev,
+        currentStage: data[0]._id,
+      }));
+    }
+  }, [data]);
 
   return (
     <>
@@ -178,6 +212,35 @@ const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
               </select>
             </div>
           </div>
+          <div className="input-pipeline mb-3">
+            <label htmlFor="stage" className="text-textColor block mb-2">
+              Pipeline
+            </label>
+            <select
+              name="pipeline"
+              id="pipeline"
+              className="input capitalize"
+              onChange={(e) => setPipeId(e.target.value)}
+            >
+              {pipelines?.map((item, i) => {
+                return item._id === pipelineId ? (
+                  <option
+                    key={i}
+                    selected
+                    defaultValue={item._id}
+                    className="text-black"
+                    value={item._id}
+                  >
+                    {item.name}
+                  </option>
+                ) : (
+                  <option key={i} className="text-black" value={i}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
           <div className="input-stage mb-3">
             <label htmlFor="stage" className="text-textColor block mb-2">
               Stage
@@ -189,7 +252,7 @@ const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
               onChange={(e) => fillDealDetails(e.target.name, e.target.value)}
             >
               {data?.map((item, i) => {
-                return i === 0 ? (
+                return item._id === dealData.currentStage ? (
                   <option
                     key={i}
                     className="text-black"
@@ -207,35 +270,7 @@ const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
               })}
             </select>
           </div>
-          <div className="input-pipeline mb-3">
-            <label htmlFor="stage" className="text-textColor block mb-2">
-              Pipeline
-            </label>
-            <select
-              name="stage"
-              id="stage"
-              className="input capitalize"
-              onChange={(e) => fillDealDetails(e.target.name, e.target.value)}
-            >
-              {pipelines?.map((item, i) => {
-                return item._id === pipelineId ? (
-                  <option
-                    key={i}
-                    selected
-                    defaultValue={i}
-                    className="text-black"
-                    value={i}
-                  >
-                    {item.name}
-                  </option>
-                ) : (
-                  <option key={i} className="text-black" value={i}>
-                    {item.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+
           <div className="input-label mb-3">
             <label htmlFor="stage" className="text-textColor block mb-2">
               Label
@@ -246,10 +281,11 @@ const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
             <label htmlFor="close-date" className="text-textColor block mb-2">
               Expected Close Date
             </label>
-            <input
+            {/* <input
               type="date"
               id="close-date"
               name="expectedClosingDate"
+              
               onChange={(e) =>
                 fillDealDetails(
                   e.target.name,
@@ -257,6 +293,13 @@ const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
                 )
               }
               className="input"
+            /> */}
+            <ReactDatePicker
+              className="input"
+              name="expectedClosingDate"
+              selected={dealData.expectedClosingDate}
+              onChange={(date) => fillDealDetails("expectedClosingDate", date)}
+              minDate={new Date()}
             />
           </div>
         </div>
