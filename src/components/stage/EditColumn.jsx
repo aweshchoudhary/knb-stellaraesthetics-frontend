@@ -6,6 +6,7 @@ import {
   useDeleteStageMutation,
   useUpdateStageMutation,
 } from "../../services/stageApi";
+import { toast } from "react-toastify";
 
 const EditColumn = ({ provided, item, pipelineId }) => {
   const [
@@ -24,8 +25,16 @@ const EditColumn = ({ provided, item, pipelineId }) => {
     await updateStage({ name: stageName, stageId: item._id });
   }
   async function handleDeleteStage() {
-    await deleteStage(item.position);
+    await deleteStage({ position: item.position, pipelineId });
   }
+
+  useEffect(() => {
+    if (isDeleteSuccess) toast.success("Stage has been deleted");
+  }, [isDeleteSuccess]);
+
+  useEffect(() => {
+    if (isUpdateSuccess) toast.success("Stage has been updated");
+  }, [isUpdateSuccess]);
 
   return (
     <>
@@ -107,45 +116,5 @@ const EditColumn = ({ provided, item, pipelineId }) => {
     </>
   );
 };
-
-// function AddStageModel({ setIsOpen, postin }) {
-//   const [name, setName] = useState("");
-//   const [position, setPosition] = useState(postin || 0);
-
-//   const dispatch = useDispatch();
-
-//   function addStage(position) {
-//     dispatch(createStage({ name: "New Stage", position: position + 1 }));
-//   }
-
-//   function closeModel() {
-//     setName("");
-//     setIsOpen(false);
-//   }
-//   return (
-//     <div className="p-5">
-//       <h2 className="text-lg font-medium mb-3">Create Stage</h2>
-//       <div>
-//         <input
-//           type="text"
-//           placeholder="Stage name"
-//           id="stage-name"
-//           name="stage-name"
-//           className="input"
-//           value={name}
-//           onChange={(e) => setName(e.target.value)}
-//         />
-//       </div>
-//       <div className="flex items-center mt-3 gap-2">
-//         <button className="btn-outlined" onClick={closeModel}>
-//           cancel
-//         </button>
-//         <button className="btn-filled" onClick={addStage}>
-//           save
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
 
 export default EditColumn;

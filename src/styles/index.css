@@ -1424,6 +1424,10 @@ thead.css-120bgvu-MuiTableHead-root{
   padding-top: 0.75rem;
 }
 
+.pt-5 {
+  padding-top: 1.25rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -1602,14 +1606,6 @@ thead.css-120bgvu-MuiTableHead-root{
 }
 
 @media (min-width: 640px) {
-  .sm\:flex {
-    display: flex;
-  }
-
-  .sm\:w-1\/2 {
-    width: 50%;
-  }
-
   .sm\:text-3xl {
     font-size: 1.875rem;
     line-height: 2.25rem;
@@ -1623,6 +1619,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
   .md\:left-0 {
     left: 0px;
+  }
+
+  .md\:m-10 {
+    margin: 2.5rem;
   }
 
   .md\:block {

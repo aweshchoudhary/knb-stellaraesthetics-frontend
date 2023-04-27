@@ -20,10 +20,13 @@ const CreateStageModel = ({ setIsOpen, position, pipelineId }) => {
     if (isError) {
       toast.error("Something went wrong!");
     }
-    if (isSuccess && stageName > 4) {
+  }, [isError]);
+
+  useEffect(() => {
+    if (isSuccess) {
       toast.success(stageName + " has been created.");
     }
-  }, [isSuccess, isError]);
+  }, [isSuccess]);
 
   return (
     <section className="p-5">

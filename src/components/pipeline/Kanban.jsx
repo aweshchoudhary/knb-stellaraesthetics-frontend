@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useGetPipelinesQuery } from "../../services/pipelineApi";
+import { Tooltip } from "@mui/material";
 import Model from "../models/Model";
 import CreatePipelineModel from "../models/CreatePipelineModel";
 import { Icon } from "@iconify/react";
@@ -8,10 +8,11 @@ import CreateDealModel from "../models/CreateDealModel";
 import { useDispatch, useSelector } from "react-redux";
 import { addPipeline } from "../../state/features/globalSlice";
 import Stages from "../stage/Stages";
-import { Tooltip } from "@mui/material";
+import { useGetPipelinesQuery } from "../../services/pipelineApi";
 
 const Kanban = ({ setIsOpen }) => {
   const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
+  const [isStagesLength, setIsStagesLength] = useState(false);
   const dispatch = useDispatch();
   const [activePipeline, setActivePipeline] = useState(null);
 
@@ -58,11 +59,12 @@ const Kanban = ({ setIsOpen }) => {
           setIsOpen={setIsCreateDealModelOpen}
         />
       </Model>
-      <section className="px-5 py-3 flex justify-between items-center border-b">
+      <header className="px-5 py-3 flex justify-between items-center border-b">
         <div className="flex items-stretch gap-2">
           <button
             className="btn-filled btn-small"
             onClick={() => setIsCreateDealModelOpen(true)}
+            disabled={!isStagesLength}
           >
             <Icon icon="uil:plus" className="text-lg" /> <span>Deal</span>
           </button>
@@ -120,20 +122,26 @@ const Kanban = ({ setIsOpen }) => {
             </button>
           </Tooltip>
         </div>
+      </header>
+      <section>
+        {data.length && activePipeline ? (
+          <Stages
+            setIsStagesLength={setIsStagesLength}
+            pipeline={activePipeline}
+            setIsEditStageView={setIsOpen}
+          />
+        ) : (
+          <p className="p-10">
+            No pipeline has been created yet.{" "}
+            <button
+              className="underline"
+              onClick={() => setIsCreatePipelineModelOpen(true)}
+            >
+              Create
+            </button>
+          </p>
+        )}
       </section>
-      {data.length && activePipeline ? (
-        <Stages pipeline={activePipeline} setIsEditStageView={setIsOpen} />
-      ) : (
-        <p className="p-10">
-          No pipeline has been created yet.{" "}
-          <button
-            className="underline"
-            onClick={() => setIsCreatePipelineModelOpen(true)}
-          >
-            Create
-          </button>
-        </p>
-      )}
     </>
   ) : (
     <section className="h-screen w-full flex justify-center items-center">

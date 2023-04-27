@@ -4,12 +4,18 @@ import { toast } from "react-toastify";
 import { Icon } from "@iconify/react";
 
 const EditPipelineName = ({ name, id }) => {
-  const [pipelineName, setPipelineName] = useState(name);
+  const [pipelineName, setPipelineName] = useState(name || "");
+
   const [updatePipeline, { isLoading, isSuccess }] =
     useUpdatePipelineMutation();
+
   async function handleUpdatePipelineName() {
     await updatePipeline({ id, update: { name: pipelineName } });
   }
+  function handleReset() {
+    setPipelineName(name);
+  }
+
   useEffect(() => {
     if (isSuccess) {
       toast.success("Name updated successfully");
@@ -24,12 +30,20 @@ const EditPipelineName = ({ name, id }) => {
         className="input w-1/4"
         onChange={(e) => setPipelineName(e.target.value)}
       />
-      {pipelineName === name ? (
+      {pipelineName !== name ? (
         <div className="btns flex items-stretch gap-1">
-          <button className="btn-filled btn-small">
+          <button
+            onClick={handleUpdatePipelineName}
+            className="btn-filled btn-small"
+            disabled={isLoading}
+          >
             <Icon icon="uil:check" className="text-xl" />
           </button>
-          <button className="btn-outlined btn-small">
+          <button
+            disabled={isLoading}
+            onClick={handleReset}
+            className="btn-outlined btn-small"
+          >
             <Icon icon="uil:times" className="text-xl" />
           </button>
         </div>

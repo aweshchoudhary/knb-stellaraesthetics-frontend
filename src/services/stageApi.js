@@ -37,16 +37,16 @@ export const stageApi = createApi({
       invalidatesTags: ["stage"],
     }),
     reorderStage: builder.mutation({
-      query: (data) => ({
-        url: "/stage/reorder",
+      query: (stage) => ({
+        url: "/stage/reorder/" + stage.pipelineId,
         method: "PUT",
-        body: data,
+        body: stage.data,
       }),
       invalidatesTags: ["stage"],
     }),
     deleteStage: builder.mutation({
-      query: (position) => ({
-        url: "/stage/" + position,
+      query: (stage) => ({
+        url: `/stage/${stage.pipelineId}/${stage.position}`,
         method: "DELETE",
       }),
       invalidatesTags: ["stage"],

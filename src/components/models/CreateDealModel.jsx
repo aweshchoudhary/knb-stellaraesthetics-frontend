@@ -1,64 +1,97 @@
 import { useEffect, useState } from "react";
-import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css";
 import Label from "../deal/label/Label";
 import { useGetStagesQuery } from "../../services/stageApi";
-import { useCreateClientMutation } from "../../services/clientApi";
 import { useCreateCardMutation } from "../../services/dealApi";
 import { useGetPipelinesQuery } from "../../services/pipelineApi";
-import Address from "../global/Address";
+import "react-phone-number-input/style.css";
+import { toast } from "react-toastify";
 
-const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
-  const [createCard, { isLoading, isError, isSuccess }] =
+import Box from "@mui/material/Box";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+
+import CreateContactModel from "./CreateContactModel";
+import { StepLabel } from "@mui/material";
+
+const steps = ["Create Contact", "Create Deal"];
+
+const CreateDealModel = ({ setIsOpen }) => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [completed, setCompleted] = useState({});
+
+  const totalSteps = () => {
+    return steps.length;
+  };
+
+  const completedSteps = () => {
+    return Object.keys(completed).length;
+  };
+
+  const isLastStep = () => {
+    return activeStep === totalSteps() - 1;
+  };
+
+  const allStepsCompleted = () => {
+    return completedSteps() === totalSteps();
+  };
+
+  const handleNext = () => {
+    const newActiveStep =
+      isLastStep() && !allStepsCompleted()
+        ? // It's the last step, but not all steps have been completed,
+          // find the first step that has been completed
+          steps.findIndex((step, i) => !(i in completed))
+        : activeStep + 1;
+    setActiveStep(newActiveStep);
+  };
+
+  const handleComplete = () => {
+    const newCompleted = completed;
+    newCompleted[activeStep] = true;
+    setCompleted(newCompleted);
+    handleNext();
+  };
+
+  return (
+    <section className="container h-full">
+      <Box sx={{ width: "100%" }} className="pt-5">
+        <Stepper nonLinear activeStep={activeStep} alternativeLabel>
+          {steps.map((label, index) => (
+            <Step key={label} completed={completed[index]}>
+              <StepLabel color="inherit">{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Box>
+          {activeStep === 0 ? (
+            <CreateContactModel
+              setIsOpen={setIsOpen}
+              handleComplete={handleComplete}
+            />
+          ) : (
+            <CreateDeal setIsOpen={setIsOpen} />
+          )}
+        </Box>
+      </Box>
+    </section>
+  );
+};
+
+const CreateDeal = ({ setIsOpen, pipelineId, activePipe }) => {
+  const [createCard, { isLoading, isError, error, isSuccess }] =
     useCreateCardMutation();
-  const [
-    createClient,
-    {
-      data: clientData,
-      isLoading: isClientLoading,
-      isError: isClientError,
-      isSuccess: isClientSuccess,
-    },
-  ] = useCreateClientMutation();
-  const { data: stages } = useGetStagesQuery(pipelineId);
+
+  const { data = [] } = useGetStagesQuery(pipelineId);
   const { data: pipelines } = useGetPipelinesQuery();
 
   const [dealData, setDealData] = useState({
     title: "",
-    stage: "",
+    stage: data[0] || "",
     value: { value: "", type: "inr" },
     label: "",
     expectedClosingDate: "",
   });
-  const [clientDetails, setClientDetails] = useState({
-    company: "",
-    contactPerson: "",
-    mobile: "",
-    whatsapp: "",
-    email: "",
-  });
 
-  const [activePipeline, setActivePipeline] = useState(activePipe);
-
-  const [mobile, setMobile] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [sameNumber, setSameNumber] = useState(false);
-  const [address, setAddress] = useState({});
-
-  const region = navigator?.language?.split("-")[1];
-
-  async function handlCreateClient() {
-    createClient({ ...clientDetails, address });
-    setClientDetails({
-      company: null,
-      title: null,
-      contactPerson: null,
-      mobile: null,
-      whatsapp: null,
-      email: null,
-      address: {},
-    });
-  }
   async function handleCreateDeal(clientId) {
     await createCard({ ...dealData, clientId });
     setDealData({
@@ -70,14 +103,6 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
     setIsOpen(false);
   }
 
-  function fillClientDetails(name, value) {
-    setClientDetails((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  }
   function fillDealDetails(name, value) {
     setDealData((prev) => {
       return {
@@ -86,79 +111,18 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
       };
     });
   }
-  function handleSameNumber(e) {
-    if (e.target.checked) {
-      setSameNumber(true);
-      return;
-    }
-    setSameNumber(false);
-  }
 
   useEffect(() => {
-    setClientDetails((prev) => {
-      return {
-        ...prev,
-        mobile,
-      };
-    });
-  }, [mobile]);
-
+    if (isSuccess) toast.success("Deal has been created");
+  }, [isSuccess]);
   useEffect(() => {
-    setClientDetails((prev) => {
-      return {
-        ...prev,
-        whatsapp: sameNumber ? mobile : whatsapp,
-      };
-    });
-  }, [whatsapp, sameNumber]);
-
-  useEffect(() => {
-    if (!isClientLoading && isClientSuccess && clientData?.data?._id) {
-      handleCreateDeal(clientData.data._id);
-    }
-  }, [isClientLoading, isClientSuccess]);
-
-  useEffect(() => {
-    if (pipelines?.length) {
-      const index = pipelines.findIndex(
-        (pipeline) => pipeline._id === pipelineId
-      );
-      setActivePipeline(pipelines[index]);
-    }
-  }, [pipelines]);
+    if (isError) toast.error(error);
+  }, [isError]);
 
   return (
     <>
-      <div className="container sm:flex h-full">
-        <div className="sm:w-1/2 shrink-0 h-full p-5">
-          <div className="input-fname mb-3">
-            <label htmlFor="personName" className="text-textColor block  mb-2">
-              Contact Person
-            </label>
-            <input
-              type="text"
-              name="contactPerson"
-              id="contactPerson"
-              placeholder="Full Name"
-              className="input"
-              value={clientDetails.contactPerson}
-              onChange={(e) => fillClientDetails(e.target.name, e.target.value)}
-            />
-          </div>
-          <div className="input-organization mb-3">
-            <label htmlFor="organization" className="text-textColor block mb-2">
-              Company
-            </label>
-            <input
-              type="text"
-              name="company"
-              id="company"
-              placeholder="Company Name"
-              className="input"
-              value={clientDetails.company}
-              onChange={(e) => fillClientDetails(e.target.name, e.target.value)}
-            />
-          </div>
+      <section className="container h-full">
+        <div className="h-full p-5">
           <div className="input-title mb-3">
             <label htmlFor="title" className="text-textColor block  mb-2">
               Deal Title
@@ -224,11 +188,18 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
               className="input capitalize"
               onChange={(e) => fillDealDetails(e.target.name, e.target.value)}
             >
-              <option className="text-black" defaultValue={""}>
-                Select Stage
-              </option>
-              {stages?.map((item, i) => {
-                return (
+              {data?.map((item, i) => {
+                return i === 0 ? (
+                  <option
+                    key={i}
+                    className="text-black"
+                    selected
+                    defaultValue={item._id}
+                    value={item._id}
+                  >
+                    {item.name}
+                  </option>
+                ) : (
                   <option key={i} className="text-black" value={item._id}>
                     {item.name}
                   </option>
@@ -289,81 +260,21 @@ const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
             />
           </div>
         </div>
-        <div className="flex-1 h-full p-3">
-          <div className="input-group mb-3 w-full">
-            <label htmlFor="personName" className="text-textColor block  mb-2">
-              Mobile
-            </label>
-            <PhoneInput
-              placeholder="Mobile Number"
-              value={mobile}
-              defaultCountry={region}
-              onChange={setMobile}
-              className="input"
-            />
-          </div>
-          <div className="input-group mb-3 w-full">
-            <label htmlFor="personName" className="text-textColor block  mb-2">
-              Whatsapp Number
-            </label>
-            <PhoneInput
-              placeholder="Whatsapp Number"
-              value={sameNumber ? mobile : whatsapp}
-              disabled={sameNumber}
-              defaultCountry={region}
-              onChange={setWhatsapp}
-              className="input"
-            />
-          </div>
-          <div className="input-group mb-3 w-full flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="same-number"
-              id="same-number"
-              onChange={handleSameNumber}
-              checked={sameNumber}
-            />
-            <label htmlFor="same-number" className="text-textColor block ">
-              Same as mobile number
-            </label>
-          </div>
-          <div className="input-group mb-3">
-            <label htmlFor="personName" className="text-textColor block  mb-2">
-              Email
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Email"
-                className="input"
-                value={clientDetails.email}
-                onChange={(e) =>
-                  fillClientDetails(e.target.name, e.target.value)
-                }
-              />
-            </div>
-          </div>
-          <div className="input-address mb-3">
-            <Address address={address} setAddress={setAddress} />
-          </div>
-        </div>
-      </div>
+      </section>
       <footer className="modal-footer">
         <button
           className="btn-outlined"
-          disabled={isClientLoading || isLoading}
+          disabled={isLoading}
           onClick={() => setIsOpen(false)}
         >
           cancel
         </button>
         <button
-          onClick={handlCreateClient}
-          disabled={isClientLoading || isLoading}
+          onClick={handleCreateDeal}
+          disabled={isLoading}
           className="btn-filled"
         >
-          {isClientLoading || isLoading ? "Loading..." : "add deal"}
+          {isLoading ? "Loading..." : "add deal"}
         </button>
       </footer>
     </>

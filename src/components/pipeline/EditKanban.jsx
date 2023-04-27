@@ -10,9 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import EditStages from "../stage/EditStages";
 import { addPipeline, removePipeline } from "../../state/features/globalSlice";
 import EditPipelineName from "./EditPipelineName";
+import { Skeleton } from "@mui/material";
 
 const EditKanban = ({ setIsOpen }) => {
   const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
+  const [isStagesLength, setIsStagesLength] = useState(false);
+
   const {
     data = [],
     isLoading,
@@ -29,6 +32,7 @@ const EditKanban = ({ setIsOpen }) => {
 
   const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
     useState(false);
+
   const [activePipeline, setActivePipeline] = useState(null);
 
   function handleStageEditViewClose() {
@@ -50,40 +54,69 @@ const EditKanban = ({ setIsOpen }) => {
     }
   }, [data, isSuccess]);
 
-  return !isLoading && !isFetching && isSuccess ? (
-    <>
-      <Model
-        title={"Create Pipeline"}
-        isOpen={isCreatePipelineModelOpen}
-        setIsOpen={setIsCreatePipelineModelOpen}
-      >
-        <CreatePipelineModel setIsOpen={isCreatePipelineModelOpen} />
-      </Model>
-      <section className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
-        <EditPipelineName name={activePipeline?.name} />
-        <div className="flex items-center gap-2">
-          <button
-            className="btn-filled bg-red-600 border-red-600 btn-small"
-            onClick={handleDeletePipeline}
-          >
-            {!isPiplineDeleting ? "delete pipeline" : "Deleting..."}
-          </button>
-          <button
-            className="btn-filled btn-small"
-            onClick={handleStageEditViewClose}
-          >
-            close
-          </button>
+  return (
+    isSuccess && (
+      <>
+        <Model
+          title={"Create Pipeline"}
+          isOpen={isCreatePipelineModelOpen}
+          setIsOpen={setIsCreatePipelineModelOpen}
+        >
+          <CreatePipelineModel setIsOpen={isCreatePipelineModelOpen} />
+        </Model>
+        <div
+          className={
+            !isLoading && !isFetching && isSuccess
+              ? "opacity-100"
+              : "opacity-50"
+          }
+        >
+          <header className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
+            {activePipeline ? (
+              <EditPipelineName
+                name={activePipeline?.name}
+                id={activePipeline?._id}
+              />
+            ) : (
+              <Skeleton width={200} height={"100%"} />
+            )}
+            <div className="flex items-center gap-2">
+              <button
+                className="btn-filled bg-red-600 border-red-600 btn-small"
+                onClick={handleDeletePipeline}
+              >
+                {!isPiplineDeleting ? "delete pipeline" : "Deleting..."}
+              </button>
+              <button
+                className="btn-filled btn-small"
+                onClick={handleStageEditViewClose}
+              >
+                close
+              </button>
+            </div>
+          </header>
+          <section>
+            {data.length && activePipeline ? (
+              <EditStages
+                setIsStagesLength={setIsStagesLength}
+                pipeline={activePipeline}
+                setIsEditStageView={setIsOpen}
+              />
+            ) : (
+              <p className="p-10">
+                No pipeline has been created yet.{" "}
+                <button
+                  className="underline"
+                  onClick={() => setIsCreatePipelineModelOpen(true)}
+                >
+                  Create
+                </button>
+              </p>
+            )}
+          </section>
         </div>
-      </section>
-      {data.length && activePipeline && (
-        <EditStages pipeline={activePipeline} setIsEditStageView={setIsOpen} />
-      )}
-    </>
-  ) : (
-    <section className="h-screen w-full flex justify-center items-center">
-      <Loader />
-    </section>
+      </>
+    )
   );
 };
 

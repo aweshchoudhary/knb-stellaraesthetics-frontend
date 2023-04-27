@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Model from "../models/Model";
 import Column from "./Column";
@@ -7,9 +7,15 @@ import CreateStageModel from "../models/CreateStageModel";
 import { useGetStagesQuery } from "../../services/stageApi";
 import { useUpdateCardStageMutation } from "../../services/dealApi";
 
-const Stages = ({ pipeline }) => {
-  const { data, isLoading, isError, isFetching, isSuccess, error } =
-    useGetStagesQuery(pipeline._id);
+const Stages = ({ pipeline, setIsStagesLength }) => {
+  const {
+    data = [],
+    isLoading,
+    isError,
+    isFetching,
+    isSuccess,
+    error,
+  } = useGetStagesQuery(pipeline._id);
   const [
     updateCardStage,
     { isLoading: isUpdatingStage, isSuccess: isUpdateSuccess },
@@ -30,6 +36,13 @@ const Stages = ({ pipeline }) => {
     }
   };
 
+  useEffect(() => {
+    if (data.length) {
+      setIsStagesLength(true);
+    } else {
+      setIsStagesLength(false);
+    }
+  }, [data]);
   return (
     isSuccess && (
       <>
@@ -82,19 +95,12 @@ const Stages = ({ pipeline }) => {
 };
 
 const Models = ({
-  editDealModelDisplay,
-  setEditDealModelDisplay,
   setCreateStageModelDisplay,
   createStageModelDisplay,
   pipeline,
 }) => {
   return (
     <>
-      <Model
-        title={"Edit Deal"}
-        isOpen={editDealModelDisplay}
-        setIsOpen={setEditDealModelDisplay}
-      ></Model>
       <Model
         title="Create Stage"
         isOpen={createStageModelDisplay}

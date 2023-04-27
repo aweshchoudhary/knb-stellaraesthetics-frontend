@@ -13,8 +13,18 @@ export const clientApi = createApi({
         return response.data;
       },
     }),
-    getClients: builder.query({
+    getClientsByCardId: builder.query({
       query: (id) => "/client/get-client/" + id,
+      providesTags: ["client"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
+    getClients: builder.query({
+      query: (data) => ({
+        url: "/client/get-clients/",
+        params: data.params,
+      }),
       providesTags: ["client"],
       transformResponse: (response) => {
         return response.data;
@@ -51,5 +61,6 @@ export const {
   useCreateClientMutation,
   useDeleteClientMutation,
   useUpdateClientMutation,
+  useLazyGetClientsQuery,
   useUpdateClientStageMutation,
 } = clientApi;

@@ -1,27 +1,38 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
 import EditColumn from "./EditColumn";
-import Loader from "../global/Loader";
 import {
   useGetStagesQuery,
   useReorderStageMutation,
 } from "../../services/stageApi";
+import Model from "../models/Model";
+import CreateStageModel from "../models/CreateStageModel";
 
-const EditStage = ({ pipeline }) => {
-  const { data, isLoading, isSuccess, isFetching, isError } = useGetStagesQuery(
-    pipeline._id
-  );
+const EditStage = ({ pipeline, setIsStagesLength }) => {
+  const {
+    data = [],
+    isLoading,
+    isSuccess,
+    isFetching,
+    isError,
+  } = useGetStagesQuery(pipeline._id);
   const [reorderStages, { isLoading: isStagesReorderLoading }] =
     useReorderStageMutation();
+
   const onDragComplete = async (result) => {
     if (!result.destination) return;
     const { destination, draggableId } = result;
     await reorderStages({
-      stageId: draggableId,
-      newPosition: destination.index,
+      pipelineId: pipeline._id,
+      data: {
+        stageId: draggableId,
+        newPosition: destination.index,
+      },
     });
   };
+
+  const [createStageModelDisplay, setCreateStageModelDisplay] = useState(false);
 
   useEffect(() => {
     if (isError) {
@@ -29,11 +40,31 @@ const EditStage = ({ pipeline }) => {
     }
   }, [isError]);
 
+  useEffect(() => {
+    if (data.length) {
+      setIsStagesLength(true);
+    } else {
+      setIsStagesLength(false);
+    }
+  }, [data]);
+
   return (
     <>
+      <Model
+        title={"Create Stage"}
+        isOpen={createStageModelDisplay}
+        setIsOpen={setCreateStageModelDisplay}
+      >
+        <CreateStageModel
+          pipelineId={pipeline._id}
+          setIsOpen={setCreateStageModelDisplay}
+        />
+      </Model>
       <section
         className={`h-[calc(100%-120px)] bg-paper ${
-          !isLoading && !isFetching && isSuccess ? "opacity-100" : "opacity-50"
+          !isLoading && !isFetching && isSuccess && !isStagesReorderLoading
+            ? "opacity-100"
+            : "opacity-50"
         }`}
       >
         <DragDropContext onDragEnd={onDragComplete}>
@@ -45,24 +76,36 @@ const EditStage = ({ pipeline }) => {
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
-                  {data.length
-                    ? data.map((item) => (
-                        <Draggable
-                          key={item._id}
-                          draggableId={item._id}
-                          index={item.position}
+                  {data.length ? (
+                    data.map((item) => (
+                      <Draggable
+                        key={item._id}
+                        draggableId={item._id}
+                        index={item.position}
+                      >
+                        {(provided) => (
+                          <EditColumn
+                            provided={provided}
+                            length={data.length}
+                            item={item}
+                            pipelineId={pipeline._id}
+                          />
+                        )}
+                      </Draggable>
+                    ))
+                  ) : (
+                    <section className="md:p-10 bg-bg w-full p-5">
+                      <p>
+                        No stages has been created yet.{" "}
+                        <button
+                          onClick={() => setCreateStageModelDisplay(true)}
+                          className="underline"
                         >
-                          {(provided) => (
-                            <EditColumn
-                              provided={provided}
-                              length={data.length}
-                              item={item}
-                              pipelineId={pipeline._id}
-                            />
-                          )}
-                        </Draggable>
-                      ))
-                    : null}
+                          Create One
+                        </button>
+                      </p>
+                    </section>
+                  )}
                   {provided.placeholder}
                 </div>
               )}
