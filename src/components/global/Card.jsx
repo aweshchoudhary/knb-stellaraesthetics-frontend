@@ -59,7 +59,7 @@ const Card = ({ card }) => {
       <div className="bottom flex items-center gap-3 text-sm">
         <div className="user">
           <Tooltip title={client.contactPerson}>
-            <Icon icon={"teenyicons:users-solid"}  />
+            <Icon icon={"teenyicons:users-solid"} />
           </Tooltip>
         </div>
         <div className="amount flex items-center">

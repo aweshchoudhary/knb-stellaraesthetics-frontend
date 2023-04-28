@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   useDeleteClientMutation,
   useGetClientQuery,
@@ -10,6 +10,7 @@ import { Icon } from "@iconify/react";
 import Tabs from "../components/global/Tabs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import formatNumber from "../components/functions/formatNumber";
 
 import EventTabsContainer from "../components/eventHandlers/EventTabsContainer";
 import ActivitiesTabs from "../components/eventHandlers/ActivitiesTabs";
@@ -18,10 +19,24 @@ import ActivityHandler from "../components/eventHandlers/ActivityHandler";
 import NoteHandler from "../components/eventHandlers/NoteHandler";
 import FileHandler from "../components/eventHandlers/FileHandler";
 import EmailHandler from "../components/eventHandlers/EmailHandler";
+import { useGetActivitiesByClientIdQuery } from "../services/activityApi";
+import moment from "moment";
+import { useGetCardsByClientIdQuery } from "../services/dealApi";
+import Card from "../components/global/Card";
 
 const Contact = () => {
   const params = useParams();
   const { id } = params;
+  const {
+    data: activities,
+    isLoading: isActivitiesLoading,
+    isFetching: isActivitiesFetching,
+  } = useGetActivitiesByClientIdQuery(id);
+  const {
+    data: cards,
+    isLoading: isCardsLoading,
+    isFetching: isCardsFetching,
+  } = useGetCardsByClientIdQuery(id);
   const { data, isLoading, isSuccess, isFetching } = useGetClientQuery(id);
   const [updateData, setUpdateData] = useState({});
   const navigate = useNavigate();
@@ -70,7 +85,7 @@ const Contact = () => {
       toast.success("Contact Deleted Successfully");
     }
   }, [isDeleteSuccess]);
-
+  console.log(activities);
   return (
     <>
       <Header title={"Contact"} />
@@ -114,27 +129,22 @@ const Contact = () => {
                   <h2>Open Deals</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-2">
-                  <div className="w-full py-3 px-4 border flex justify-between items-center">
-                    <div className="flex gap-3 items-center">
-                      <span className="w-[30px] h-[30px] rounded-full bg-gray-500"></span>
-                      <h2>Deal 1</h2>
-                    </div>
-                    <div>10,000Rs</div>
-                  </div>
-                  <div className="w-full py-3 px-4 border flex justify-between items-center">
-                    <div className="flex gap-3 items-center">
-                      <span className="w-[30px] h-[30px] rounded-full bg-gray-500"></span>
-                      <h2>Deal 1</h2>
-                    </div>
-                    <div>10,000Rs</div>
-                  </div>
-                  <div className="w-full py-3 px-4 border flex justify-between items-center">
-                    <div className="flex gap-3 items-center">
-                      <span className="w-[30px] h-[30px] rounded-full bg-gray-500"></span>
-                      <h2>Deal 1</h2>
-                    </div>
-                    <div>10,000Rs</div>
-                  </div>
+                  {cards?.length !== 0 &&
+                    cards?.map((card) => {
+                      return (
+                        // <Link
+                        //   to={"/deals/" + card._id}
+                        //   className="text-sm w-full py-3 px-4 border flex justify-between items-center"
+                        // >
+                        //   <div className="flex gap-2 items-center">
+                        //     {/* <span className="w-[20px] h-[20px] rounded-full bg-gray-500"></span> */}
+                        //     <h2>{card.title}</h2>
+                        //   </div>
+                        //   <div>{formatNumber(card.value.value)}</div>
+                        // </Link>
+                        <Card card={card} />
+                      );
+                    })}
                 </div>
               </div>
               <div className="flex-1 border-r">
@@ -142,27 +152,22 @@ const Contact = () => {
                   <h2>Next Activities</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-3">
-                  <div className="w-full py-3 px-4 border flex justify-between items-center">
-                    <div className="flex gap-3 items-center">
-                      <Icon icon="uil:phone" className="text-xl" />
-                      <h2>Call For Details</h2>
-                    </div>
-                    <div>20 April 2023</div>
-                  </div>
-                  <div className="w-full py-3 px-4 border flex justify-between items-center">
-                    <div className="flex gap-3 items-center">
-                      <Icon icon="uil:envelope" className="text-xl" />
-                      <h2>Email For Reminder</h2>
-                    </div>
-                    <div>24 April 2023</div>
-                  </div>
-                  <div className="w-full py-3 px-4 border flex justify-between items-center">
-                    <div className="flex gap-3 items-center">
-                      <Icon icon="uil:envelope" className="text-xl" />
-                      <h2>Email For Reminder</h2>
-                    </div>
-                    <div>24 April 2023</div>
-                  </div>
+                  {activities?.length !== 0 &&
+                    activities?.map((activity) => {
+                      return (
+                        <div className="w-full py-3 px-4 border flex justify-between items-center">
+                          <div className="flex gap-3 items-center">
+                            <Icon icon={activity?.icon} className="text-xl" />
+                            <h2>{activity.title}</h2>
+                          </div>
+                          <div>
+                            {moment(activity.startDateTime).format(
+                              "DD-MM-YYYY"
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </div>

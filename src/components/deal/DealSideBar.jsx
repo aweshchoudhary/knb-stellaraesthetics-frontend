@@ -8,15 +8,16 @@ import { useGetClientQuery } from "../../services/clientApi";
 import { Link } from "react-router-dom";
 
 const DealSideBar = ({ data }) => {
-  const {
-    data: client,
-    isLoading,
-    isFetching,
-    isSuccess,
-  } = useGetClientQuery(data.clientId);
-  return !isLoading && !isFetching && isSuccess && data ? (
+  // const {
+  //   data: client,
+  //   isLoading,
+  //   isFetching,
+  //   isSuccess,
+  // } = useGetClientQuery(data.clientId);
+
+  return !isLoading && !isFetching ? (
     <aside className="w-[350px] shrink-0 h-full overflow-y-auto">
-      <Accordian title={"Summary"}>
+      {/* <Accordian title={"Summary"}>
         <AccordianBody>
           <div>
             <div className="money/value flex items-center gap-4 mb-4">
@@ -42,7 +43,7 @@ const DealSideBar = ({ data }) => {
             </div>
           </div>
         </AccordianBody>
-      </Accordian>
+      </Accordian> */}
       <Accordian title={"Overview"}>
         <AccordianBody>
           <div>
@@ -62,13 +63,6 @@ const DealSideBar = ({ data }) => {
               <p>Closing Date:</p>
               <p>{moment(data.expectedClosingDate).format("DD-MM-YYYY")}</p>
             </div>
-          </div>
-        </AccordianBody>
-      </Accordian>
-      <Accordian title={"Custom Fields"}>
-        <AccordianBody>
-          <div>
-            <FileInput />
           </div>
         </AccordianBody>
       </Accordian>

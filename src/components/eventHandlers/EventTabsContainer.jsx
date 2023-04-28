@@ -10,7 +10,7 @@ import {
 
 const EventTabsContainer = ({ cardId }) => {
   const [activeTab, setActiveTab] = useState("notes");
-  const tabs = ["notes", "files"];
+  const tabs = ["notes"];
   return (
     <div className="my-5">
       <h2 className="mb-2 text-lg font-medium">History</h2>

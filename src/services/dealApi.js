@@ -35,6 +35,13 @@ export const dealApi = createApi({
         return response.data;
       },
     }),
+    getCardsByClientId: builder.query({
+      query: (clientId) => "/card/get-cards-by-client/" + clientId,
+      providesTags: ["deal"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
     updateCard: builder.mutation({
       query: (data) => ({
         url: "/card/update/" + data.id,
@@ -63,6 +70,7 @@ export const dealApi = createApi({
 
 export const {
   useGetCardQuery,
+  useGetCardsByClientIdQuery,
   useLazyGetCardQuery,
   useCreateCardMutation,
   useDeleteCardMutation,

@@ -4,19 +4,21 @@ import {
   useAddFileMutation,
   useDeleteFileMutation,
   useGetAllFileInfoQuery,
-  fileApi,
-  useDownloadFileQuery,
 } from "../../services/fileApi";
+
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Skeleton } from "@mui/material";
 import moment from "moment";
-import { useDispatch } from "react-redux";
 import BASE_URL from "../../config/BASE_URL";
 
-const File = () => {
+import DealSelect from "../eventHandlers/DealSelect";
+
+const File = ({ card }) => {
+  const [selectedData, setSelectedData] = useState(card ? [card] : []);
   const params = useParams();
   const { id } = params;
+
   const {
     data: files,
     isLoading,
@@ -36,12 +38,12 @@ const File = () => {
     deleteFile,
     { isLoading: isDeleting, isSuccess: isDeleteSuccess, isError },
   ] = useDeleteFileMutation();
-  const dispatch = useDispatch();
 
   async function handleUploadFile(file) {
+    const cardIds = selectedData.map((i) => i.value);
     const newFormData = new FormData();
     newFormData.append("file", file);
-    newFormData.append("cardId", id);
+    newFormData.append("cardId", cardIds);
     await uploadFile(newFormData);
   }
   async function handleDeleteFile(fileId) {
@@ -75,6 +77,13 @@ const File = () => {
   return (
     <>
       <section className="p-5">
+        <div className="mb-4">
+          <DealSelect
+            selectedData={selectedData}
+            setSelectedData={setSelectedData}
+            compare={card ? [card] : null}
+          />
+        </div>
         {!isLoading && !isFetching && isSuccess ? (
           <ul>
             {files.length > 0 ? (

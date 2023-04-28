@@ -102,7 +102,7 @@ const Deal = () => {
         </div> */}
       </section>
       <section className="flex min-h-[calc(100%-180px)] items-stretch">
-        <DealSideBar data={data} />
+        {/* <DealSideBar data={data} /> */}
         <div className="flex-1 p-5 bg-paper">
           <Tabs tabs={tabs} />
           <FocusActivitiesTabs cardId={id} />

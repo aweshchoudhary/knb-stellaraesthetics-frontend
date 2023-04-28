@@ -28,6 +28,13 @@ export const activityApi = createApi({
         return response.data;
       },
     }),
+    getActivitiesByClientId: builder.query({
+      query: (clientId) => "/activity/get-activities-by-client/" + clientId,
+      providesTags: ["activity"],
+      transformResponse: (response) => {
+        return response.data;
+      },
+    }),
     getAllActivities: builder.query({
       query: () => "/activity/get-all-activities",
       providesTags: ["activity"],
@@ -61,4 +68,5 @@ export const {
   useGetAllActivitiesQuery,
   useGetActivitiesByCardIdQuery,
   useLazyGetActivityQuery,
+  useGetActivitiesByClientIdQuery,
 } = activityApi;

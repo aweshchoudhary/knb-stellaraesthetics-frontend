@@ -37,16 +37,16 @@ const activityOptions = [
   },
 ];
 
-const CreateActivity = ({
+const ActivityHandler = ({
   selectedInfo,
   setIsOpen,
   isUpdate,
   activityId,
   card,
 }) => {
-  const [selectedDeals, setSelectedDeals] = useState([card]);
+  const [selectedDeals, setSelectedDeals] = useState(card ? [card] : []);
   const [eventInfo, setEventInfo] = useState({
-    title: "call",
+    title: "Call",
     type: "call",
     startDateTime: selectedInfo ? selectedInfo.start : new Date(),
     endDateTime: selectedInfo ? selectedInfo.end : new Date(),
@@ -102,6 +102,7 @@ const CreateActivity = ({
       description: "",
       cardId: selectedDeals,
       holder: "asdfasdfasdfasdfsadfsadfas",
+      icon: "uil:phone",
     });
     setIsOpen && setIsOpen(false);
   }
@@ -143,6 +144,7 @@ const CreateActivity = ({
   useEffect(() => {
     if (isCreateSuccess) toast.success("Activity has been created");
   }, [isCreateSuccess]);
+
   useEffect(() => {
     if (isUpdateSuccess) toast.success("Activity has been updated");
   }, [isUpdateSuccess]);
@@ -163,7 +165,7 @@ const CreateActivity = ({
             type="text"
             name="title"
             id="activity-name"
-            placeholder={eventInfo.title}
+            placeholder={"Create activity title"}
             className="input"
             value={eventInfo.title}
             onChange={(e) => fillEventInfo(e.target.name, e.target.value)}
@@ -182,8 +184,9 @@ const CreateActivity = ({
                     : "hover:border-textColor"
                 } p-3 border border-collapse`}
                 onClick={() => {
+                  fillEventInfo("title", item.name);
                   fillEventInfo("type", item.type);
-                  fillEventInfo("title", item.title);
+                  fillEventInfo("icon", item.icon);
                 }}
               >
                 <Icon icon={item.icon} className="text-lg" />
@@ -367,4 +370,4 @@ const CreateActivity = ({
   );
 };
 
-export default CreateActivity;
+export default ActivityHandler;
