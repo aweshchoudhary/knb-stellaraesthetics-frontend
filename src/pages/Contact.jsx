@@ -118,19 +118,19 @@ const Contact = () => {
                     <span className="text-2xl">
                       <Icon icon={"uil:phone"} />
                     </span>
-                    <span>{data.mobile}</span>
+                    <span>{data.mobile || "Not Specified"}</span>
                   </p>
                   <p className="flex gap-2 items-center">
                     <span className="text-2xl">
                       <Icon icon="uil:whatsapp" />
                     </span>
-                    <span>{data.whatsapp}</span>
+                    <span>{data.whatsapp || "Not Specified"}</span>
                   </p>
                   <p className="flex gap-2 items-center">
                     <span className="text-2xl">
                       <Icon icon="uil:envelope" />
                     </span>
-                    <span>{data.email}</span>
+                    <span>{data.email || "Not Specified"}</span>
                   </p>
                   <p className="flex gap-2 items-center">
                     <span className="text-2xl">

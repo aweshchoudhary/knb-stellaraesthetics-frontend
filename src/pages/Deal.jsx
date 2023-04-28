@@ -1,8 +1,12 @@
 import Header from "../components/global/Header";
 // import Tabs from "../components/global/Tabs";
 import DealSideBar from "../components/deal/DealSideBar";
-import { useParams } from "react-router-dom";
-import { useGetCardQuery } from "../services/dealApi";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  useDeleteCardMutation,
+  useGetCardQuery,
+  useUpdateCardMutation,
+} from "../services/dealApi";
 import Loader from "../components/global/Loader";
 
 import EventTabsContainer from "../components/eventHandlers/EventTabsContainer";
@@ -19,10 +23,26 @@ const Deal = () => {
   const params = useParams();
   const { id } = params;
   const { data, isLoading, isFetching, isSuccess } = useGetCardQuery(id);
+  const [updateCard, { isLoading: isCardUpdating }] = useUpdateCardMutation();
+  const [deleteCard, { isLoading: isCardDeleting }] = useDeleteCardMutation();
+
+  const navigate = useNavigate();
+
+  async function handleDeleteCard() {
+    await deleteCard(id);
+    navigate("/pipeline");
+  }
+
+  async function handleUpdateCardStatus(status) {
+    await updateCard({ id, update: { status } });
+    navigate("/pipeline");
+  }
 
   const [currentTab, setCurrentTab] = useState(1);
+
   function handleTabChange(event, newTab) {
     setCurrentTab(newTab);
+    navigate("/pipeline");
   }
 
   return !isLoading && !isFetching && isSuccess ? (
@@ -35,13 +55,25 @@ const Deal = () => {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex gap-1">
-              <button className="btn-filled bg-green-600 border-0">Won</button>
-              <button className="btn-filled bg-red-600 border-0">Lost</button>
+              <button
+                disabled={isCardUpdating}
+                onClick={() => handleUpdateCardStatus("won")}
+                className="btn-filled bg-green-600 border-0"
+              >
+                Won
+              </button>
+              <button
+                disabled={isCardUpdating}
+                onClick={() => handleUpdateCardStatus("lost")}
+                className="btn-filled bg-red-600 border-0"
+              >
+                Lost
+              </button>
               <button
                 className="btn-outlined text-red-600 ml-2"
-                // onClick={handleDeleteDeal}
+                onClick={handleDeleteCard}
               >
-                Delete
+                {isCardDeleting ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

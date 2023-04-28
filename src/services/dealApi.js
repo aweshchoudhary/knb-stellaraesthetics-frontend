@@ -46,7 +46,7 @@ export const dealApi = createApi({
       query: (data) => ({
         url: "/card/update/" + data.id,
         method: "PUT",
-        body: data.body,
+        body: data.update,
       }),
       invalidatesTags: ["deal"],
     }),

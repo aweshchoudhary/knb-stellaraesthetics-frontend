@@ -15,7 +15,7 @@ import ActivityHandler from "../eventHandlers/ActivityHandler";
 const Calendar = () => {
   const [
     updateActivity,
-    // { isLoading: isActivityUpdating, isSuccess: isActivitySuccess },
+    { isLoading: isActivityUpdating, isSuccess: isActivitySuccess },
   ] = useUpdateActivityMutation();
 
   const [isActivityModelOpen, setIsActivityModelOpen] = useState(false);
@@ -28,52 +28,24 @@ const Calendar = () => {
     isLoading,
     isFetching,
     isSuccess,
-    refetch,
   } = useGetAllActivitiesQuery();
-  // console.log(data);
   const [events, setEvents] = useState([]);
 
   const handleDateSelect = (selectInfo) => {
     setIsCreateActivityModelOpen(true);
     setSelectedInfo(selectInfo);
-    // let title = prompt("Please enter a new title for your event");
-    // let calendarApi = selectInfo.view.calendar;
-
-    // calendarApi.unselect(); // clear date selection
-
-    // if (title) {
-    //   calendarApi.addEvent({
-    //     id: Date.now(),
-    //     title,
-    //     start: selectInfo.startStr,
-    //     end: selectInfo.endStr,
-    //     allDay: selectInfo.allDay,
-    //   });
-    // }
   };
 
   const handleEventClick = (clickInfo) => {
     setClickedActivityData(clickInfo);
     setIsActivityModelOpen(true);
-
-    // // console.log(clickInfo);
-    // if (
-    //   confirm(
-    //     `Are you sure you want to delete the event '${clickInfo.event.title}'`
-    //   )
-    // ) {
-    //   clickInfo.event.remove();
-    // }
   };
 
-  const handleEvents = (events) => {
-    // setEvents(events);
-  };
   const handleEventDrop = async (eventInfo) => {
     const event = eventInfo.event;
     const updateData = {
-      startDate: event.start,
-      endDate: event.end,
+      startDateTime: event.start,
+      endDateTime: event.end,
     };
     await updateActivity({ id: event.id, update: updateData });
   };
@@ -85,8 +57,8 @@ const Calendar = () => {
       filteredActivitiesArr.push({
         id: event._id,
         title: event.title,
-        start: event.startDate,
-        end: event.endDate,
+        start: event.startDateTime,
+        end: event.endDateTime,
         type: event.type,
         markDone: event.markDone,
         location: event.location,
@@ -94,7 +66,7 @@ const Calendar = () => {
       });
     });
     setEvents(filteredActivitiesArr);
-    refetch();
+    // refetch();
     setIsActivityModelOpen(false);
   }
   useEffect(() => {
@@ -131,7 +103,9 @@ const Calendar = () => {
 
         <section
           className={`py-5 w-full px-5 text-sm ${
-            !isLoading && !isFetching ? "opacity-100" : "opacity-50"
+            !isLoading && !isFetching && !isActivityUpdating
+              ? "opacity-100"
+              : "opacity-50"
           }`}
         >
           <FullCalendar
@@ -148,11 +122,9 @@ const Calendar = () => {
             dayMaxEvents={true}
             weekends={true}
             events={events}
-            // initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
             select={handleDateSelect}
-            eventContent={renderEventContent} // custom render function
+            eventContent={renderEventContent}
             eventClick={handleEventClick}
-            eventsSet={handleEvents} // called after events are initialized/added/changed/removed
             eventDrop={handleEventDrop}
             eventResize={handleEventDrop}
           />
@@ -170,7 +142,7 @@ function renderEventContent(eventInfo) {
 const EventComponent = ({ eventInfo }) => {
   const data = eventInfo?.event?.extendedProps;
   const [icon, setIcon] = useState("");
-
+  console.log(eventInfo);
   useEffect(() => {
     switch (data.type) {
       case "call":

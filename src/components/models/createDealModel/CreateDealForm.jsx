@@ -96,8 +96,6 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     onSubmit: (values) => handleCreateDeal(values),
   });
 
-  console.log(formik.errors);
-
   useEffect(() => {
     if (isSuccess) toast.success("Deal has been created");
   }, [isSuccess]);

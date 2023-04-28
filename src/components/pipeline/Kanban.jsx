@@ -62,7 +62,7 @@ const Kanban = ({ setIsOpen }) => {
           />
         </Model>
       )}
-      <header className="px-5 py-3 flex justify-between items-center border-b">
+      <header className="px-5 py-2 flex justify-between items-center border-b">
         <div className="flex items-stretch gap-2">
           <button
             className="btn-filled btn-small"

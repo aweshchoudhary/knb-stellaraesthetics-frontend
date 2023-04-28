@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import FileInput from "../customFields/Fields/FileInput";
 import Accordian, { AccordianBody } from "../global/Accordian";
 import formatNumber from "../functions/formatNumber";
 import moment from "moment";
@@ -12,6 +11,15 @@ const DealSideBar = ({ data }) => {
     <aside className="w-[400px] shrink-0 h-full overflow-y-auto">
       <Accordian title={"Contacts"}>
         <AccordianBody>
+          <div className="money/value flex items-center gap-4 mb-4">
+            <Icon icon="ph:money" className="text-2xl" />
+            <p>
+              {formatNumber(data?.value?.value, {
+                country: "en-IN",
+                type: "INR",
+              })}
+            </p>
+          </div>
           {data?.contacts?.length
             ? data.contacts.map((client) => {
                 return <ClientAccordian data={data} clientId={client} />;
@@ -47,7 +55,7 @@ const DealSideBar = ({ data }) => {
   );
 };
 
-const ClientAccordian = ({ clientId, data }) => {
+const ClientAccordian = ({ clientId }) => {
   const {
     data: client,
     isLoading,
@@ -59,25 +67,16 @@ const ClientAccordian = ({ clientId, data }) => {
     !isLoading &&
     !isFetching &&
     isSuccess && (
-      <div>
-        <div className="money/value flex items-center gap-4 mb-4">
-          <Icon icon="ph:money" className="text-2xl" />
-          <p>
-            {formatNumber(data?.value?.value, {
-              country: "en-IN",
-              type: "INR",
-            })}
-          </p>
-        </div>
-        <div className="expected-close-date flex items-center gap-4 mb-4">
+      <Link to={"/contacts/" + client._id} className="block border p-2 mb-1">
+        <div className="expected-close-date flex items-center gap-4 mb-2">
           <Icon icon="uil:user" className="text-2xl" />
           <Link to={"/contacts/" + client._id}>{client.contactPerson}</Link>
         </div>
-        <div className="expected-close-date flex items-center gap-4 mb-4">
+        <div className="expected-close-date flex items-center gap-4">
           <Icon icon="uil:building" className="text-2xl" />
           <p>{client.company}</p>
         </div>
-      </div>
+      </Link>
     )
   );
 };
