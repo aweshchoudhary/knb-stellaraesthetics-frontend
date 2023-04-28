@@ -204,7 +204,7 @@ const ContactTable = () => {
               className="btn-filled btn-small"
               to={"/contacts/" + row.original._id}
             >
-              <Icon icon={"uil:eye"} />
+              <Icon className="text-lg" icon={"ic:baseline-remove-red-eye"} />
             </Link>
           </div>
         )}

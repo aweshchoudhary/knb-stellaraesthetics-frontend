@@ -1109,6 +1109,10 @@ thead.css-120bgvu-MuiTableHead-root{
   width: 350px;
 }
 
+.w-\[400px\] {
+  width: 400px;
+}
+
 .w-\[40px\] {
   width: 40px;
 }
@@ -1135,10 +1139,6 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[400px\] {
-  width: 400px;
 }
 
 .min-w-\[200px\] {
@@ -1308,11 +1308,6 @@ thead.css-120bgvu-MuiTableHead-root{
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.bg-gray-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
 .bg-green-600 {

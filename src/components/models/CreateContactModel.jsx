@@ -41,7 +41,7 @@ const CreateContactModel = ({
           className="btn-filled btn-small m-5"
           onClick={() => setCreateNewContactSectionDisplay(true)}
         >
-          <Icon icon="uil:plus" className="text-lg" /> New Contact
+          <Icon icon="uil:plus" className="text-lg" /> Contact
         </button>
       )}
 

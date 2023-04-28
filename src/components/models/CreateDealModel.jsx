@@ -16,10 +16,17 @@ import ReactDatePicker from "react-datepicker";
 
 const steps = ["Create Contact", "Create Deal"];
 
-const CreateDealModel = ({ setIsOpen, pipelineId, activePipe }) => {
+const CreateDealModel = ({
+  setIsOpen,
+  pipelineId,
+  activePipe,
+  selectedData = [],
+}) => {
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
-  const [selectedContacts, setSelectedContacts] = useState([]);
+  const [selectedContacts, setSelectedContacts] = useState(
+    selectedData.length ? selectedData : []
+  );
 
   const totalSteps = () => {
     return steps.length;
@@ -129,13 +136,17 @@ const CreateDeal = ({ setIsOpen, pipelineId, selectedContacts }) => {
     });
   }
 
+  const fetchStages = async (pipeId) => {
+    await getStages(pipeId);
+  };
   useEffect(() => {
-    const fetchStages = async () => {
-      await getStages(pipeId);
-    };
-    if (pipeId) fetchStages();
+    if (pipeId) fetchStages(pipeId);
   }, [pipeId]);
-  // console.log(Country.getAllCountries());
+
+  useEffect(() => {
+    if (!pipeId && pipelines?.length) fetchStages(pipelines[0]._id);
+  }, [pipeId, pipelines]);
+
   useEffect(() => {
     if (isSuccess) toast.success("Deal has been created");
   }, [isSuccess]);
@@ -227,14 +238,19 @@ const CreateDeal = ({ setIsOpen, pipelineId, selectedContacts }) => {
                   <option
                     key={i}
                     selected
-                    defaultValue={item._id}
                     className="text-black"
                     value={item._id}
+                    defaultValue={item._id}
                   >
                     {item.name}
                   </option>
                 ) : (
-                  <option key={i} className="text-black" value={i}>
+                  <option
+                    key={i}
+                    className="text-black"
+                    value={item._id}
+                    defaultValue={item._id}
+                  >
                     {item.name}
                   </option>
                 );

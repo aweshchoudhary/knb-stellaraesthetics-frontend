@@ -38,7 +38,13 @@ const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
         setSearchedData(compare ? [mainOptions, otherOptions] : [otherOptions]);
       }
     };
-    query.length > 2 && searchDataFn(query);
+    const interval = setTimeout(
+      () => query.length > 2 && searchDataFn(query),
+      500
+    );
+    return () => {
+      clearTimeout(interval);
+    };
   }, [query]);
   return (
     <div>

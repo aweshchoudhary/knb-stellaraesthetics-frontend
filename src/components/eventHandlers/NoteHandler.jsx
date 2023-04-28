@@ -8,7 +8,7 @@ const Notes = ({ cards }) => {
   const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
   const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
-  console.log(cards);
+
   async function handleCreateNote() {
     const selectedDeals = selectedDeals.map((item) => item.value);
     await createNote({ noteBody, cardId: selectedDeals });
