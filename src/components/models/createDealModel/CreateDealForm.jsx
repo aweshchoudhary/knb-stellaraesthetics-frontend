@@ -6,6 +6,32 @@ import { useGetPipelinesQuery } from "../../../services/pipelineApi";
 import { toast } from "react-toastify";
 import ReactDatePicker from "react-datepicker";
 import "react-phone-number-input/style.css";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { Country } from "country-state-city";
+import Select from "react-select";
+import { Icon } from "@iconify/react";
+
+let initialValues = {
+  title: "",
+  pipeline: "",
+  stage: "",
+  value: { value: "", type: "inr" },
+  label: "",
+  expectedClosingDate: new Date(),
+};
+
+const validationSchema = Yup.object({
+  title: Yup.string().required("Title is required"),
+  pipeline: Yup.string().required("Pipeline is required"),
+  stage: Yup.string().required("Stage is required"),
+  value: Yup.object({
+    value: Yup.number().positive("Value must be positive"),
+    type: Yup.string(),
+  }),
+  label: Yup.string().required("Label is required"),
+  expectedClosingDate: Yup.date().required("Expected closing date is required"),
+});
 
 const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   const [getStages, { data = [] }] = useLazyGetStagesQuery();
@@ -17,40 +43,60 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     expectedClosingDate: new Date(),
   });
 
+  let currentCountry = {};
+
+  const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
+    if (country.currency === "INR")
+      currentCountry = {
+        label: `${country.flag} ${country.name} (${country.currency})`,
+        value: country.currency,
+      };
+    return {
+      label: `${country.flag} ${country.name} (${country.currency})`,
+      value: country.currency,
+    };
+  });
+
+  function handleCurrencyChange(newCurrency) {
+    formik.values.value.type = newCurrency.value;
+  }
+
   const [pipeId, setPipeId] = useState(pipelineId);
+  const [label, setLabel] = useState("");
 
   const [createCard, { isLoading, isError, error, isSuccess }] =
     useCreateCardMutation();
 
   const { data: pipelines } = useGetPipelinesQuery();
 
-  async function handleCreateDeal() {
+  async function handleCreateDeal(values) {
     const contacts = selectedContacts.map((item) => item.value);
-    const newCard = { ...dealData, contacts };
 
+    const newCard = {
+      title: values.title,
+      value: values.value,
+      currentStage: values.stage,
+      label: values.label,
+      expectedClosingDate: values.expectedClosingDate,
+      contacts,
+    };
     await createCard(newCard);
     setIsOpen(false);
-  }
-
-  function fillDealDetails(name, value) {
-    setDealData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
   }
 
   const fetchStages = async (pipeId) => {
     await getStages(pipeId);
   };
-  useEffect(() => {
-    if (pipeId) fetchStages(pipeId);
-  }, [pipeId]);
 
-  useEffect(() => {
-    if (!pipeId && pipelines?.length) fetchStages(pipelines[0]._id);
-  }, [pipeId, pipelines]);
+  // Validation
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: (values) => handleCreateDeal(values),
+  });
+
+  console.log(formik.errors);
 
   useEffect(() => {
     if (isSuccess) toast.success("Deal has been created");
@@ -61,18 +107,34 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   }, [isError]);
 
   useEffect(() => {
+    if (pipeId) {
+      formik.values.pipeline = pipeId;
+      fetchStages(pipeId);
+    }
+  }, [pipeId]);
+
+  useEffect(() => {
+    if (!pipeId && pipelines?.length) fetchStages(pipelines[0]._id);
+  }, [pipeId, pipelines]);
+
+  useEffect(() => {
     if (data.length) {
-      setDealData((prev) => ({
-        ...prev,
-        currentStage: data[0]._id,
-      }));
+      formik.values.stage = data[0]._id;
     }
   }, [data]);
 
+  useEffect(() => {
+    formik.values.label = label;
+  }, [label]);
+
+  useEffect(() => {
+    formik.values.value.type = currentCountry.value;
+  }, []);
+
   return (
-    <>
+    <form onSubmit={formik.handleSubmit}>
       <section className="container h-full">
-        <div className="h-full p-5">
+        <div className="h-full md:p-10 p-5">
           <div className="input-title mb-3">
             <label htmlFor="title" className="text-textColor block  mb-2">
               Deal Title
@@ -83,49 +145,51 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               id="title"
               placeholder="Title"
               className="input"
-              value={dealData.title}
-              onChange={(e) => fillDealDetails(e.target.name, e.target.value)}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.title}
             />
+            {formik.touched.title && formik.errors.title ? (
+              <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
+                <Icon icon="ic:round-error" className="text-lg" />
+                {formik.errors.title}
+              </div>
+            ) : null}
           </div>
           <div className="input-value mb-3">
             <label htmlFor="amount-value" className="text-textColor block mb-2">
               Value
             </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                name="value"
-                id="amount-value"
-                placeholder="Value"
-                className="input w-1/2"
-                onChange={(e) =>
-                  fillDealDetails(e.target.name, {
-                    value: +e.target.value,
-                    type: dealData.value.type,
-                  })
-                }
-              />
-              <select
-                name="value"
-                id="value-type" // like inr,usd
-                className="input w-1/2"
-                onChange={(e) =>
-                  fillDealDetails(e.target.name, {
-                    value: dealData.value.value,
-                    type: e.target.value,
-                  })
-                }
-              >
-                <option defaultValue={"inr"} className="text-black" value="inr">
-                  Indian Rupee
-                </option>
-                <option className="text-black" value="dollar">
-                  US Dollar
-                </option>
-                <option className="text-black" value="inr">
-                  Indian Rupee
-                </option>
-              </select>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <input
+                  type="number"
+                  name="value.value"
+                  id="amount-value"
+                  placeholder="Value"
+                  className="input w-full"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.value.value}
+                />
+                {formik.touched.value?.value && formik.errors.value?.value ? (
+                  <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
+                    <Icon icon="ic:round-error" className="text-lg" />
+                    {formik.errors.value.value}
+                  </div>
+                ) : null}
+              </div>
+              <div className="flex-1">
+                <Select
+                  name="value"
+                  id="value-type" // like inr,usd
+                  // className="input w-1/2"
+                  options={AllCountriesCurrencyData}
+                  onChange={handleCurrencyChange}
+                  onBlur={formik.handleBlur}
+                  value={currentCountry}
+                />
+              </div>
             </div>
           </div>
           <div className="input-pipeline mb-3">
@@ -136,10 +200,15 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               name="pipeline"
               id="pipeline"
               className="input capitalize"
-              onChange={(e) => setPipeId(e.target.value)}
+              onChange={(e) => {
+                formik.handleChange(e);
+                setPipeId(e.target.value);
+              }}
+              onBlur={formik.handleBlur}
+              value={formik.values.pipeline}
             >
               {pipelines?.map((item, i) => {
-                return item._id === pipelineId ? (
+                return item._id === formik.values.pipeline ? (
                   <option
                     key={i}
                     selected
@@ -161,6 +230,12 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
                 );
               })}
             </select>
+            {formik.touched.pipeline && formik.errors.pipeline ? (
+              <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
+                <Icon icon="ic:round-error" className="text-lg" />
+                {formik.errors.pipeline}
+              </div>
+            ) : null}
           </div>
           <div className="input-stage mb-3">
             <label htmlFor="stage" className="text-textColor block mb-2">
@@ -170,10 +245,12 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               name="stage"
               id="stage"
               className="input capitalize"
-              onChange={(e) => fillDealDetails(e.target.name, e.target.value)}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.stage}
             >
               {data?.map((item, i) => {
-                return item._id === dealData.currentStage ? (
+                return item._id === formik.values.currentStage ? (
                   <option
                     key={i}
                     className="text-black"
@@ -190,38 +267,48 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
                 );
               })}
             </select>
+            {formik.touched.stage && formik.errors.stage ? (
+              <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
+                <Icon icon="ic:round-error" className="text-lg" />
+                {formik.errors.stage}
+              </div>
+            ) : null}
           </div>
 
           <div className="input-label mb-3">
-            <label htmlFor="stage" className="text-textColor block mb-2">
+            <label htmlFor="label" className="text-textColor block mb-2">
               Label
             </label>
-            <Label setLabel={setDealData} label={dealData.label} />
+            <Label setLabel={setLabel} label={label} />
+            {formik.touched.label && formik.errors.label ? (
+              <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
+                <Icon icon="ic:round-error" className="text-lg" />
+                {formik.errors.label}
+              </div>
+            ) : null}
           </div>
           <div className="input-close-date mb-3">
             <label htmlFor="close-date" className="text-textColor block mb-2">
               Expected Close Date
             </label>
-            {/* <input
-              type="date"
-              id="close-date"
-              name="expectedClosingDate"
-              
-              onChange={(e) =>
-                fillDealDetails(
-                  e.target.name,
-                  new Date(e.target.value).toISOString()
-                )
-              }
-              className="input"
-            /> */}
+
             <ReactDatePicker
               className="input"
               name="expectedClosingDate"
               selected={dealData.expectedClosingDate}
-              onChange={(date) => fillDealDetails("expectedClosingDate", date)}
               minDate={new Date()}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.expectedClosingDate}
+              // onChange={(date) => fillDealDetails("expectedClosingDate", date)}
             />
+            {formik.touched.expectedClosingDate &&
+            formik.errors.expectedClosingDate ? (
+              <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
+                <Icon icon="ic:round-error" className="text-lg" />
+                {formik.errors.expectedClosingDate}
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
@@ -230,18 +317,20 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
           className="btn-outlined"
           disabled={isLoading}
           onClick={() => setIsOpen(false)}
+          type="button"
         >
           cancel
         </button>
         <button
-          onClick={handleCreateDeal}
+          // onClick={handleCreateDeal}
           disabled={isLoading}
           className="btn-filled"
+          type="submit"
         >
           {isLoading ? "Loading..." : "add deal"}
         </button>
       </footer>
-    </>
+    </form>
   );
 };
 

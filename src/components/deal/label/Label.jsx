@@ -18,6 +18,7 @@ const Label = ({ setLabel, label }) => {
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className="w-full border py-2 px-3 text-sm rounded mb-2 flex items-center justify-between"
       >
@@ -50,12 +51,7 @@ const Label = ({ setLabel, label }) => {
                   <li
                     key={index}
                     onClick={() => {
-                      setLabel((prev) => {
-                        return {
-                          ...prev,
-                          label: item._id,
-                        };
-                      });
+                      setLabel(item._id);
                       setIsOpen(false);
                     }}
                     className="flex items-center gap-2 p-2 hover:bg-paper cursor-pointer"

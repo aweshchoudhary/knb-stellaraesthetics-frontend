@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { Tooltip } from "@mui/material";
 import Model from "../models/Model";
-import CreatePipelineModel from "../models/CreatePipelineModel";
 import { Icon } from "@iconify/react";
 import Loader from "../global/Loader";
-import CreateDealModel from "../models/CreateDealModel";
 import { useDispatch, useSelector } from "react-redux";
 import { addPipeline } from "../../state/features/globalSlice";
 import Stages from "../stage/Stages";
+
 import { useGetPipelinesQuery } from "../../services/pipelineApi";
+import CreatePipelineModel from "../models/CreatePipelineModel";
+import CreateDealModel from "../models/createDealModel/CreateDealModel";
 
 const Kanban = ({ setIsOpen }) => {
   const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
