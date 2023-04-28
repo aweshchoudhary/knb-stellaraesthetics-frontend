@@ -1,8 +1,5 @@
 import PhoneInput from "react-phone-number-input";
-import {
-  useCreateClientMutation,
-  useLazyGetClientsQuery,
-} from "../../services/clientApi";
+import { useCreateClientMutation } from "../../../services/clientApi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Formik, Field, Form } from "formik";
@@ -10,68 +7,6 @@ import * as Yup from "yup";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import { Icon } from "@iconify/react";
-
-const CreateContactModel = ({
-  setIsOpen,
-  handleComplete,
-  selectedContacts,
-  setSelectedContacts,
-}) => {
-  const [createNewContactSectionDisplay, setCreateNewContactSectionDisplay] =
-    useState(false);
-
-  function handleAddClient() {
-    handleComplete && handleComplete(selectedContacts);
-  }
-
-  return (
-    <section>
-      <div className="p-5 pb-0">
-        <div className="Search-Contacts mb-3">
-          <label className="text-textColor block  mb-2">Search Contacts</label>
-          <SearchContact
-            selectedContacts={selectedContacts}
-            setSelectedContacts={setSelectedContacts}
-          />
-        </div>
-      </div>
-      {!createNewContactSectionDisplay && (
-        <button
-          type="button"
-          className="btn-filled btn-small m-5"
-          onClick={() => setCreateNewContactSectionDisplay(true)}
-        >
-          <Icon icon="uil:plus" className="text-lg" /> Contact
-        </button>
-      )}
-
-      {createNewContactSectionDisplay && (
-        <CreateContactForm
-          setSelectedContacts={setSelectedContacts}
-          setIsOpen={setCreateNewContactSectionDisplay}
-        />
-      )}
-      <footer className="modal-footer">
-        <button
-          className="btn-outlined"
-          type="button"
-          // disabled={isLoading}
-          onClick={() => setIsOpen(false)}
-        >
-          cancel
-        </button>
-        <button
-          // disabled={isLoading}
-          className="btn-filled"
-          onClick={handleAddClient}
-          disabled={!selectedContacts?.length}
-        >
-          add contacts
-        </button>
-      </footer>
-    </section>
-  );
-};
 
 const validationSchema = Yup.object({
   contactPerson: Yup.string()
@@ -94,7 +29,7 @@ const validationSchema = Yup.object({
   }),
 });
 
-export const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
+const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
   let clientDetails = {
     company: "",
     contactPerson: "",
@@ -537,45 +472,4 @@ export const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
   );
 };
 
-const SearchContact = ({ selectedContacts, setSelectedContacts }) => {
-  const [searchClient, { isLoading, isFetching }] = useLazyGetClientsQuery();
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchedContacts, setSearchedContacts] = useState([]);
-
-  const handleChange = async (options) => {
-    setSelectedContacts(options);
-  };
-
-  useEffect(() => {
-    const fetchContacts = async (query) => {
-      const res = await searchClient({ params: { search: query } });
-      if (res.data) {
-        const contacts = res.data.map((item) => ({
-          label: `${item.contactPerson} - ${item.company}`,
-          value: item._id,
-        }));
-        setSearchedContacts(contacts);
-      }
-    };
-    searchQuery.length > 3 && fetchContacts(searchQuery);
-  }, [searchQuery]);
-  return (
-    <Select
-      id="deal"
-      name="deal"
-      label="deal"
-      isMulti
-      value={selectedContacts}
-      isLoading={isFetching || isLoading}
-      options={searchedContacts}
-      placeholder="Search Contacts"
-      onChange={handleChange}
-      onInputChange={(value) => setSearchQuery(value)}
-      inputValue={searchQuery}
-      className="mb-2"
-    ></Select>
-  );
-};
-
-export default CreateContactModel;
+export default CreateContactForm;
