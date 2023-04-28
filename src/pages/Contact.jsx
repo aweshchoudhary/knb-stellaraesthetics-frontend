@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   useDeleteClientMutation,
   useGetClientQuery,
@@ -7,10 +7,9 @@ import {
 import Header from "../components/global/Header";
 import Loader from "../components/global/Loader";
 import { Icon } from "@iconify/react";
-import Tabs from "../components/global/Tabs";
+// import Tabs from "../components/global/Tabs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import formatNumber from "../components/functions/formatNumber";
 
 import EventTabsContainer from "../components/eventHandlers/EventTabsContainer";
 import ActivitiesTabs from "../components/eventHandlers/ActivitiesTabs";
@@ -23,6 +22,7 @@ import { useGetActivitiesByClientIdQuery } from "../services/activityApi";
 import moment from "moment";
 import { useGetCardsByClientIdQuery } from "../services/dealApi";
 import Card from "../components/global/Card";
+import { Box, Tab, Tabs } from "@mui/material";
 
 const Contact = () => {
   const params = useParams();
@@ -37,44 +37,24 @@ const Contact = () => {
     isLoading: isCardsLoading,
     isFetching: isCardsFetching,
   } = useGetCardsByClientIdQuery(id);
-  const { data, isLoading, isSuccess, isFetching } = useGetClientQuery(id);
-  const [updateData, setUpdateData] = useState({});
+
+  const { data = [], isLoading, isSuccess, isFetching } = useGetClientQuery(id);
+
   const navigate = useNavigate();
+
+  const [currentTab, setCurrentTab] = useState(1);
+  function handleTabChange(event, newTab) {
+    setCurrentTab(newTab);
+  }
 
   const [deleteClient, { isSuccess: isDeleteSuccess }] =
     useDeleteClientMutation();
-  const [updateClient] = useUpdateClientMutation();
 
-  const tabs = [
-    {
-      id: 1,
-      name: "notes",
-      icon: "material-symbols:sticky-note-2-outline",
-      component: <NoteHandler />,
-    },
-    {
-      id: 2,
-      name: "activity",
-      icon: "material-symbols:calendar-month-outline",
-      component: <ActivityHandler />,
-    },
-    {
-      id: 3,
-      name: "File",
-      icon: "material-symbols:attach-file",
-      component: <FileHandler />,
-    },
-    {
-      id: 4,
-      name: "Email",
-      icon: "uil:envelope",
-      component: <EmailHandler />,
-    },
-  ];
-
-  async function handleUpdateClient() {
-    await updateClient({ id, update: updateData });
-  }
+  const selectedCards =
+    cards?.map((i) => ({
+      label: i.title,
+      value: i._id,
+    })) || [];
 
   async function handleDeleteClient() {
     await deleteClient(id);
@@ -85,7 +65,6 @@ const Contact = () => {
       toast.success("Contact Deleted Successfully");
     }
   }, [isDeleteSuccess]);
-  console.log(activities);
   return (
     <>
       <Header title={"Contact"} />
@@ -131,19 +110,7 @@ const Contact = () => {
                 <div className="p-5 flex flex-col gap-2">
                   {cards?.length !== 0 &&
                     cards?.map((card) => {
-                      return (
-                        // <Link
-                        //   to={"/deals/" + card._id}
-                        //   className="text-sm w-full py-3 px-4 border flex justify-between items-center"
-                        // >
-                        //   <div className="flex gap-2 items-center">
-                        //     {/* <span className="w-[20px] h-[20px] rounded-full bg-gray-500"></span> */}
-                        //     <h2>{card.title}</h2>
-                        //   </div>
-                        //   <div>{formatNumber(card.value.value)}</div>
-                        // </Link>
-                        <Card card={card} />
-                      );
+                      return <Card card={card} />;
                     })}
                 </div>
               </div>
@@ -173,9 +140,32 @@ const Contact = () => {
             </div>
             <div className="flex flex-1">
               <div className="flex-1 p-5 bg-paper">
-                <Tabs tabs={tabs} />
-                <EventTabsContainer cardId={id} />
-                <ActivitiesTabs cardId={id} />
+                <Box>
+                  <Box className="bg-bg border-b">
+                    <Tabs
+                      value={currentTab}
+                      onChange={handleTabChange}
+                      textColor="primary"
+                      indicatorColor="primary"
+                      aria-label="primary tabs example"
+                    >
+                      <Tab value={1} label="Note" />
+                      <Tab value={2} label="Activity" />
+                      <Tab value={3} label="File" />
+                      <Tab value={4} label="Email" />
+                    </Tabs>
+                  </Box>
+                  <Box className="bg-bg">
+                    {currentTab === 1 && <NoteHandler cards={selectedCards} />}
+                    {currentTab === 2 && (
+                      <ActivityHandler cards={selectedCards} />
+                    )}
+                    {currentTab === 3 && <FileHandler cards={selectedCards} />}
+                    {currentTab === 4 && <EmailHandler cards={selectedCards} />}
+                  </Box>
+                </Box>
+                {/* <EventTabsContainer cardId={id} />
+                <ActivitiesTabs cardId={id} /> */}
               </div>
             </div>
           </section>

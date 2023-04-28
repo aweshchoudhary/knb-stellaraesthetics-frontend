@@ -4,13 +4,13 @@ import { useCreateNoteMutation } from "../../services/noteApi";
 import DealSelect from "./DealSelect";
 import { toast } from "react-toastify";
 
-const Notes = ({ card }) => {
+const Notes = ({ cards }) => {
   const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
-  const [deals, setDeals] = useState([card]);
-
+  const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
+  console.log(cards);
   async function handleCreateNote() {
-    const selectedDeals = deals.map((item) => item.value);
+    const selectedDeals = selectedDeals.map((item) => item.value);
     await createNote({ noteBody, cardId: selectedDeals });
     handleClear();
   }
@@ -28,9 +28,9 @@ const Notes = ({ card }) => {
     <section className="p-5">
       <div>
         <DealSelect
-          selectedData={deals}
-          setSelectedData={setDeals}
-          compare={[card]}
+          selectedData={selectedDeals}
+          setSelectedData={setSelectedDeals}
+          compare={cards}
         />
         <RichTextEditor setContent={setNoteBody} />
         <div className="flex items-center mt-3 gap-2">

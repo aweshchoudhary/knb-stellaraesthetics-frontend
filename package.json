@@ -41,6 +41,7 @@
     "react-router-dom": "^6.8.2",
     "react-select": "^5.7.2",
     "react-table": "^7.8.0",
+    "react-tabs": "^6.0.1",
     "react-toastify": "^9.1.2",
     "xlsx": "^0.18.5",
     "yup": "^1.1.1"

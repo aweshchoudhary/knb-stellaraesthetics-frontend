@@ -1,5 +1,5 @@
 import Header from "../components/global/Header";
-import Tabs from "../components/global/Tabs";
+// import Tabs from "../components/global/Tabs";
 import DealSideBar from "../components/deal/DealSideBar";
 import { useParams } from "react-router-dom";
 import { useGetCardQuery } from "../services/dealApi";
@@ -12,43 +12,18 @@ import ActivityHandler from "../components/eventHandlers/ActivityHandler";
 import NoteHandler from "../components/eventHandlers/NoteHandler";
 import FileHandler from "../components/eventHandlers/FileHandler";
 import EmailHandler from "../components/eventHandlers/EmailHandler";
+import { Box, Tab, Tabs } from "@mui/material";
+import { useState } from "react";
 
 const Deal = () => {
   const params = useParams();
   const { id } = params;
   const { data, isLoading, isFetching, isSuccess } = useGetCardQuery(id);
 
-  const tabs = [
-    {
-      id: 1,
-      name: "notes",
-      icon: "material-symbols:sticky-note-2-outline",
-      component: <NoteHandler card={{ value: id, label: data?.title }} />,
-    },
-    {
-      id: 2,
-      name: "activity",
-      icon: "material-symbols:calendar-month-outline",
-      component: (
-        <ActivityHandler
-          dealData={data}
-          card={{ value: id, label: data?.title }}
-        />
-      ),
-    },
-    {
-      id: 3,
-      name: "File",
-      icon: "material-symbols:attach-file",
-      component: <FileHandler card={{ value: id, label: data?.title }} />,
-    },
-    {
-      id: 4,
-      name: "Email",
-      icon: "uil:envelope",
-      component: <EmailHandler card={{ value: id, label: data?.title }} />,
-    },
-  ];
+  const [currentTab, setCurrentTab] = useState(1);
+  function handleTabChange(event, newTab) {
+    setCurrentTab(newTab);
+  }
 
   return !isLoading && !isFetching && isSuccess ? (
     <>
@@ -71,40 +46,40 @@ const Deal = () => {
             </div>
           </div>
         </div>
-        {/* <div className="w-full flex gap-1">
-          {stages.data &&
-            stages.data.map((stage, index) => {
-              return (
-                <button
-                  key={index}
-                  className={`px-2 py-1 flex-1 text-center ${
-                    data.stages[index]?.active
-                      ? "text-white bg-primary"
-                      : "bg-paper hover:bg-primary hover:text-white"
-                  }`}
-                  onClick={() =>
-                    updateDealStageFn(
-                      data._id,
-                      data.stages[index].active ? data.stages[index] : null._id,
-                      stage._id
-                    )
-                  }
-                >
-                  <p>
-                    {stage.name}:{" "}
-                    {data?.stages[index]?.active
-                      ? moment(data?.stages[index]?.createdAt).fromNow()
-                      : "0 Days"}
-                  </p>
-                </button>
-              );
-            })}
-        </div> */}
       </section>
       <section className="flex min-h-[calc(100%-180px)] items-stretch">
-        {/* <DealSideBar data={data} /> */}
+        <DealSideBar data={data} />
         <div className="flex-1 p-5 bg-paper">
-          <Tabs tabs={tabs} />
+          <Box>
+            <Box className="bg-bg border-b">
+              <Tabs
+                value={currentTab}
+                onChange={handleTabChange}
+                textColor="primary"
+                indicatorColor="primary"
+                aria-label="primary tabs example"
+              >
+                <Tab value={1} label="Note" />
+                <Tab value={2} label="Activity" />
+                <Tab value={3} label="File" />
+                <Tab value={4} label="Email" />
+              </Tabs>
+            </Box>
+            <Box className="bg-bg">
+              {currentTab === 1 && (
+                <NoteHandler cards={[{ value: id, label: data?.title }]} />
+              )}
+              {currentTab === 2 && (
+                <ActivityHandler cards={[{ value: id, label: data?.title }]} />
+              )}
+              {currentTab === 3 && (
+                <FileHandler cards={[{ value: id, label: data?.title }]} />
+              )}
+              {currentTab === 4 && (
+                <EmailHandler cards={[{ value: id, label: data?.title }]} />
+              )}
+            </Box>
+          </Box>
           <FocusActivitiesTabs cardId={id} />
           <EventTabsContainer cardId={id} />
         </div>

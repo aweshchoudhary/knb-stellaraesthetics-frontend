@@ -14,8 +14,8 @@ import BASE_URL from "../../config/BASE_URL";
 
 import DealSelect from "../eventHandlers/DealSelect";
 
-const File = ({ card }) => {
-  const [selectedData, setSelectedData] = useState(card ? [card] : []);
+const File = ({ cards }) => {
+  const [selectedData, setSelectedData] = useState(cards ? cards : []);
   const params = useParams();
   const { id } = params;
 
@@ -81,7 +81,7 @@ const File = ({ card }) => {
           <DealSelect
             selectedData={selectedData}
             setSelectedData={setSelectedData}
-            compare={card ? [card] : null}
+            compare={cards ? cards : null}
           />
         </div>
         {!isLoading && !isFetching && isSuccess ? (

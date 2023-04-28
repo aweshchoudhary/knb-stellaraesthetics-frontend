@@ -1137,6 +1137,10 @@ thead.css-120bgvu-MuiTableHead-root{
   width: 100vw;
 }
 
+.w-\[400px\] {
+  width: 400px;
+}
+
 .min-w-\[200px\] {
   min-width: 200px;
 }

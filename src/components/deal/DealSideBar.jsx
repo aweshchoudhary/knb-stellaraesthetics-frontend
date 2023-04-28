@@ -8,42 +8,17 @@ import { useGetClientQuery } from "../../services/clientApi";
 import { Link } from "react-router-dom";
 
 const DealSideBar = ({ data }) => {
-  // const {
-  //   data: client,
-  //   isLoading,
-  //   isFetching,
-  //   isSuccess,
-  // } = useGetClientQuery(data.clientId);
-
-  return !isLoading && !isFetching ? (
-    <aside className="w-[350px] shrink-0 h-full overflow-y-auto">
-      {/* <Accordian title={"Summary"}>
+  return data ? (
+    <aside className="w-[400px] shrink-0 h-full overflow-y-auto">
+      <Accordian title={"Contacts"}>
         <AccordianBody>
-          <div>
-            <div className="money/value flex items-center gap-4 mb-4">
-              <Icon icon="ph:money" className="text-2xl" />
-              <p>
-                {formatNumber(data?.value?.value, {
-                  country: "en-IN",
-                  type: "INR",
-                })}
-              </p>
-            </div>
-            <div className="expected-close-date flex items-center gap-4 mb-4">
-              <Icon icon="bx:calendar" className="text-2xl" />
-              <p>{moment(data.createdAt).format("DD-MM-YYYY")}</p>
-            </div>
-            <div className="expected-close-date flex items-center gap-4 mb-4">
-              <Icon icon="uil:user" className="text-2xl" />
-              <Link to={"/contacts/" + client._id}>{client.contactPerson}</Link>
-            </div>
-            <div className="expected-close-date flex items-center gap-4 mb-4">
-              <Icon icon="uil:building" className="text-2xl" />
-              <p>{client.company}</p>
-            </div>
-          </div>
+          {data?.contacts?.length
+            ? data.contacts.map((client) => {
+                return <ClientAccordian data={data} clientId={client} />;
+              })
+            : null}
         </AccordianBody>
-      </Accordian> */}
+      </Accordian>
       <Accordian title={"Overview"}>
         <AccordianBody>
           <div>
@@ -69,6 +44,41 @@ const DealSideBar = ({ data }) => {
     </aside>
   ) : (
     <Loader />
+  );
+};
+
+const ClientAccordian = ({ clientId, data }) => {
+  const {
+    data: client,
+    isLoading,
+    isFetching,
+    isSuccess,
+  } = useGetClientQuery(clientId);
+
+  return (
+    !isLoading &&
+    !isFetching &&
+    isSuccess && (
+      <div>
+        <div className="money/value flex items-center gap-4 mb-4">
+          <Icon icon="ph:money" className="text-2xl" />
+          <p>
+            {formatNumber(data?.value?.value, {
+              country: "en-IN",
+              type: "INR",
+            })}
+          </p>
+        </div>
+        <div className="expected-close-date flex items-center gap-4 mb-4">
+          <Icon icon="uil:user" className="text-2xl" />
+          <Link to={"/contacts/" + client._id}>{client.contactPerson}</Link>
+        </div>
+        <div className="expected-close-date flex items-center gap-4 mb-4">
+          <Icon icon="uil:building" className="text-2xl" />
+          <p>{client.company}</p>
+        </div>
+      </div>
+    )
   );
 };
 

@@ -2,9 +2,9 @@ import { useState } from "react";
 import RichTextEditor from "../global/RichTextEditor";
 import DealSelect from "./DealSelect";
 
-const Email = ({ card }) => {
+const Email = ({ cards }) => {
   const [emailBody, setEmailBody] = useState("");
-  const [selectedDeals, setSelectedDeals] = useState([card]);
+  const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
   return (
     <section>
       <div className="p-5">
@@ -12,7 +12,7 @@ const Email = ({ card }) => {
           <DealSelect
             selectedData={selectedDeals}
             setSelectedData={setSelectedDeals}
-            compare={card}
+            compare={cards}
           />
         </div>
         <div className="sender-email mb-3">

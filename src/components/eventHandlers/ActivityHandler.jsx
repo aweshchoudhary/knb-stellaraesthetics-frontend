@@ -42,9 +42,9 @@ const ActivityHandler = ({
   setIsOpen,
   isUpdate,
   activityId,
-  card,
+  cards,
 }) => {
-  const [selectedDeals, setSelectedDeals] = useState(card ? [card] : []);
+  const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
   const [eventInfo, setEventInfo] = useState({
     title: "Call",
     type: "call",
@@ -156,7 +156,7 @@ const ActivityHandler = ({
           <DealSelect
             selectedData={selectedDeals}
             setSelectedData={setSelectedDeals}
-            compare={card}
+            compare={cards}
           />
         </div>
         <div className="my-2">
