@@ -142,7 +142,6 @@ function renderEventContent(eventInfo) {
 const EventComponent = ({ eventInfo }) => {
   const data = eventInfo?.event?.extendedProps;
   const [icon, setIcon] = useState("");
-  console.log(eventInfo);
   useEffect(() => {
     switch (data.type) {
       case "call":

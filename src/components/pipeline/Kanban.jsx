@@ -51,7 +51,7 @@ const Kanban = ({ setIsOpen }) => {
       </Model>
       {activePipeline && (
         <Model
-          title={"Add Deal"}
+          title={"Create New Deal"}
           isOpen={isCreateDealModelOpen}
           setIsOpen={setIsCreateDealModelOpen}
         >

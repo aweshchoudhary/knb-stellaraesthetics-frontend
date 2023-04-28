@@ -70,12 +70,43 @@ option{
 .input {
   @apply border focus:border-textColor hover:border-textColor bg-transparent px-3 py-2 rounded w-full outline-0 outline-none text-sm;
 }
-
-
-
 .modal-footer {
   @apply py-2 px-5 h-[60px] border-t flex items-center justify-end gap-2 sticky bottom-0 left-0 bg-bg;
 }
+
+
+.select__control{
+  background: transparent !important;
+  border-color: var(--border-color) !important;
+  box-shadow: none !important;
+} 
+.select__input-container{
+  color: var(--text-color) !important;
+}
+.select__indicators{
+  color: var(--text-color) !important;
+  opacity: 70 !important;
+}
+.select__indicators:hover{
+  opacity: 100 !important;
+}
+
+.select__menu{
+  background-color: var(--background) !important;
+  color: inherit !important;
+  border-radius: 0 !important;
+}
+.select__option--is-focused{
+  background-color: var(--paper) !important;
+}
+
+.select__multi-value{
+  background: var(--paper) !important;
+}
+.select__multi-value__label, .select__single-value{
+  color: inherit !important;
+}
+
 
 .fc-event-main{
   color: inherit !important;

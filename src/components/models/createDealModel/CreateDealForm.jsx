@@ -43,14 +43,16 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     expectedClosingDate: new Date(),
   });
 
-  let currentCountry = {};
-
+  const [currentCurrency, setCurrentCurrency] = useState({});
   const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
-    if (country.currency === "INR")
-      currentCountry = {
+    if (!currentCurrency?.label && country.currency === "INR") {
+      console.log("wokring");
+      setCurrentCurrency({
         label: `${country.flag} ${country.name} (${country.currency})`,
         value: country.currency,
-      };
+      });
+    }
+
     return {
       label: `${country.flag} ${country.name} (${country.currency})`,
       value: country.currency,
@@ -59,6 +61,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
 
   function handleCurrencyChange(newCurrency) {
     formik.values.value.type = newCurrency.value;
+    setCurrentCurrency(newCurrency);
   }
 
   const [pipeId, setPipeId] = useState(pipelineId);
@@ -126,7 +129,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   }, [label]);
 
   useEffect(() => {
-    formik.values.value.type = currentCountry.value;
+    formik.values.value.type = currentCurrency.value;
   }, []);
 
   return (
@@ -181,11 +184,11 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
                 <Select
                   name="value"
                   id="value-type" // like inr,usd
-                  // className="input w-1/2"
+                  classNamePrefix="select"
                   options={AllCountriesCurrencyData}
                   onChange={handleCurrencyChange}
                   onBlur={formik.handleBlur}
-                  value={currentCountry}
+                  value={currentCurrency}
                 />
               </div>
             </div>

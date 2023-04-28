@@ -30,6 +30,7 @@ const SearchContacts = ({ selectedContacts, setSelectedContacts }) => {
       id="deal"
       name="deal"
       label="deal"
+      classNamePrefix={"select"}
       isMulti
       value={selectedContacts}
       isLoading={isFetching || isLoading}

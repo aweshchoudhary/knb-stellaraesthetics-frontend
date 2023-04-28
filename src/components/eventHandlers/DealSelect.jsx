@@ -47,9 +47,10 @@ const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
     };
   }, [query]);
   return (
-    <div>
+    <div style={{ color: "var(--text-color) !important" }}>
       <h2 className="mb-1">Select Deals</h2>
       <Select
+        classNamePrefix="select"
         id="deal"
         name="deal"
         label="deal"
