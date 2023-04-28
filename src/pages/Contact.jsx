@@ -20,7 +20,7 @@ import Card from "../components/global/Card";
 import { Box, Tab, Tabs } from "@mui/material";
 
 import Model from "../components/models/Model";
-import CreateDealModel from "../components/models/CreateDealModel";
+import CreateDealModel from "../components/models/createDealModel/CreateDealModel";
 
 const Contact = () => {
   const params = useParams();
@@ -30,13 +30,13 @@ const Contact = () => {
 
   const {
     data: activities,
-    isLoading: isActivitiesLoading,
-    isFetching: isActivitiesFetching,
+    // isLoading: isActivitiesLoading,
+    // isFetching: isActivitiesFetching,
   } = useGetActivitiesByClientIdQuery(id);
   const {
     data: cards,
-    isLoading: isCardsLoading,
-    isFetching: isCardsFetching,
+    // isLoading: isCardsLoading,
+    // isFetching: isCardsFetching,
   } = useGetCardsByClientIdQuery(id);
 
   const { data, isLoading, isSuccess, isFetching } = useGetClientQuery(id);
