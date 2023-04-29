@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 const Notes = ({ cards }) => {
   const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
+  const [isClear, setIsClear] = useState(false);
   const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
 
   async function handleCreateNote() {
@@ -16,6 +17,7 @@ const Notes = ({ cards }) => {
   }
   function handleClear() {
     setNoteBody("");
+    setIsClear(true);
   }
 
   useEffect(() => {
@@ -32,7 +34,12 @@ const Notes = ({ cards }) => {
           setSelectedData={setSelectedDeals}
           compare={cards}
         />
-        <RichTextEditor setContent={setNoteBody} />
+        <RichTextEditor
+          setContent={setNoteBody}
+          setIsClear={setIsClear}
+          clear={isClear}
+          placeholder={"Enter a note"}
+        />
         <div className="flex items-center mt-3 gap-2">
           <button
             disabled={isLoading}

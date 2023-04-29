@@ -77,5 +77,6 @@ export const {
   useUpdateCardMutation,
   useUpdateCardStageMutation,
   useGetCardsByStageQuery,
+  useLazyGetCardsByStageQuery,
   useLazySearchCardsQuery,
 } = dealApi;

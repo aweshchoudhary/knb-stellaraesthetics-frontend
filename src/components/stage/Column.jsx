@@ -1,7 +1,7 @@
 import { Droppable } from "react-beautiful-dnd";
 import Card from "../global/Card";
 import Row from "./Row";
-import { useGetCardsByStageQuery } from "../../services/dealApi";
+import { useLazyGetCardsByStageQuery } from "../../services/dealApi";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 
@@ -10,9 +10,12 @@ const Column = ({ stage, loading }) => {
     totalDeals: 0,
     totalRevenue: 0,
   });
-  const { data, isLoading, isFetching, isSuccess } = useGetCardsByStageQuery(
-    stage._id
-  );
+  const [getCardsByStageId, { data, isLoading, isFetching, isSuccess }] =
+    useLazyGetCardsByStageQuery();
+
+  useEffect(() => {
+    getCardsByStageId(stage._id);
+  }, [stage]);
 
   useEffect(() => {
     let isMounted = true;

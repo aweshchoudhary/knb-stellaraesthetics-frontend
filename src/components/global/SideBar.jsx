@@ -26,16 +26,16 @@ const menuLinks = [
     link: "/contacts",
     icon: "material-symbols:contacts-outline-rounded",
   },
-  {
-    label: "Products",
-    link: "/products",
-    icon: "mdi:box-outline",
-  },
-  {
-    label: "Services",
-    link: "/services",
-    icon: "eva:shopping-bag-outline",
-  },
+  // {
+  //   label: "Products",
+  //   link: "/products",
+  //   icon: "mdi:box-outline",
+  // },
+  // {
+  //   label: "Services",
+  //   link: "/services",
+  //   icon: "eva:shopping-bag-outline",
+  // },
 ];
 const SideBar = ({ setIsOpen, isOpen }) => {
   const isMobileOpen = useSelector((state) => state.global.isMobileOpen);
@@ -53,7 +53,7 @@ const SideBar = ({ setIsOpen, isOpen }) => {
       } border-r md:sticky absolute bg-bg z-50 top-0 left-0 h-screen shrink-0 transition-all`}
     >
       <header
-        className={`flex items-center h-[60px] border-b ${
+        className={`flex items-center h-[50px] border-b ${
           isOpen ? "px-5 gap-2 justify-between" : "px-2 justify-center"
         }`}
       >

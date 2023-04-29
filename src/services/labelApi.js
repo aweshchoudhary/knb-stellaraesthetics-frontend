@@ -48,6 +48,7 @@ export const labelApi = createApi({
 
 export const {
   useGetLabelQuery,
+  useLazyGetLabelQuery,
   useCreateLabelMutation,
   useDeleteLabelMutation,
   useGetLabelsQuery,

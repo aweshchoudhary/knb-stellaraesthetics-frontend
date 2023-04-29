@@ -29,7 +29,9 @@ const validationSchema = Yup.object({
     .min(3, "Must be at least 3 characters")
     .required("Required"),
   company: Yup.string().min(3, "Must be at least 3 characters"),
-  mobile: Yup.string().min(10, "Must be at least 10 digits"),
+  mobile: Yup.string()
+    .min(10, "Must be at least 10 digits")
+    .required("Mobile is required"),
   whatsapp: Yup.string().min(10, "Must be at least 10 digits"),
   email: Yup.string().email("Invalid email address"),
   address: Yup.object({

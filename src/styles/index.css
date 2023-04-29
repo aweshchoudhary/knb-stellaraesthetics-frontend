@@ -550,6 +550,7 @@ video {
 html.darkMode:root {
   --primary: #571168;
   --text-color: #ffffff;
+  --secondary: #cc0000;
   --paper: rgb(59, 59, 59);
   --background: #212121;
   --border-color: rgb(98, 98, 98);
@@ -557,6 +558,7 @@ html.darkMode:root {
 
 html:root {
   --primary: #571168;
+  --secondary: #cc0000;
   --text-color: #000000;
   --paper: rgb(236, 236, 236);
   --background: #fff;
@@ -802,6 +804,17 @@ option {
   height: auto;
 }
 
+.rdw-editor-toolbar{
+  background: var(--bg) !important;
+  border-color: inherit !important;
+}
+
+.rdw-option-wrapper{
+  border-color: inherit !important;
+  /* background-color: var(--background) !important; */
+  color: var(--text-color) !important;
+}
+
 input {
   outline: none;
 }
@@ -970,6 +983,10 @@ thead.css-120bgvu-MuiTableHead-root{
   margin-left: 0.5rem;
 }
 
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -1080,6 +1097,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .min-h-\[100px\] {
   min-height: 100px;
+}
+
+.min-h-\[350px\] {
+  min-height: 350px;
 }
 
 .min-h-\[calc\(100\%-180px\)\] {
@@ -1196,6 +1217,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .border-collapse {
   border-collapse: collapse;
+}
+
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .cursor-pointer {

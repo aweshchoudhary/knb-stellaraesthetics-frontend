@@ -2,39 +2,61 @@ import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
-import { useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
-import { labelApi } from "../../services/labelApi";
-import { clientApi } from "../../services/clientApi";
+import { useLazyGetClientQuery } from "../../services/clientApi";
+import { useLazyGetLabelQuery } from "../../services/labelApi";
 import ActivityStatus from "../deal/ActivityStatus";
+import moment from "moment";
 
 const Card = ({ card }) => {
-  const dispatch = useDispatch();
   const [label, setLabel] = useState({});
-  const [client, setClient] = useState({});
+  const [clients, setClients] = useState([]);
+  const [
+    getClientById,
+    {
+      isLoading: isClientsLoading,
+      isSuccess: isClientsSuccess,
+      isFetching: isClientsFetching,
+    },
+  ] = useLazyGetClientQuery();
+  const [
+    getLabelById,
+    {
+      isLoading: isLabelLoading,
+      isSuccess: isLabelSuccess,
+      isFetching: isLabelFetching,
+    },
+  ] = useLazyGetLabelQuery();
 
   const fetchLabel = async (id) => {
-    const { data } = await dispatch(labelApi.endpoints.getLabel.initiate(id));
+    const { data } = await getLabelById(id);
     setLabel(data);
   };
   const fetchClient = async (id) => {
-    const { data } = await dispatch(clientApi.endpoints.getClient.initiate(id));
-    setClient(data);
+    const { data } = await getClientById(id);
+    setClients((prev) => [...prev, data]);
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (card?.label) {
-      fetchLabel(card.label);
+      isMounted && fetchLabel(card.label);
     }
-    if (card?.clientId) fetchClient(card.clientId);
+    if (card?.contacts?.length) {
+      card.contacts.forEach((contact) => {
+        isMounted && fetchClient(contact);
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
   }, [card]);
 
   // useEffect(() => {
   //   if (isError) toast.error(error);
   // }, [isError]);
-
-  return card && label && client ? (
+  return card && label ? (
     <Link
       to={"/deals/" + card._id}
       className={
@@ -42,24 +64,47 @@ const Card = ({ card }) => {
       }
     >
       <div className="top">
-        {card.label && (
+        {!isLabelLoading && !isLabelFetching && isLabelSuccess ? (
           <Tooltip title={label.name} className="label mb-1">
             <p
               className="w-[20%] h-[5px]"
               style={{ background: label.color }}
             ></p>
           </Tooltip>
+        ) : (
+          <Skeleton
+            variant="rectangular"
+            height={5}
+            sx={{ width: "20%" }}
+            className="mb-1"
+          />
         )}
         <h4 className="font-medium">{card.title}</h4>
-        <p className="text-gray-500 text-xs">{client.company}</p>
+        {!isClientsLoading && !isClientsFetching && isClientsSuccess ? (
+          <p className="text-gray-500 text-xs flex gap-2 mt-1">
+            {clients?.map((client, i) => {
+              return (
+                i < 2 && (
+                  <span>
+                    {client.contactPerson}
+                    {clients.length - 1 !== i && ","}
+                  </span>
+                )
+              );
+            })}
+            {clients.length > 2 && <span>{clients.length - 2} more</span>}
+          </p>
+        ) : (
+          <p className="text-gray-500 text-xs flex gap-2 mt-1">Loading...</p>
+        )}
         <div className="activity absolute top-2 right-2">
           <ActivityStatus cardId={card._id} />
         </div>
       </div>
       <div className="bottom flex items-center gap-3 text-sm">
         <div className="user">
-          <Tooltip title={client.contactPerson}>
-            <Icon icon={"teenyicons:users-solid"} />
+          <Tooltip title={moment(card.createdAt).format("DD-MM-YYYY")}>
+            <span>{moment(card.createdAt).fromNow()}</span>
           </Tooltip>
         </div>
         <div className="amount flex items-center">

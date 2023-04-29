@@ -5,12 +5,14 @@
 html.darkMode:root {
   --primary: #571168;
   --text-color: #ffffff;
+  --secondary: #cc0000;
   --paper: rgb(59, 59, 59);
   --background: #212121;
   --border-color: rgb(98, 98, 98);
 }
 html:root {
   --primary: #571168;
+  --secondary: #cc0000;
   --text-color: #000000;
   --paper: rgb(236, 236, 236);
   --background: #fff;
@@ -124,6 +126,17 @@ option{
   background-color: var(--background);
   border: 1px solid var(--border-color) !important;
   height: auto;
+}
+
+
+.rdw-editor-toolbar{
+  background: var(--bg) !important;
+  border-color: inherit !important;
+}
+.rdw-option-wrapper{
+  border-color: inherit !important;
+  /* background-color: var(--background) !important; */
+  color: var(--text-color) !important;
 }
 
 input {

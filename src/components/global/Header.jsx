@@ -14,7 +14,7 @@ const Header = ({ title }) => {
 
   const toggleThemeMode = () => dispatch(toggleDarkMode());
   return (
-    <header className="px-5 h-[60px] border-b flex items-center justify-between">
+    <header className="px-5 h-[50px] border-b flex items-center justify-between">
       <div className="flex items-center gap-4">
         <button
           onClick={() => dispatch(toggleMobileOpen())}
@@ -24,19 +24,16 @@ const Header = ({ title }) => {
         </button>
         <h1 className="font-semibold">{title}</h1>
       </div>
-      <div className="flex items-center gap-1">
-        <button
-          className="btn p-2 rounded-full text-2xl hover:bg-paper"
-          onClick={toggleThemeMode}
-        >
+      <div className="flex items-center gap-3">
+        <button className="rounded-full text-xl" onClick={toggleThemeMode}>
           <Icon
             icon={
               darkMode ? "ic:round-light-mode" : "material-symbols:dark-mode"
             }
           />
         </button>
-        <Link className="block p-2 hover:bg-paper rounded-full">
-          <Icon icon="basil:user-plus-outline" className="text-2xl" />
+        <Link className="block rounded-full">
+          <Icon icon="basil:user-plus-outline" className="text-xl" />
         </Link>
         <Link
           to="/user"
