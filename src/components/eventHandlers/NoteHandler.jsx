@@ -4,11 +4,11 @@ import { useCreateNoteMutation } from "../../services/noteApi";
 import DealSelect from "./DealSelect";
 import { toast } from "react-toastify";
 
-const Notes = ({ cards }) => {
+const Notes = ({ cards = [] }) => {
   const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
   const [isClear, setIsClear] = useState(false);
-  const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
+  const [selectedDeals, setSelectedDeals] = useState(cards);
 
   async function handleCreateNote() {
     const selectedDeals = selectedDeals.map((item) => item.value);

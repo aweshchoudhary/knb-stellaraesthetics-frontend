@@ -7,7 +7,6 @@ import { CssBaseline } from "@mui/material";
 
 import "react-toastify/dist/ReactToastify.css";
 import "react-datepicker/dist/react-datepicker.css";
-import "react-tabs/style/react-tabs.css";
 
 import Layout from "./components/Layout/Layout";
 const Dashboard = lazy(() => import("./pages/Dashboard"));

@@ -1,5 +1,5 @@
 import PhoneInput from "react-phone-number-input";
-import { useCreateClientMutation } from "../../../services/clientApi";
+import { useCreateContactMutation } from "../../../services/contactApi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -8,7 +8,7 @@ import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import { Icon } from "@iconify/react";
 
-let clientDetails = {
+let contactDetails = {
   company: "",
   contactPerson: "",
   mobile: "",
@@ -50,13 +50,13 @@ const validationSchema = Yup.object({
 const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
   // Validation
   const formik = useFormik({
-    initialValues: clientDetails,
+    initialValues: contactDetails,
     validationSchema,
-    onSubmit: (values) => handlCreateClient(values),
+    onSubmit: (values) => handlCreateContact(values),
   });
 
-  const [createClient, { isLoading, isError, isSuccess, error }] =
-    useCreateClientMutation();
+  const [createContact, { isLoading, isError, isSuccess, error }] =
+    useCreateContactMutation();
 
   const [mobile, setMobile] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -64,12 +64,12 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
 
   const region = navigator?.language?.split("-")[1];
 
-  async function handlCreateClient(values) {
+  async function handlCreateContact(values) {
     if (!formik.values.mobile.length && !formik.values.whatsapp.length) {
       return toast.error("Please enter Mobile or Whatsapp Number");
     }
 
-    const res = await createClient(values);
+    const res = await createContact(values);
 
     if (setSelectedContacts && res.data) {
       setSelectedContacts((prev) => [
@@ -80,11 +80,11 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
         },
       ]);
     }
-    handleClearForm();
+    setIsOpen(false);
   }
 
   function handleClearForm() {
-    clientDetails = {
+    contactDetails = {
       company: "",
       contactPerson: "",
       mobile: "",
@@ -334,6 +334,7 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
                   options={updatedCountries}
                   placeholder="Country"
                   className="mb-2"
+                  classNamePrefix={"select"}
                   onBlur={formik.handleBlur}
                   value={currentCountry}
                   onChange={(value) => {
@@ -361,6 +362,7 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
                   }}
                   placeholder="State"
                   className="mb-2"
+                  classNamePrefix={"select"}
                 />
                 {formik.touched.address?.state &&
                 formik.errors.address?.state ? (
@@ -386,6 +388,7 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
                     setCurrentCity(value);
                   }}
                   className="mb-2"
+                  classNamePrefix={"select"}
                 />
                 {formik.touched.address?.city && formik.errors.address?.city ? (
                   <div className="text-sm mt-2 text-red-600 flex items-center gap-2">

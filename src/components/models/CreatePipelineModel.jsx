@@ -36,7 +36,7 @@ const CreatePipelineModel = ({ setIsOpen }) => {
         <button
           className="btn-filled"
           onClick={handleCreatePipeline}
-          disabled={isLoading}
+          disabled={isLoading || !name}
         >
           {isLoading ? "Loading..." : "Create Pipeline"}
         </button>

@@ -6,61 +6,61 @@ export const dealApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: ["deal"],
   endpoints: (builder) => ({
-    createCard: builder.mutation({
+    createDeal: builder.mutation({
       query: (data) => ({
-        url: "/card/add",
+        url: "/deal/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["deal"],
     }),
-    getCard: builder.query({
-      query: (id) => "/card/get-card/" + id,
+    getDeal: builder.query({
+      query: (id) => "/deal/get-deal/" + id,
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;
       },
     }),
-    searchCards: builder.query({
-      query: (query) => "/card/search?query=" + query,
+    searchDeals: builder.query({
+      query: (query) => "/deal/search?query=" + query,
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;
       },
     }),
-    getCardsByStage: builder.query({
-      query: (stageId) => "/card/get-cards/" + stageId,
+    getDealsByStage: builder.query({
+      query: (stageId) => "/deal/get-deals/" + stageId,
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;
       },
     }),
-    getCardsByClientId: builder.query({
-      query: (clientId) => "/card/get-cards-by-client/" + clientId,
+    getDealsByContactId: builder.query({
+      query: (contactId) => "/deal/get-deals-by-client/" + contactId,
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;
       },
     }),
-    updateCard: builder.mutation({
+    updateDeal: builder.mutation({
       query: (data) => ({
-        url: "/card/update/" + data.id,
+        url: "/deal/update/" + data.id,
         method: "PUT",
         body: data.update,
       }),
       invalidatesTags: ["deal"],
     }),
-    updateCardStage: builder.mutation({
+    updateDealStage: builder.mutation({
       query: (data) => ({
-        url: "/card/card-stage",
+        url: "/deal/deal-stage",
         method: "PUT",
         body: data,
       }),
       invalidatesTags: ["deal"],
     }),
-    deleteCard: builder.mutation({
+    deleteDeal: builder.mutation({
       query: (id) => ({
-        url: "/card/delete/" + id,
+        url: "/deal/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["deal"],
@@ -69,14 +69,14 @@ export const dealApi = createApi({
 });
 
 export const {
-  useGetCardQuery,
-  useGetCardsByClientIdQuery,
-  useLazyGetCardQuery,
-  useCreateCardMutation,
-  useDeleteCardMutation,
-  useUpdateCardMutation,
-  useUpdateCardStageMutation,
-  useGetCardsByStageQuery,
-  useLazyGetCardsByStageQuery,
-  useLazySearchCardsQuery,
+  useGetDealQuery,
+  useGetDealsByContactIdQuery,
+  useLazyGetDealQuery,
+  useCreateDealMutation,
+  useDeleteDealMutation,
+  useUpdateDealMutation,
+  useUpdateDealStageMutation,
+  useGetDealsByStageQuery,
+  useLazyGetDealsByStageQuery,
+  useLazySearchDealsQuery,
 } = dealApi;

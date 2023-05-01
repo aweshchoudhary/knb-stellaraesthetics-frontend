@@ -1,9 +1,10 @@
+import React from "react";
 import { Icon } from "@iconify/react";
 import Accordian, { AccordianBody } from "../global/Accordian";
 import formatNumber from "../functions/formatNumber";
 import moment from "moment";
 import Loader from "../global/Loader";
-import { useGetClientQuery } from "../../services/clientApi";
+import { useGetContactQuery } from "../../services/contactApi";
 import { Link } from "react-router-dom";
 
 const DealSideBar = ({ data }) => {
@@ -21,8 +22,10 @@ const DealSideBar = ({ data }) => {
             </p>
           </div>
           {data?.contacts?.length
-            ? data.contacts.map((client) => {
-                return <ClientAccordian data={data} clientId={client} />;
+            ? data.contacts.map((client, i) => {
+                return (
+                  <ContactAccordian key={i} data={data} clientId={client} />
+                );
               })
             : null}
         </AccordianBody>
@@ -55,13 +58,13 @@ const DealSideBar = ({ data }) => {
   );
 };
 
-const ClientAccordian = ({ clientId }) => {
+const ContactAccordian = ({ clientId }) => {
   const {
     data: client,
     isLoading,
     isFetching,
     isSuccess,
-  } = useGetClientQuery(clientId);
+  } = useGetContactQuery(clientId);
 
   return (
     !isLoading &&

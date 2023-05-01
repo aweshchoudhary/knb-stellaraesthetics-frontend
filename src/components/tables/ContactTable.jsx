@@ -54,7 +54,7 @@ const ContactTable = () => {
     useInfiniteQuery({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam = 0 }) => {
-        const { data } = await axiosInstance.get("/client/get-clients", {
+        const { data } = await axiosInstance.get("/contact/get-contacts", {
           params: {
             start: pageParam * fetchSize,
             size: fetchSize,

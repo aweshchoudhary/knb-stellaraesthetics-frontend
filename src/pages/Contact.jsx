@@ -1,26 +1,30 @@
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  useDeleteClientMutation,
-  useGetClientQuery,
-} from "../services/clientApi";
+  useDeleteContactMutation,
+  useGetContactQuery,
+} from "../services/contactApi";
 import Header from "../components/global/Header";
 import Loader from "../components/global/Loader";
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+
+import moment from "moment";
+import Deal from "../components/global/Deal";
+import { Box, Tab, Tabs } from "@mui/material";
 
 import ActivityHandler from "../components/eventHandlers/ActivityHandler";
 import NoteHandler from "../components/eventHandlers/NoteHandler";
 import FileHandler from "../components/eventHandlers/FileHandler";
 import EmailHandler from "../components/eventHandlers/EmailHandler";
-import { useGetActivitiesByClientIdQuery } from "../services/activityApi";
-import moment from "moment";
-import { useGetCardsByClientIdQuery } from "../services/dealApi";
-import Card from "../components/global/Card";
-import { Box, Tab, Tabs } from "@mui/material";
 
-import Model from "../components/models/Model";
-import CreateDealModel from "../components/models/createDealModel/CreateDealModel";
+import { useGetActivitiesByContactIdQuery } from "../services/activityApi";
+import { useGetDealsByContactIdQuery } from "../services/dealApi";
+
+const Model = lazy(() => import("../components/models/Model"));
+const CreateDealModel = lazy(() =>
+  import("../components/models/createDealModel/CreateDealModel")
+);
 
 const Contact = () => {
   const params = useParams();
@@ -32,14 +36,14 @@ const Contact = () => {
     data: activities,
     // isLoading: isActivitiesLoading,
     // isFetching: isActivitiesFetching,
-  } = useGetActivitiesByClientIdQuery(id);
+  } = useGetActivitiesByContactIdQuery(id);
   const {
     data: cards,
-    // isLoading: isCardsLoading,
-    // isFetching: isCardsFetching,
-  } = useGetCardsByClientIdQuery(id);
+    isLoading: isDealsLoading,
+    isFetching: isDealsFetching,
+  } = useGetDealsByContactIdQuery(id);
 
-  const { data, isLoading, isSuccess, isFetching } = useGetClientQuery(id);
+  const { data, isLoading, isSuccess, isFetching } = useGetContactQuery(id);
 
   const navigate = useNavigate();
 
@@ -48,17 +52,17 @@ const Contact = () => {
     setCurrentTab(newTab);
   }
 
-  const [deleteClient, { isSuccess: isDeleteSuccess }] =
-    useDeleteClientMutation();
+  const [deleteContact, { isSuccess: isDeleteSuccess }] =
+    useDeleteContactMutation();
 
-  const selectedCards =
+  const selectedDeals =
     cards?.map((i) => ({
       label: i.title,
       value: i._id,
     })) || [];
 
-  async function handleDeleteClient() {
-    await deleteClient(id);
+  async function handleDeleteContact() {
+    await deleteContact(id);
     navigate("/contacts", { replace: true });
   }
   useEffect(() => {
@@ -69,14 +73,21 @@ const Contact = () => {
   return (
     <>
       <Header title={"Contact"} />
-      <Model setIsOpen={setIsCreateDealModeOpen} isOpen={isCreateDealModelOpen}>
-        <CreateDealModel
-          selectedData={
-            data ? [{ label: data.contactPerson, value: data._id }] : []
-          }
-          setIsOpen={setIsCreateDealModeOpen}
-        />
-      </Model>
+      <Suspense>
+        {isCreateDealModelOpen && (
+          <Model
+            setIsOpen={setIsCreateDealModeOpen}
+            isOpen={isCreateDealModelOpen}
+          >
+            <CreateDealModel
+              selectedData={
+                data ? [{ label: data.contactPerson, value: data._id }] : []
+              }
+              setIsOpen={setIsCreateDealModeOpen}
+            />
+          </Model>
+        )}
+      </Suspense>
       {!isLoading && !isFetching && isSuccess ? (
         <>
           <section className="px-5 py-3 border-b flex justify-between items-center">
@@ -93,7 +104,7 @@ const Contact = () => {
             </h1>
             <div className="flex gap-2">
               <button
-                onClick={handleDeleteClient}
+                onClick={handleDeleteContact}
                 className="btn-filled bg-red-600 border-red-600 btn-small"
               >
                 Delete
@@ -148,9 +159,10 @@ const Contact = () => {
                   <h2>Open Deals</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-2">
-                  {cards?.length !== 0 &&
+                  {!isDealsFetching &&
+                    !isDealsLoading &&
                     cards?.map((card) => {
-                      return <Card card={card} />;
+                      return <Deal card={card} key={card._id} />;
                     })}
                 </div>
               </div>
@@ -160,11 +172,17 @@ const Contact = () => {
                 </header>
                 <div className="p-5 flex flex-col gap-3">
                   {activities?.length !== 0 &&
-                    activities?.map((activity) => {
+                    activities?.map((activity, index) => {
                       return (
-                        <div className="w-full py-3 px-4 border flex justify-between items-center">
-                          <div className="flex gap-3 items-center">
-                            <Icon icon={activity?.icon} className="text-xl" />
+                        <div
+                          key={index}
+                          className="w-full py-3 px-4 border flex justify-between items-center"
+                        >
+                          <div className="flex gap-2 items-center">
+                            <Icon
+                              icon={activity?.icon || "mdi:calendar-task"}
+                              className="text-xl"
+                            />
                             <h2>{activity.title}</h2>
                           </div>
                           <div>
@@ -196,12 +214,12 @@ const Contact = () => {
                     </Tabs>
                   </Box>
                   <Box className="bg-bg">
-                    {currentTab === 1 && <NoteHandler cards={selectedCards} />}
+                    {currentTab === 1 && <NoteHandler cards={selectedDeals} />}
                     {currentTab === 2 && (
-                      <ActivityHandler cards={selectedCards} />
+                      <ActivityHandler cards={selectedDeals} />
                     )}
-                    {currentTab === 3 && <FileHandler cards={selectedCards} />}
-                    {currentTab === 4 && <EmailHandler cards={selectedCards} />}
+                    {currentTab === 3 && <FileHandler cards={selectedDeals} />}
+                    {currentTab === 4 && <EmailHandler cards={selectedDeals} />}
                   </Box>
                 </Box>
                 {/* <EventTabsContainer cardId={id} />

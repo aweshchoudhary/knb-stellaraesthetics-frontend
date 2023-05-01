@@ -1,10 +1,11 @@
+import React from "react";
 import { useDispatch } from "react-redux";
 import { Icon } from "@iconify/react";
 import moment from "moment";
 import Loader from "../global/Loader";
 import { updateActivity } from "../../state/features/dealFeatures/activitySlice";
 import { deleteActivity } from "../../state/features/dealFeatures/activitySlice";
-import { useGetActivitiesByCardIdQuery } from "../../services/activityApi";
+import { useGetActivitiesByDealIdQuery } from "../../services/activityApi";
 
 const FocusActivities = ({ cardId }) => {
   return (
@@ -19,7 +20,7 @@ const FocusActivities = ({ cardId }) => {
 
 const Activites = ({ cardId }) => {
   const { data, isLoading, isFetching, isSuccess } =
-    useGetActivitiesByCardIdQuery(cardId);
+    useGetActivitiesByDealIdQuery(cardId);
 
   return !isLoading && !isFetching && isSuccess ? (
     <div>
@@ -28,7 +29,7 @@ const Activites = ({ cardId }) => {
           data?.map((activity, index) => {
             return (
               <li key={index}>
-                <ActivityCard data={activity} />
+                <ActivityDeal data={activity} />
               </li>
             );
           })
@@ -46,7 +47,7 @@ const Activites = ({ cardId }) => {
   );
 };
 
-const ActivityCard = ({ data }) => {
+const ActivityDeal = ({ data }) => {
   const dispatch = useDispatch();
   function handleDeleteActivity() {
     dispatch(deleteActivity(data._id));

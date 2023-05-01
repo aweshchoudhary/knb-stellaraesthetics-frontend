@@ -1,7 +1,9 @@
-import { useState } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import { Icon } from "@iconify/react";
-import CreateContactForm from "./CreateContactForm";
+const CreateContactForm = lazy(() => import("./CreateContactForm"));
+
 import SearchContacts from "./SearchContacts";
+import Loader from "../../global/Loader";
 
 const CreateContactModel = ({
   setIsOpen,
@@ -37,12 +39,20 @@ const CreateContactModel = ({
         </button>
       )}
 
-      {createNewContactSectionDisplay && (
-        <CreateContactForm
-          setSelectedContacts={setSelectedContacts}
-          setIsOpen={setCreateNewContactSectionDisplay}
-        />
-      )}
+      <Suspense
+        fallback={
+          <div className="w-full flex justify-center p-5">
+            <Loader />
+          </div>
+        }
+      >
+        {createNewContactSectionDisplay && (
+          <CreateContactForm
+            setSelectedContacts={setSelectedContacts}
+            setIsOpen={setCreateNewContactSectionDisplay}
+          />
+        )}
+      </Suspense>
       <footer className="modal-footer">
         <button
           className="btn-outlined"

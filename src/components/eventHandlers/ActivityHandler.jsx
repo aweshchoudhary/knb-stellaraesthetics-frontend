@@ -116,13 +116,6 @@ const ActivityHandler = ({
       const res = await getActivityById(activityId);
       if (res.data) {
         const activityData = res.data;
-        // setTitle(activityData.title);
-        // setType(activityData.type);
-        // setStartDate(moment(activityData.startDate).format("YYYY-MM-DD"));
-        // setStartTime(activityData.startTime);
-        // setEndDate(moment(activityData.endDate).format("YYYY-MM-DD"));
-        // setEndTime(activityData.endTime);
-        // setHolder(activityData.holder);
         setEventInfo({ ...activityData });
 
         if (activityData?.location) {

@@ -1,7 +1,7 @@
 import { Droppable } from "react-beautiful-dnd";
-import Card from "../global/Card";
+import Deal from "../global/Deal";
 import Row from "./Row";
-import { useLazyGetCardsByStageQuery } from "../../services/dealApi";
+import { useLazyGetDealsByStageQuery } from "../../services/dealApi";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 
@@ -10,30 +10,30 @@ const Column = ({ stage, loading }) => {
     totalDeals: 0,
     totalRevenue: 0,
   });
-  const [getCardsByStageId, { data, isLoading, isFetching, isSuccess }] =
-    useLazyGetCardsByStageQuery();
+  const [getDealsByStageId, { data: deals, isLoading, isFetching, isSuccess }] =
+    useLazyGetDealsByStageQuery();
 
   useEffect(() => {
-    getCardsByStageId(stage._id);
+    getDealsByStageId(stage._id);
   }, [stage]);
 
   useEffect(() => {
     let isMounted = true;
     const calculateData = () => {
       let totalRevenue = 0;
-      data.map((item) => {
+      deals.map((item) => {
         totalRevenue += item.value.value;
       });
       setStageInfo({
-        totalDeals: data.length,
+        totalDeals: deals.length,
         totalRevenue,
       });
     };
-    isMounted && data?.length > 0 && calculateData();
+    isMounted && deals?.length > 0 && calculateData();
     return () => {
       isMounted = false;
     };
-  }, [data]);
+  }, [deals]);
   return (
     <div className={"border-r shrink-0 flex flex-col w-1/3"} key={stage._id}>
       <header
@@ -64,10 +64,10 @@ const Column = ({ stage, loading }) => {
                 {!loading &&
                   !isLoading &&
                   isSuccess &&
-                  data?.map((card, index) => {
+                  deals?.map((deal, index) => {
                     return (
-                      <Row itemId={card._id} index={index} key={index}>
-                        <Card card={card} />
+                      <Row itemId={deal._id} index={index} key={index}>
+                        <Deal deal={deal} />
                       </Row>
                     );
                   })}

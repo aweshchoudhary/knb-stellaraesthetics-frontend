@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Label from "../../deal/label/Label";
 import { useLazyGetStagesQuery } from "../../../services/stageApi";
-import { useCreateCardMutation } from "../../../services/dealApi";
+import { useCreateDealMutation } from "../../../services/dealApi";
 import { useGetPipelinesQuery } from "../../../services/pipelineApi";
 import { toast } from "react-toastify";
 import ReactDatePicker from "react-datepicker";
@@ -15,7 +15,7 @@ import { Icon } from "@iconify/react";
 let initialValues = {
   title: "",
   pipeline: "",
-  stage: "",
+  currentStage: "",
   value: { value: "", type: "inr" },
   label: "",
   expectedClosingDate: new Date(),
@@ -25,23 +25,14 @@ const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
   pipeline: Yup.string().required("Pipeline is required"),
   stage: Yup.string().required("Stage is required"),
-  value: Yup.object({
-    value: Yup.number().positive("Value must be positive"),
-    type: Yup.string(),
-  }),
+  value: Yup.number().positive("Value must be positive"),
+  currency: Yup.string(),
   label: Yup.string().required("Label is required"),
   expectedClosingDate: Yup.date().required("Expected closing date is required"),
 });
 
 const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   const [getStages, { data = [] }] = useLazyGetStagesQuery();
-  const [dealData, setDealData] = useState({
-    title: "",
-    value: "",
-    currentStage: "",
-    label: "",
-    expectedClosingDate: new Date(),
-  });
 
   const [currentCurrency, setCurrentCurrency] = useState({});
   const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
@@ -60,30 +51,26 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   });
 
   function handleCurrencyChange(newCurrency) {
-    formik.values.value.type = newCurrency.value;
+    formik.values.currency = newCurrency.value;
     setCurrentCurrency(newCurrency);
   }
 
   const [pipeId, setPipeId] = useState(pipelineId);
   const [label, setLabel] = useState("");
 
-  const [createCard, { isLoading, isError, error, isSuccess }] =
-    useCreateCardMutation();
+  const [createDeal, { isLoading, isError, error, isSuccess }] =
+    useCreateDealMutation();
 
   const { data: pipelines } = useGetPipelinesQuery();
 
   async function handleCreateDeal(values) {
     const contacts = selectedContacts.map((item) => item.value);
 
-    const newCard = {
-      title: values.title,
-      value: values.value,
-      currentStage: values.stage,
-      label: values.label,
-      expectedClosingDate: values.expectedClosingDate,
+    const newDeal = {
+      ...values,
       contacts,
     };
-    await createCard(newCard);
+    await createDeal(newDeal);
     setIsOpen(false);
   }
 
@@ -91,8 +78,11 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     await getStages(pipeId);
   };
 
-  // Validation
+  function handleDateSelect(date) {
+    formik.values.expectedClosingDate = date;
+  }
 
+  // Validation
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -120,7 +110,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
 
   useEffect(() => {
     if (data.length) {
-      formik.values.stage = data[0]._id;
+      formik.values.currentStage = data[0]._id;
     }
   }, [data]);
 
@@ -129,7 +119,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   }, [label]);
 
   useEffect(() => {
-    formik.values.value.type = currentCurrency.value;
+    formik.values.currency = currentCurrency.value;
   }, []);
 
   return (
@@ -165,25 +155,25 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               <div className="flex-1">
                 <input
                   type="number"
-                  name="value.value"
+                  name="value"
                   id="amount-value"
                   placeholder="Value"
                   className="input w-full"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.value.value}
+                  value={formik.values.value}
                 />
-                {formik.touched.value?.value && formik.errors.value?.value ? (
+                {formik.touched.value && formik.errors.value ? (
                   <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
                     <Icon icon="ic:round-error" className="text-lg" />
-                    {formik.errors.value.value}
+                    {formik.errors.value}
                   </div>
                 ) : null}
               </div>
               <div className="flex-1">
                 <Select
-                  name="value"
-                  id="value-type" // like inr,usd
+                  name="currency"
+                  id="currency" // like inr,usd
                   classNamePrefix="select"
                   options={AllCountriesCurrencyData}
                   onChange={handleCurrencyChange}
@@ -243,12 +233,12 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               Stage
             </label>
             <select
-              name="stage"
-              id="stage"
+              name="currentStage"
+              id="currentStage"
               className="input capitalize"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.stage}
+              value={formik.values.currentStage}
             >
               {data?.map((item, i) => {
                 return item._id === formik.values.currentStage ? (
@@ -268,10 +258,10 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
                 );
               })}
             </select>
-            {formik.touched.stage && formik.errors.stage ? (
+            {formik.touched.currentStage && formik.errors.currentStage ? (
               <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
                 <Icon icon="ic:round-error" className="text-lg" />
-                {formik.errors.stage}
+                {formik.errors.currentStage}
               </div>
             ) : null}
           </div>
@@ -296,12 +286,11 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
             <ReactDatePicker
               className="input"
               name="expectedClosingDate"
-              selected={dealData.expectedClosingDate}
+              selected={formik.values.expectedClosingDate}
               minDate={new Date()}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              onChange={handleDateSelect}
+              // onBlur={formik.handleBlur}
               value={formik.values.expectedClosingDate}
-              // onChange={(date) => fillDealDetails("expectedClosingDate", date)}
             />
             {formik.touched.expectedClosingDate &&
             formik.errors.expectedClosingDate ? (

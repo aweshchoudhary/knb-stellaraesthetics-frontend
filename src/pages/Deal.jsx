@@ -1,11 +1,11 @@
+import React, { useState } from "react";
 import Header from "../components/global/Header";
-// import Tabs from "../components/global/Tabs";
 import DealSideBar from "../components/deal/DealSideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  useDeleteCardMutation,
-  useGetCardQuery,
-  useUpdateCardMutation,
+  useDeleteDealMutation,
+  useGetDealQuery,
+  useUpdateDealMutation,
 } from "../services/dealApi";
 import Loader from "../components/global/Loader";
 
@@ -17,24 +17,23 @@ import NoteHandler from "../components/eventHandlers/NoteHandler";
 import FileHandler from "../components/eventHandlers/FileHandler";
 import EmailHandler from "../components/eventHandlers/EmailHandler";
 import { Box, Tab, Tabs } from "@mui/material";
-import { useState } from "react";
 
 const Deal = () => {
   const params = useParams();
   const { id } = params;
-  const { data, isLoading, isFetching, isSuccess } = useGetCardQuery(id);
-  const [updateCard, { isLoading: isCardUpdating }] = useUpdateCardMutation();
-  const [deleteCard, { isLoading: isCardDeleting }] = useDeleteCardMutation();
+  const { data, isLoading, isFetching, isSuccess } = useGetDealQuery(id);
+  const [updateDeal, { isLoading: isDealUpdating }] = useUpdateDealMutation();
+  const [deleteDeal, { isLoading: isDealDeleting }] = useDeleteDealMutation();
 
   const navigate = useNavigate();
 
-  async function handleDeleteCard() {
-    await deleteCard(id);
+  async function handleDeleteDeal() {
+    await deleteDeal(id);
     navigate("/pipeline");
   }
 
-  async function handleUpdateCardStatus(status) {
-    await updateCard({ id, update: { status } });
+  async function handleUpdateDealStatus(status) {
+    await updateDeal({ id, update: { status } });
     navigate("/pipeline");
   }
 
@@ -42,13 +41,12 @@ const Deal = () => {
 
   function handleTabChange(event, newTab) {
     setCurrentTab(newTab);
-    navigate("/pipeline");
   }
 
   return !isLoading && !isFetching && isSuccess ? (
     <>
       <Header title={"Deal"} />
-      <section className="header border-b border-collapse px-5 py-3 h-[120px]">
+      <section className="header border-b border-collapse px-5 py-3 h-[120px]/">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h1 className="text-2xl font-semibold">{data.title}</h1>
@@ -56,24 +54,24 @@ const Deal = () => {
           <div className="flex items-center gap-3">
             <div className="flex gap-1">
               <button
-                disabled={isCardUpdating}
-                onClick={() => handleUpdateCardStatus("won")}
+                disabled={isDealUpdating}
+                onClick={() => handleUpdateDealStatus("won")}
                 className="btn-filled bg-green-600 border-0"
               >
                 Won
               </button>
               <button
-                disabled={isCardUpdating}
-                onClick={() => handleUpdateCardStatus("lost")}
+                disabled={isDealUpdating}
+                onClick={() => handleUpdateDealStatus("lost")}
                 className="btn-filled bg-red-600 border-0"
               >
                 Lost
               </button>
               <button
                 className="btn-outlined text-red-600 ml-2"
-                onClick={handleDeleteCard}
+                onClick={handleDeleteDeal}
               >
-                {isCardDeleting ? "Deleting..." : "Delete"}
+                {isDealDeleting ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

@@ -57,10 +57,18 @@ const CreateLabel = ({ setIsOpen }) => {
         </div>
       </div>
       <footer className="p-2 bg-paper flex items-center gap-2 justify-end">
-        <button className="btn-outlined btn-small" onClick={clear}>
+        <button
+          type="button"
+          className="btn-outlined btn-small"
+          onClick={clear}
+        >
           cancel
         </button>
-        <button className="btn-filled btn-small" onClick={createLabelFn}>
+        <button
+          type="button"
+          className="btn-filled btn-small"
+          onClick={createLabelFn}
+        >
           save
         </button>
       </footer>

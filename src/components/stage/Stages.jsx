@@ -5,7 +5,7 @@ import Column from "./Column";
 import { toast } from "react-toastify";
 import CreateStageModel from "../models/CreateStageModel";
 import { useGetStagesQuery } from "../../services/stageApi";
-import { useUpdateCardStageMutation } from "../../services/dealApi";
+import { useUpdateDealStageMutation } from "../../services/dealApi";
 
 const Stages = ({ pipeline, setIsStagesLength }) => {
   const {
@@ -17,9 +17,9 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
     error,
   } = useGetStagesQuery(pipeline._id);
   const [
-    updateCardStage,
+    updateDealStage,
     { isLoading: isUpdatingStage, isSuccess: isUpdateSuccess },
-  ] = useUpdateCardStageMutation();
+  ] = useUpdateDealStageMutation();
 
   const [editDealModelDisplay, setEditDealModelDisplay] = useState(false);
   const [createStageModelDisplay, setCreateStageModelDisplay] = useState(false);
@@ -28,7 +28,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
     if (!result.destination) return;
     const { source, destination, draggableId } = result;
     if (source.droppableId !== destination.droppableId) {
-      await updateCardStage({
+      await updateDealStage({
         cardId: draggableId,
         prevStageId: source.droppableId,
         newStageId: destination.droppableId,
