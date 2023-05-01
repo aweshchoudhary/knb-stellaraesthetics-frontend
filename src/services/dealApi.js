@@ -21,22 +21,11 @@ export const dealApi = createApi({
         return response.data;
       },
     }),
-    searchDeals: builder.query({
-      query: (query) => "/deal/search?query=" + query,
-      providesTags: ["deal"],
-      transformResponse: (response) => {
-        return response.data;
-      },
-    }),
-    getDealsByStage: builder.query({
-      query: (stageId) => "/deal/get-deals/" + stageId,
-      providesTags: ["deal"],
-      transformResponse: (response) => {
-        return response.data;
-      },
-    }),
-    getDealsByContactId: builder.query({
-      query: (contactId) => "/deal/get-deals-by-client/" + contactId,
+    getDeals: builder.query({
+      query: (params) => ({
+        url: "/deal/get-deals/",
+        params,
+      }),
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;
@@ -70,13 +59,10 @@ export const dealApi = createApi({
 
 export const {
   useGetDealQuery,
-  useGetDealsByContactIdQuery,
   useLazyGetDealQuery,
   useCreateDealMutation,
   useDeleteDealMutation,
   useUpdateDealMutation,
   useUpdateDealStageMutation,
-  useGetDealsByStageQuery,
-  useLazyGetDealsByStageQuery,
-  useLazySearchDealsQuery,
+  useGetDealsQuery,
 } = dealApi;

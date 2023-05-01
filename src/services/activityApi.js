@@ -21,22 +21,11 @@ export const activityApi = createApi({
         return response.data;
       },
     }),
-    getActivitiesByDealId: builder.query({
-      query: (cardId) => "/activity/get-activities/" + cardId,
-      providesTags: ["activity"],
-      transformResponse: (response) => {
-        return response.data;
-      },
-    }),
-    getActivitiesByContactId: builder.query({
-      query: (clientId) => "/activity/get-activities-by-client/" + clientId,
-      providesTags: ["activity"],
-      transformResponse: (response) => {
-        return response.data;
-      },
-    }),
-    getAllActivities: builder.query({
-      query: () => "/activity/get-all-activities",
+    getActivities: builder.query({
+      query: (params) => ({
+        url: "/activity/get-activities/",
+        params,
+      }),
       providesTags: ["activity"],
       transformResponse: (response) => {
         return response.data;
@@ -62,11 +51,10 @@ export const activityApi = createApi({
 
 export const {
   useGetActivityQuery,
+  useLazyGetActivityQuery,
   useCreateActivityMutation,
   useDeleteActivityMutation,
   useUpdateActivityMutation,
-  useGetAllActivitiesQuery,
-  useGetActivitiesByDealIdQuery,
-  useLazyGetActivityQuery,
-  useGetActivitiesByContactIdQuery,
+  useGetActivitiesQuery,
+  useLazyGetActivitiesQuery,
 } = activityApi;

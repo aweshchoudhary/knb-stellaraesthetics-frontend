@@ -36,15 +36,16 @@ const store = configureStore({
     // contact: contactSlice,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(dealApi.middleware)
-      .concat(stageApi.middleware)
-      .concat(contactApi.middleware)
-      .concat(labelApi.middleware)
-      .concat(pipelineApi.middleware)
-      .concat(noteApi.middleware)
-      .concat(activityApi.middleware)
-      .concat(fileApi.middleware),
+    getDefaultMiddleware().concat([
+      pipelineApi.middleware,
+      stageApi.middleware,
+      dealApi.middleware,
+      contactApi.middleware,
+      labelApi.middleware,
+      noteApi.middleware,
+      activityApi.middleware,
+      fileApi.middleware,
+    ]),
 });
 
 export default store;

@@ -15,7 +15,6 @@ const CreateDealModel = lazy(() =>
 );
 
 const Kanban = ({ setIsOpen }) => {
-  const savedPipelineIndex = useSelector((state) => state.global.pipelineIndex);
   const dispatch = useDispatch();
   const [isStagesLength, setIsStagesLength] = useState(false);
   const [activePipeline, setActivePipeline] = useState(null);

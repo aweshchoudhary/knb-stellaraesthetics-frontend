@@ -21,8 +21,11 @@ export const noteApi = createApi({
         return response.data;
       },
     }),
-    getNotesByCardId: builder.query({
-      query: (cardId) => "/note/get-notes/" + cardId,
+    getNotes: builder.query({
+      query: (params) => ({
+        url: "/note/get-notes/",
+        params,
+      }),
       providesTags: ["note"],
       transformResponse: (response) => {
         return response.data;
@@ -51,5 +54,5 @@ export const {
   useUpdateNoteMutation,
   useCreateNoteMutation,
   useDeleteNoteMutation,
-  useGetNotesByCardIdQuery,
+  useGetNotesQuery,
 } = noteApi;

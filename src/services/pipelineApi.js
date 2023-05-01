@@ -22,11 +22,11 @@ export const pipelineApi = createApi({
       },
     }),
     getPipelines: builder.query({
-      query: (id) => "/pipeline/get-pipelines/",
+      query: (params) => ({
+        url: "/pipeline/get-pipelines/",
+        params,
+      }),
       providesTags: ["pipeline"],
-      transformResponse: (response) => {
-        return response.data;
-      },
     }),
     updatePipeline: builder.mutation({
       query: (data) => ({
@@ -51,6 +51,7 @@ export const {
   useCreatePipelineMutation,
   useUpdatePipelineMutation,
   useDeletePipelineMutation,
-  useGetPipelinesQuery,
+  useLazyGetPipelineQuery,
   useLazyGetPipelinesQuery,
+  useGetPipelinesQuery,
 } = pipelineApi;

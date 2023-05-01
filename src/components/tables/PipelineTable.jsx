@@ -22,29 +22,17 @@ import EditContact from "../contacts/EditContact";
 //defining columns outside of the component is fine, is stable
 const columns = [
   {
-    accessorKey: "contactPerson",
-    header: "Contact Person",
+    accessorKey: "name",
+    header: "Pipeline Name",
   },
   {
-    accessorKey: "company",
-    header: "Company",
-  },
-  {
-    accessorKey: "mobile",
-    header: "Mobile",
-  },
-  {
-    accessorKey: "whatsapp",
-    header: "Whatsapp",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "stages",
+    header: "Stages",
   },
 ];
 const fetchSize = 10;
 
-const ContactTable = () => {
+const PipelineTable = () => {
   const tableContainerRef = useRef(null);
   const rowVirtualizerInstanceRef = useRef(null);
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
@@ -60,7 +48,7 @@ const ContactTable = () => {
     useInfiniteQuery({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam = 0 }) => {
-        const { data } = await axiosInstance.get("/contact/get-contacts", {
+        const { data } = await axiosInstance.get("/pipeline/get-pipelines", {
           params: {
             start: pageParam * fetchSize,
             size: fetchSize,
@@ -208,7 +196,7 @@ const ContactTable = () => {
             </button>
             <Link
               className="btn-filled btn-small"
-              to={"/contacts/" + row.original._id}
+              to={"/pipeline/" + row.original._id}
             >
               <Icon className="text-lg" icon={"ic:baseline-remove-red-eye"} />
             </Link>
@@ -272,7 +260,7 @@ const ContactTable = () => {
       <Model
         isOpen={isContactEditModelOpen}
         setIsOpen={setIsContactEditModelOpen}
-        title="Edit Contact"
+        title="Edit Pipeline"
       >
         <EditContact data={editRow} setIsOpen={setIsContactEditModelOpen} />
       </Model>
@@ -284,7 +272,7 @@ const queryClient = new QueryClient();
 
 const ContactTableComponent = () => (
   <QueryClientProvider client={queryClient}>
-    <ContactTable />
+    <PipelineTable />
   </QueryClientProvider>
 );
 

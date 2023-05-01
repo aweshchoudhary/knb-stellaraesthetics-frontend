@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import { useCreateContactMutation } from "../../../services/contactApi";
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -81,16 +81,6 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
       ]);
     }
     setIsOpen(false);
-  }
-
-  function handleClearForm() {
-    contactDetails = {
-      company: "",
-      contactPerson: "",
-      mobile: "",
-      whatsapp: "",
-      email: "",
-    };
   }
 
   function handleSameNumber(e) {

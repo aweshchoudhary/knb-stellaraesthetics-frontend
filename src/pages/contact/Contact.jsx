@@ -3,27 +3,27 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useDeleteContactMutation,
   useGetContactQuery,
-} from "../services/contactApi";
-import Header from "../components/global/Header";
-import Loader from "../components/global/Loader";
+} from "../../services/contactApi";
+import Header from "../../components/global/Header";
+import Loader from "../../components/global/Loader";
 import { Icon } from "@iconify/react";
 import { toast } from "react-toastify";
 
 import moment from "moment";
-import Deal from "../components/global/Deal";
+import Deal from "../../components/global/Deal";
 import { Box, Tab, Tabs } from "@mui/material";
 
-import ActivityHandler from "../components/eventHandlers/ActivityHandler";
-import NoteHandler from "../components/eventHandlers/NoteHandler";
-import FileHandler from "../components/eventHandlers/FileHandler";
-import EmailHandler from "../components/eventHandlers/EmailHandler";
+import ActivityHandler from "../../components/eventHandlers/ActivityHandler";
+import NoteHandler from "../../components/eventHandlers/NoteHandler";
+import FileHandler from "../../components/eventHandlers/FileHandler";
+import EmailHandler from "../../components/eventHandlers/EmailHandler";
 
-import { useGetActivitiesByContactIdQuery } from "../services/activityApi";
-import { useGetDealsByContactIdQuery } from "../services/dealApi";
+import { useGetActivitiesByContactIdQuery } from "../../services/activityApi";
+import { useGetDealsByContactIdQuery } from "../../services/dealApi";
 
-const Model = lazy(() => import("../components/models/Model"));
+const Model = lazy(() => import("../../components/models/Model"));
 const CreateDealModel = lazy(() =>
-  import("../components/models/createDealModel/CreateDealModel")
+  import("../../components/models/createDealModel/CreateDealModel")
 );
 
 const Contact = () => {

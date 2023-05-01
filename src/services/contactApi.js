@@ -14,9 +14,9 @@ export const contactApi = createApi({
       },
     }),
     getContacts: builder.query({
-      query: (data) => ({
+      query: (params) => ({
         url: "/contact/get-contacts/",
-        params: data.params,
+        params,
       }),
       providesTags: ["contact"],
       transformResponse: (response) => {

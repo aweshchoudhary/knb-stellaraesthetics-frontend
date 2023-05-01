@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
@@ -13,7 +13,7 @@ const menuLinks = [
   },
   {
     label: "Pipelines",
-    link: "/pipeline",
+    link: "/pipelines",
     icon: "ph:currency-circle-dollar",
   },
   {

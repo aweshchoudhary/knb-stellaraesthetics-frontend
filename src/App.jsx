@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
@@ -9,16 +10,20 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-datepicker/dist/react-datepicker.css";
 
 import Layout from "./components/Layout/Layout";
+import Loader from "./components/global/Loader";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Pipelines = lazy(() => import("./pages/Pipelines"));
+const Pipelines = lazy(() => import("./pages/pipeline/Pipelines"));
+const Pipeline = lazy(() => import("./pages/pipeline/Pipeline"));
 const Deal = lazy(() => import("./pages/Deal"));
-const Contacts = lazy(() => import("./pages/Contacts"));
-const Contact = lazy(() => import("./pages/Contact"));
+const Contacts = lazy(() => import("./pages/contact/Contacts"));
+const Contact = lazy(() => import("./pages/contact/Contact"));
 const ActivityCalendar = lazy(() => import("./pages/ActivityCalendar"));
 const Products = lazy(() => import("./pages/Products"));
 const Services = lazy(() => import("./pages/Services"));
 const NotFound = lazy(() => import("./pages/User"));
 const User = lazy(() => import("./pages/User"));
+const Register = lazy(() => import("./pages/auth/Register"));
+const Login = lazy(() => import("./pages/auth/Login"));
 
 const App = () => {
   const darkMode = useSelector((state) => state.global.darkMode);
@@ -56,7 +61,8 @@ const App = () => {
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/pipeline" element={<Pipelines />} />
+            <Route path="/pipelines" element={<Pipelines />} />
+            <Route path="/pipeline/:id" element={<Pipeline />} />
             <Route path="/deals/:id" element={<Deal />} />
             <Route path="/activities" element={<ActivityCalendar />} />
             <Route path="/contacts" element={<Contacts />} />
@@ -66,6 +72,34 @@ const App = () => {
             <Route path="/user" element={<User />} />
             <Route path="*" element={<NotFound />} />
           </Route>
+          <Route
+            path="/register"
+            element={
+              <Suspense
+                fallback={
+                  <section className="w-screen h-screen flex items-center justify-center">
+                    <Loader />
+                  </section>
+                }
+              >
+                <Register />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <Suspense
+                fallback={
+                  <section className="w-screen h-screen flex items-center justify-center">
+                    <Loader />
+                  </section>
+                }
+              >
+                <Login />
+              </Suspense>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
