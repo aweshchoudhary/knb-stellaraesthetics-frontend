@@ -1,13 +1,9 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const contactApi = createApi({
-  reducerPath: "contactApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/contact" }),
-  tagTypes: ["contact"],
+export const contactApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     getContact: builder.query({
-      query: (id) => "/get-contact/" + id,
+      query: (id) => "/api/pipeline/get-contact/" + id,
       providesTags: ["contact"],
       transformResponse: (response) => {
         return response.data;
@@ -15,7 +11,7 @@ export const contactApi = createApi({
     }),
     getContacts: builder.query({
       query: (params) => ({
-        url: "/get-contacts/",
+        url: "/api/pipeline/get-contacts/",
         params,
       }),
       providesTags: ["contact"],
@@ -25,7 +21,7 @@ export const contactApi = createApi({
     }),
     createContact: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/pipeline/add",
         method: "POST",
         body: data,
       }),
@@ -36,7 +32,7 @@ export const contactApi = createApi({
     }),
     updateContact: builder.mutation({
       query: (data) => ({
-        url: "/update/" + data.id,
+        url: "/api/pipeline/update/" + data.id,
         method: "PUT",
         body: data.body,
       }),
@@ -44,7 +40,7 @@ export const contactApi = createApi({
     }),
     deleteContact: builder.mutation({
       query: (id) => ({
-        url: "/delete/" + id,
+        url: "/api/pipeline/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["contact"],

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input";
-import { useCreateContactMutation } from "../../../services/contactApi";
+import { useCreateContactMutation } from "../../../redux/services/contactApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";

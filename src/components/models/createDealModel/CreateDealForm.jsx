@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useLazyGetStagesQuery } from "../../../redux/services/stageApi";
+import { useCreateDealMutation } from "../../../redux/services/dealApi";
+import { useGetPipelinesQuery } from "../../../redux/services/pipelineApi";
 import Label from "../../deal/label/Label";
-import { useLazyGetStagesQuery } from "../../../services/stageApi";
-import { useCreateDealMutation } from "../../../services/dealApi";
-import { useGetPipelinesQuery } from "../../../services/pipelineApi";
 import { toast } from "react-toastify";
 import ReactDatePicker from "react-datepicker";
 import "react-phone-number-input/style.css";

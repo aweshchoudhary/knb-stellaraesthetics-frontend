@@ -4,8 +4,8 @@ import Model from "../models/Model";
 import Column from "./Column";
 import { toast } from "react-toastify";
 import CreateStageModel from "../models/CreateStageModel";
-import { useGetStagesQuery } from "../../services/stageApi";
-import { useUpdateDealStageMutation } from "../../services/dealApi";
+import { useGetStagesQuery } from "../../redux/services/stageApi";
+import { useUpdateDealStageMutation } from "../../redux/services/dealApi";
 
 const Stages = ({ pipeline, setIsStagesLength }) => {
   const { data, isLoading, isError, isFetching, isSuccess, error } =

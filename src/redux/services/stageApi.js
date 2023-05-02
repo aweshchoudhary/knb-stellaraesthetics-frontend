@@ -1,14 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const stageApi = createApi({
-  reducerPath: "stageApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/stage" }),
-  tagTypes: ["stage"],
+export const stageApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     createStage: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/stage/add",
         method: "POST",
         body: data,
       }),
@@ -16,13 +12,13 @@ export const stageApi = createApi({
     }),
     getStages: builder.query({
       query: (params) => ({
-        url: "/get-stages/",
+        url: "/api/stage/get-stages/",
         params,
       }),
       providesTags: ["stage"],
     }),
     getStage: builder.query({
-      query: (id) => "/get-stage/" + id,
+      query: (id) => "/api/stage/get-stage/" + id,
       providesTags: ["stage"],
       transformResponse: (response) => {
         return response.data;
@@ -30,7 +26,7 @@ export const stageApi = createApi({
     }),
     updateStage: builder.mutation({
       query: (data) => ({
-        url: "/update/" + data.stageId,
+        url: "/api/stage/update/" + data.stageId,
         method: "PUT",
         body: { name: data.name },
       }),
@@ -38,7 +34,7 @@ export const stageApi = createApi({
     }),
     reorderStage: builder.mutation({
       query: (stage) => ({
-        url: "/reorder/" + stage.pipelineId,
+        url: "/api/stage/reorder/" + stage.pipelineId,
         method: "PUT",
         body: stage.data,
       }),

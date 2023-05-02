@@ -2,33 +2,28 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Model from "../models/Model";
 import { Icon } from "@iconify/react";
 import ActivityDisplayPanel from "../eventHandlers/ActivityDisplayModel";
 import {
-  useGetAllActivitiesQuery,
+  useGetActivitiesQuery,
   useUpdateActivityMutation,
 } from "../../services/activityApi";
 import ActivityHandler from "../eventHandlers/ActivityHandler";
 
 const Calendar = () => {
-  const [
-    updateActivity,
-    { isLoading: isActivityUpdating, isSuccess: isActivitySuccess },
-  ] = useUpdateActivityMutation();
+  const [updateActivity, { isLoading: isActivityUpdating }] =
+    useUpdateActivityMutation();
 
   const [isActivityModelOpen, setIsActivityModelOpen] = useState(false);
   const [isCreateActivityModelOpen, setIsCreateActivityModelOpen] =
     useState(false);
   const [clickedActivityData, setClickedActivityData] = useState({});
   const [selectedInfo, setSelectedInfo] = useState(null);
-  const {
-    data = [],
-    isLoading,
-    isFetching,
-    isSuccess,
-  } = useGetAllActivitiesQuery();
+  const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
+    data: true,
+  });
   const [events, setEvents] = useState([]);
 
   const handleDateSelect = (selectInfo) => {
@@ -52,7 +47,7 @@ const Calendar = () => {
 
   function filteredActivities() {
     const filteredActivitiesArr = [];
-    const copyData = [...data];
+    const copyData = data?.data && [...data.data];
     copyData.forEach((event) => {
       filteredActivitiesArr.push({
         id: event._id,
@@ -71,11 +66,11 @@ const Calendar = () => {
   }
   useEffect(() => {
     let isMounted = true;
-    data.length > 0 && isMounted && filteredActivities();
+    data?.data?.length > 0 && isMounted && filteredActivities();
     return () => {
       isMounted = false;
     };
-  }, [data]);
+  }, [data?.data]);
 
   return (
     isSuccess && (

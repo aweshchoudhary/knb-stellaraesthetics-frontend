@@ -1,14 +1,14 @@
-import { useDispatch, useSelector } from "react-redux";
+import React, { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/global/Header";
-import { logout } from "../state/features/authSlice";
+import { logOut } from "../state/features/auth/authSlice";
 
 const User = () => {
   const profile = useSelector((state) => state?.auth?.user?.profile);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   function handleLogout() {
-    dispatch(logout());
+    dispatch(logOut());
     navigate("/login", { replace: true });
   }
   return profile ? (

@@ -21,7 +21,7 @@ const validationSchema = Yup.object().shape({
 const Login = () => {
   const [login, { data, isLoading, isSuccess, isError, error }] =
     useLoginMutation();
-
+  console.log(error);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -48,7 +48,7 @@ const Login = () => {
   }, [isSuccess]);
 
   useEffect(() => {
-    if (isError) toast.error(error);
+    if (isError) toast.error(error.data.message);
   }, [isError]);
 
   return (

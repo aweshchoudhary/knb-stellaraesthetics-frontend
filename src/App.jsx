@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import Layout from "./components/Layout/Layout";
 import Loader from "./components/global/Loader";
+
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Pipelines = lazy(() => import("./pages/pipeline/Pipelines"));
 const Pipeline = lazy(() => import("./pages/pipeline/Pipeline"));
@@ -27,7 +28,7 @@ const Login = lazy(() => import("./pages/auth/Login"));
 
 const App = () => {
   const darkMode = useSelector((state) => state.global.darkMode);
-  const accessToken = useSelector((state) => state.global.accessToken);
+  const accessToken = useSelector((state) => state.auth.accessToken);
 
   const theme = createTheme({
     palette: {

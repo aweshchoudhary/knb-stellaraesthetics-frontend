@@ -1,4 +1,4 @@
-import { useLazyGetContactsQuery } from "../../../services/contactApi";
+import { useLazyGetContactsQuery } from "../../../redux/services/contactApi";
 import Select from "react-select";
 import React, { useEffect, useState } from "react";
 
@@ -15,6 +15,7 @@ const SearchContacts = ({ selectedContacts, setSelectedContacts }) => {
   useEffect(() => {
     const fetchContacts = async (query) => {
       const res = await searchContacts({ search: query, data: true });
+      console.log(res);
       if (res.data) {
         const contacts = res.data.map((item) => ({
           label: `${item.contactPerson} - ${item.company}`,
@@ -23,7 +24,14 @@ const SearchContacts = ({ selectedContacts, setSelectedContacts }) => {
         setSearchedContacts(contacts);
       }
     };
-    fetchContacts(searchQuery);
+
+    const interval = setTimeout(
+      () => searchQuery.length > 2 && fetchContacts(searchQuery),
+      500
+    );
+    return () => {
+      clearTimeout(interval);
+    };
   }, [searchQuery]);
   return (
     <Select

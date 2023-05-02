@@ -1,8 +1,8 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateLabel from "./CreateLabel";
 import Loader from "../../global/Loader";
-import { useGetLabelsQuery } from "../../../services/labelApi";
+import { useGetLabelsQuery } from "../../../redux/services/labelApi";
 import { toast } from "react-toastify";
 
 const Label = ({ setLabel, label }) => {
@@ -26,7 +26,10 @@ const Label = ({ setLabel, label }) => {
           data.map(
             (item, index) =>
               item._id === label && (
-                <li className="flex items-center gap-2 hover:bg-paper cursor-pointer">
+                <li
+                  key={index}
+                  className="flex items-center gap-2 hover:bg-paper cursor-pointer"
+                >
                   <div
                     className="color w-[20px] h-[20px]"
                     style={{ background: item.color }}

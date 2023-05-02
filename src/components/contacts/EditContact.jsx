@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { useDispatch } from "react-redux";
-import { updateClient } from "../../state/features/clientSlice";
 
 const EditContact = ({ setIsOpen, data }) => {
   const [contactData, setContactData] = useState(
@@ -18,7 +16,6 @@ const EditContact = ({ setIsOpen, data }) => {
   const [whatsapp, setWhatsapp] = useState(data?.original?.whatsapp || "");
   const [sameNumber, setSameNumber] = useState(false);
   const region = navigator?.language?.split("-")[1];
-  const dispatch = useDispatch();
 
   const [isChanged, setIsChanged] = useState(false);
 

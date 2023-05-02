@@ -1,21 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const dealApi = createApi({
-  reducerPath: "dealApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/deal" }),
-  tagTypes: ["deal"],
+export const dealApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     createDeal: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/deal/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["deal"],
     }),
     getDeal: builder.query({
-      query: (id) => "/get-deal/" + id,
+      query: (id) => "/api/deal/get-deal/" + id,
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;
@@ -23,7 +19,7 @@ export const dealApi = createApi({
     }),
     getDeals: builder.query({
       query: (params) => ({
-        url: "/get-deals/",
+        url: "/api/deal/get-deals/",
         params,
       }),
       providesTags: ["deal"],
@@ -33,7 +29,7 @@ export const dealApi = createApi({
     }),
     updateDeal: builder.mutation({
       query: (data) => ({
-        url: "/update/" + data.id,
+        url: "/api/deal/update/" + data.id,
         method: "PUT",
         body: data.update,
       }),
@@ -49,7 +45,7 @@ export const dealApi = createApi({
     }),
     deleteDeal: builder.mutation({
       query: (id) => ({
-        url: "/delete/" + id,
+        url: "/api/deal/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["deal"],

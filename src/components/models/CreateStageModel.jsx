@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useCreateStageMutation } from "../../services/stageApi";
+import { useCreateStageMutation } from "../../redux/services/stageApi";
 
 const CreateStageModel = ({ setIsOpen, position, pipelineId }) => {
   const [createStage, { isLoading, isError, isSuccess }] =

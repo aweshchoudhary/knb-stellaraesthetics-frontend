@@ -1,11 +1,11 @@
 import { Icon } from "@iconify/react";
 import moment from "moment";
-import { useState } from "react";
+import React, { useState } from "react";
 import Loader from "../global/Loader";
 import { toast } from "react-toastify";
 import {
+  useGetNotesQuery,
   useDeleteNoteMutation,
-  useGetNotesByCardIdQuery,
 } from "../../services/noteApi";
 
 const EventTabsContainer = ({ cardId }) => {
@@ -40,9 +40,11 @@ const Activites = ({ name, cardId }) => {
     </div>
   );
 };
-const Note = ({ cardId }) => {
-  const { data, isLoading, isSuccess, isFetching } =
-    useGetNotesByCardIdQuery(cardId);
+const Note = ({ dealId }) => {
+  const { data, isLoading, isSuccess, isFetching } = useGetNotesQuery({
+    dataFilters: { dealId },
+    data: true,
+  });
   const [deleteNote] = useDeleteNoteMutation();
 
   async function handlDeleteDeal(id) {
@@ -50,9 +52,9 @@ const Note = ({ cardId }) => {
     toast.success("Note deleted successfully");
   }
   return !isLoading && !isFetching && isSuccess ? (
-    data.length ? (
+    data?.data?.length ? (
       <>
-        {data.map((note, index) => {
+        {data.data.map((note, index) => {
           return (
             <li className="flex" key={index}>
               <div className="w-[60px] flex flex-col items-center">

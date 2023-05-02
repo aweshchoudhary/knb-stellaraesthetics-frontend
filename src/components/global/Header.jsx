@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import {
   toggleDarkMode,
   toggleMobileOpen,
-} from "../../state/features/globalSlice";
+} from "../../redux/features/globalSlice";
+import React from "react";
 
 const Header = ({ title }) => {
   const darkMode = useSelector((state) => state.global.darkMode);

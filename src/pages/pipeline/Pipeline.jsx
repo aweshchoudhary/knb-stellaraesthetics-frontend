@@ -2,7 +2,7 @@ import React, { lazy, useState } from "react";
 import Header from "../../components/global/Header";
 import { Suspense } from "react";
 import Loader from "../../components/global/Loader";
-import { useGetPipelineQuery } from "../../services/pipelineApi";
+import { useGetPipelineQuery } from "../../redux/services/pipelineApi";
 import { useParams } from "react-router-dom";
 
 const Kanban = lazy(() => import("../../components/pipeline/Kanban"));
@@ -12,7 +12,8 @@ const Pipeline = () => {
   const [editPipeline, setEditPipeline] = useState(false);
   const params = useParams();
   const { id } = params;
-  const { data, isLoading, isFetching, isSuccess } = useGetPipelineQuery(id);
+  const { data } = useGetPipelineQuery(id);
+
   return (
     <>
       <Header title={"Pipeline"} />

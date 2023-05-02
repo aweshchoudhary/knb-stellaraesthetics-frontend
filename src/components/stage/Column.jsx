@@ -1,8 +1,8 @@
 import { Droppable } from "react-beautiful-dnd";
 import Deal from "../global/Deal";
 import Row from "./Row";
-import { useLazyGetDealsQuery } from "../../services/dealApi";
-import { useEffect, useState } from "react";
+import { useLazyGetDealsQuery } from "../../redux/services/dealApi";
+import React, { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 
 const Column = ({ stage, loading }) => {
@@ -38,7 +38,7 @@ const Column = ({ stage, loading }) => {
     <div className={"border-r shrink-0 flex flex-col w-1/3"} key={stage._id}>
       <header
         className={`${
-          isLoading ? "opacity-50 " : ""
+          isLoading && isFetching ? "opacity-50 " : ""
         } border-b px-3 py-1 sticky top-0 left-0 text-white bg-primary`}
       >
         <h2 className="font-medium capitalize text-sm">{stage.name}</h2>

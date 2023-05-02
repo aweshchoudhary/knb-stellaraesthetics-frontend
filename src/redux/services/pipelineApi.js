@@ -1,21 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const pipelineApi = createApi({
-  reducerPath: "pipelineApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/pipeline" }),
-  tagTypes: ["pipeline"],
+export const pipelineApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     createPipeline: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/pipeline/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["pipeline"],
     }),
     getPipeline: builder.query({
-      query: (id) => "/get-pipeline/" + id,
+      query: (id) => "/api/pipeline/get-pipeline/" + id,
       providesTags: ["pipeline"],
       transformResponse: (response) => {
         return response.data;
@@ -23,14 +19,14 @@ export const pipelineApi = createApi({
     }),
     getPipelines: builder.query({
       query: (params) => ({
-        url: "/get-pipelines/",
+        url: "/api/pipeline/get-pipelines/",
         params,
       }),
       providesTags: ["pipeline"],
     }),
     updatePipeline: builder.mutation({
       query: (data) => ({
-        url: "/update/" + data.id,
+        url: "/api/pipeline/update/" + data.id,
         method: "PUT",
         body: data.update,
       }),
@@ -38,7 +34,7 @@ export const pipelineApi = createApi({
     }),
     deletePipeline: builder.mutation({
       query: (id) => ({
-        url: "/delete/" + id,
+        url: "/api/pipeline/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["pipeline"],

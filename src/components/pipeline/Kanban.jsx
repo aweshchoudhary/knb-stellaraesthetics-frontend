@@ -3,10 +3,10 @@ import { Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
 import Loader from "../global/Loader";
 import { useDispatch } from "react-redux";
-import { addPipeline } from "../../state/features/globalSlice";
+import { addPipeline } from "../../redux/features/globalSlice";
 import Stages from "../stage/Stages";
 
-import { useGetPipelinesQuery } from "../../services/pipelineApi";
+import { useGetPipelinesQuery } from "../../redux/services/pipelineApi";
 
 const Model = lazy(() => import("../models/Model"));
 const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));

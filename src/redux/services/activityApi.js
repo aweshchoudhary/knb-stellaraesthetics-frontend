@@ -1,21 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const activityApi = createApi({
-  reducerPath: "activityApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/activity" }),
-  tagTypes: ["activity"],
+export const activityApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     createActivity: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/activity/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["activity"],
     }),
     getActivity: builder.query({
-      query: (id) => "/get-activity/" + id,
+      query: (id) => "/pipeline/get-activity/" + id,
       providesTags: ["activity"],
       transformResponse: (response) => {
         return response.data;
@@ -23,7 +19,7 @@ export const activityApi = createApi({
     }),
     getActivities: builder.query({
       query: (params) => ({
-        url: "/get-activities/",
+        url: "/api/activity/get-activities/",
         params,
       }),
       providesTags: ["activity"],
@@ -33,7 +29,7 @@ export const activityApi = createApi({
     }),
     updateActivity: builder.mutation({
       query: (data) => ({
-        url: "/update/" + data.id,
+        url: "/api/activity/update/" + data.id,
         method: "PUT",
         body: data.update,
       }),
@@ -41,7 +37,7 @@ export const activityApi = createApi({
     }),
     deleteActivity: builder.mutation({
       query: (id) => ({
-        url: "/delete/" + id,
+        url: "/api/activity/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["activity"],

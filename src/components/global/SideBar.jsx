@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { toggleMobileOpen } from "../../state/features/globalSlice";
+import { toggleMobileOpen } from "../../redux/features/globalSlice";
 
 const menuLinks = [
   {

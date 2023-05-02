@@ -1,21 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const labelApi = createApi({
-  reducerPath: "labelApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/label" }),
-  tagTypes: ["label"],
+export const labelApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     createLabel: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/label/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["label"],
     }),
     getLabel: builder.query({
-      query: (id) => "/get-label/" + id,
+      query: (id) => "/api/label/get-label/" + id,
       providesTags: ["label"],
       transformResponse: (res) => {
         return res.data;
@@ -30,7 +26,7 @@ export const labelApi = createApi({
     }),
     updateLabel: builder.mutation({
       query: (data) => ({
-        url: "/update/" + data.id,
+        url: "/api/label/update/" + data.id,
         method: "PUT",
         body: data.body,
       }),
@@ -38,7 +34,7 @@ export const labelApi = createApi({
     }),
     deleteLabel: builder.mutation({
       query: (id) => ({
-        url: "/delete/" + id,
+        url: "/api/label/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["label"],

@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
-import { useLazyGetContactQuery } from "../../services/contactApi";
-import { useLazyGetLabelQuery } from "../../services/labelApi";
+// import { useLazyGetContactQuery } from "../../redux/services/contactApi";
+import { useLazyGetLabelQuery } from "../../redux/services/labelApi";
 import ActivityStatus from "../deal/ActivityStatus";
 import moment from "moment";
 
@@ -89,47 +89,47 @@ const Deal = ({ deal }) => {
   );
 };
 
-const DealContacts = ({ contacts = [] }) => {
-  const [clients, setContacts] = useState([]);
-  const [
-    getContactById,
-    {
-      isLoading: isContactsLoading,
-      isSuccess: isContactsSuccess,
-      isFetching: isContactsFetching,
-    },
-  ] = useLazyGetContactQuery();
+// const DealContacts = ({ contacts = [] }) => {
+//   const [clients, setContacts] = useState([]);
+//   const [
+//     getContactById,
+//     {
+//       isLoading: isContactsLoading,
+//       isSuccess: isContactsSuccess,
+//       isFetching: isContactsFetching,
+//     },
+//   ] = useLazyGetContactQuery();
 
-  const fetchContact = async (id) => {
-    const { data } = await getContactById(id);
-    setContacts((prev) => [...prev, data]);
-  };
+//   const fetchContact = async (id) => {
+//     const { data } = await getContactById(id);
+//     setContacts((prev) => [...prev, data]);
+//   };
 
-  useEffect(() => {
-    if (contacts.length) {
-      contacts.forEach((contact) => {
-        fetchContact(contact);
-      });
-    }
-  }, [contacts]);
+//   useEffect(() => {
+//     if (contacts.length) {
+//       contacts.forEach((contact) => {
+//         fetchContact(contact);
+//       });
+//     }
+//   }, [contacts]);
 
-  return !isContactsLoading && !isContactsFetching && isContactsSuccess ? (
-    <p className="text-gray-500 text-xs flex gap-2 mt-1">
-      {clients?.map((client, i) => {
-        return (
-          i < 2 && (
-            <span>
-              {client.contactPerson}
-              {clients.length - 1 !== i && ","}
-            </span>
-          )
-        );
-      })}
-      {clients.length > 2 && <span>{clients.length - 2} more</span>}
-    </p>
-  ) : (
-    <p className="text-gray-500 text-xs flex gap-2 mt-1">Loading...</p>
-  );
-};
+//   return !isContactsLoading && !isContactsFetching && isContactsSuccess ? (
+//     <p className="text-gray-500 text-xs flex gap-2 mt-1">
+//       {clients?.map((client, i) => {
+//         return (
+//           i < 2 && (
+//             <span>
+//               {client.contactPerson}
+//               {clients.length - 1 !== i && ","}
+//             </span>
+//           )
+//         );
+//       })}
+//       {clients.length > 2 && <span>{clients.length - 2} more</span>}
+//     </p>
+//   ) : (
+//     <p className="text-gray-500 text-xs flex gap-2 mt-1">Loading...</p>
+//   );
+// };
 
 export default Deal;

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useCreateLabelMutation } from "../../../services/labelApi";
+import React, { useEffect, useState } from "react";
+import { useCreateLabelMutation } from "../../../redux/services/labelApi";
 import { toast } from "react-toastify";
 
 const CreateLabel = ({ setIsOpen }) => {
@@ -45,6 +45,7 @@ const CreateLabel = ({ setIsOpen }) => {
             {colorList.map((item, index) => {
               return (
                 <li
+                  key={index}
                   className={`w-[25px] h-[25px] border-textColor cursor-pointer rounded-full ${
                     item === color ? "border-2" : "hover:border-2"
                   }`}

@@ -1,21 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const fileApi = createApi({
-  reducerPath: "fileApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/file" }),
-  tagTypes: ["file"],
+export const fileApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     addFile: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/file/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["file"],
     }),
     getAllFileInfo: builder.query({
-      query: (cardId) => "/get-fileinfos/" + cardId,
+      query: (cardId) => "/api/file/get-fileinfos/" + cardId,
       providesTags: ["file"],
       transformResponse: (res) => {
         return res.data;
@@ -27,7 +23,7 @@ export const fileApi = createApi({
     }),
     deleteFile: builder.mutation({
       query: (id) => ({
-        url: "/delete/" + id,
+        url: "/api/file/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["file"],

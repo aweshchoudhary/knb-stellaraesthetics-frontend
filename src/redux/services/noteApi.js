@@ -1,21 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import BASE_URL from "../config/BASE_URL";
+import { mainApi } from "./mainApi";
 
-export const noteApi = createApi({
-  reducerPath: "noteApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/note" }),
-  tagTypes: ["note"],
+export const noteApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     createNote: builder.mutation({
       query: (data) => ({
-        url: "/add",
+        url: "/api/note/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["note"],
     }),
     getNote: builder.query({
-      query: (id) => "/get-note/" + id,
+      query: (id) => "/api/note/get-note/" + id,
       providesTags: ["note"],
       transformResponse: (response) => {
         return response.data;
@@ -23,7 +19,7 @@ export const noteApi = createApi({
     }),
     getNotes: builder.query({
       query: (params) => ({
-        url: "/get-notes/",
+        url: "/api/note/get-notes/",
         params,
       }),
       providesTags: ["note"],
@@ -33,7 +29,7 @@ export const noteApi = createApi({
     }),
     updateNote: builder.mutation({
       query: (data) => ({
-        url: "/update/" + data.id,
+        url: "/api/note/update/" + data.id,
         method: "PUT",
         body: data.body,
       }),
@@ -41,7 +37,7 @@ export const noteApi = createApi({
     }),
     deleteNote: builder.mutation({
       query: (id) => ({
-        url: "/delete/" + id,
+        url: "/api/note/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["note"],

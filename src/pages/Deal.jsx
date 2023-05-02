@@ -6,7 +6,7 @@ import {
   useDeleteDealMutation,
   useGetDealQuery,
   useUpdateDealMutation,
-} from "../services/dealApi";
+} from "../redux/services/dealApi";
 import Loader from "../components/global/Loader";
 
 import EventTabsContainer from "../components/eventHandlers/EventTabsContainer";

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { useGetActivitiesQuery } from "../../services/activityApi";
+import { useGetActivitiesQuery } from "../../redux/services/activityApi";
 import moment from "moment";
 import { Tooltip } from "@mui/material";
 

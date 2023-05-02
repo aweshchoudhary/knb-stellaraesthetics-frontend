@@ -18,8 +18,8 @@ import NoteHandler from "../../components/eventHandlers/NoteHandler";
 import FileHandler from "../../components/eventHandlers/FileHandler";
 import EmailHandler from "../../components/eventHandlers/EmailHandler";
 
-import { useGetActivitiesByContactIdQuery } from "../../services/activityApi";
-import { useGetDealsByContactIdQuery } from "../../services/dealApi";
+import { useGetActivitiesQuery } from "../../services/activityApi";
+import { useGetDealsQuery } from "../../services/dealApi";
 
 const Model = lazy(() => import("../../components/models/Model"));
 const CreateDealModel = lazy(() =>
@@ -36,12 +36,12 @@ const Contact = () => {
     data: activities,
     // isLoading: isActivitiesLoading,
     // isFetching: isActivitiesFetching,
-  } = useGetActivitiesByContactIdQuery(id);
+  } = useGetActivitiesQuery({ dataFilters: { contactId: id }, data: true });
   const {
     data: cards,
     isLoading: isDealsLoading,
     isFetching: isDealsFetching,
-  } = useGetDealsByContactIdQuery(id);
+  } = useGetDealsQuery({ dataFilters: { contactId: id } });
 
   const { data, isLoading, isSuccess, isFetching } = useGetContactQuery(id);
 
@@ -161,7 +161,7 @@ const Contact = () => {
                 <div className="p-5 flex flex-col gap-2">
                   {!isDealsFetching &&
                     !isDealsLoading &&
-                    cards?.map((card) => {
+                    cards?.data?.map((card) => {
                       return <Deal card={card} key={card._id} />;
                     })}
                 </div>
@@ -171,8 +171,8 @@ const Contact = () => {
                   <h2>Next Activities</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-3">
-                  {activities?.length !== 0 &&
-                    activities?.map((activity, index) => {
+                  {activities?.data?.length !== 0 &&
+                    activities?.data?.map((activity, index) => {
                       return (
                         <div
                           key={index}

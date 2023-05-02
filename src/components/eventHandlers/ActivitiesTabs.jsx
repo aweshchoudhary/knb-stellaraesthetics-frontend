@@ -5,28 +5,30 @@ import moment from "moment";
 import Loader from "../global/Loader";
 import { updateActivity } from "../../state/features/dealFeatures/activitySlice";
 import { deleteActivity } from "../../state/features/dealFeatures/activitySlice";
-import { useGetActivitiesByDealIdQuery } from "../../services/activityApi";
+import { useGetActivitiesQuery } from "../../services/activityApi";
 
-const FocusActivities = ({ cardId }) => {
+const FocusActivities = ({ dealId }) => {
   return (
     <div className="my-4">
       <header className="mb-3">
         <h2 className="text-lg font-medium">Focus Activity</h2>
       </header>
-      <Activites cardId={cardId} />
+      <Activites dealId={dealId} />
     </div>
   );
 };
 
-const Activites = ({ cardId }) => {
-  const { data, isLoading, isFetching, isSuccess } =
-    useGetActivitiesByDealIdQuery(cardId);
+const Activites = ({ dealId }) => {
+  const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
+    dataFilters: { dealId },
+    data: true,
+  });
 
   return !isLoading && !isFetching && isSuccess ? (
     <div>
       <ul>
-        {data.length ? (
-          data?.map((activity, index) => {
+        {data?.data?.length ? (
+          data?.data?.map((activity, index) => {
             return (
               <li key={index}>
                 <ActivityDeal data={activity} />
