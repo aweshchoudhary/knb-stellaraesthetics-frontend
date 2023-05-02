@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useCreateActivityMutation,
   useLazyGetActivityQuery,
   useUpdateActivityMutation,
-} from "../../services/activityApi";
+} from "../../redux/services/activityApi";
 import { toast } from "react-toastify";
 import { Skeleton } from "@mui/material";
 import DealSelect from "./DealSelect";
@@ -58,11 +58,7 @@ const ActivityHandler = ({
 
   const [
     getActivityById,
-    {
-      isLoading: isActivityLoading,
-      isFetching: isActivityFetching,
-      isSuccess: isActivitySuccess,
-    },
+    { isLoading: isActivityLoading, isFetching: isActivityFetching },
   ] = useLazyGetActivityQuery();
   const [createActivity, { isLoading, isCreateSuccess }] =
     useCreateActivityMutation();

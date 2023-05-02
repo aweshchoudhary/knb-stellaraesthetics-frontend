@@ -3,7 +3,7 @@ import { mainApi } from "./mainApi";
 export const contactApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
     getContact: builder.query({
-      query: (id) => "/api/pipeline/get-contact/" + id,
+      query: (id) => "/api/contact/get-contact/" + id,
       providesTags: ["contact"],
       transformResponse: (response) => {
         return response.data;
@@ -11,7 +11,7 @@ export const contactApi = mainApi.injectEndpoints({
     }),
     getContacts: builder.query({
       query: (params) => ({
-        url: "/api/pipeline/get-contacts/",
+        url: "/api/contact/get-contacts/",
         params,
       }),
       providesTags: ["contact"],
@@ -21,7 +21,7 @@ export const contactApi = mainApi.injectEndpoints({
     }),
     createContact: builder.mutation({
       query: (data) => ({
-        url: "/api/pipeline/add",
+        url: "/api/contact/add",
         method: "POST",
         body: data,
       }),
@@ -32,7 +32,7 @@ export const contactApi = mainApi.injectEndpoints({
     }),
     updateContact: builder.mutation({
       query: (data) => ({
-        url: "/api/pipeline/update/" + data.id,
+        url: "/api/contact/update/" + data.id,
         method: "PUT",
         body: data.body,
       }),
@@ -40,7 +40,7 @@ export const contactApi = mainApi.injectEndpoints({
     }),
     deleteContact: builder.mutation({
       query: (id) => ({
-        url: "/api/pipeline/delete/" + id,
+        url: "/api/contact/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["contact"],

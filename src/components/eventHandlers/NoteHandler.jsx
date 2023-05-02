@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import RichTextEditor from "../global/RichTextEditor";
-import { useCreateNoteMutation } from "../../services/noteApi";
+import { useCreateNoteMutation } from "../../redux/services/noteApi";
 import DealSelect from "./DealSelect";
 import { toast } from "react-toastify";
 

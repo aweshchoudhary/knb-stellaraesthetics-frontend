@@ -9,7 +9,7 @@ import ActivityDisplayPanel from "../eventHandlers/ActivityDisplayModel";
 import {
   useGetActivitiesQuery,
   useUpdateActivityMutation,
-} from "../../services/activityApi";
+} from "../../redux/services/activityApi";
 import ActivityHandler from "../eventHandlers/ActivityHandler";
 
 const Calendar = () => {

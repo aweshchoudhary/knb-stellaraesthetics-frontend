@@ -4,6 +4,8 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
+  lazy,
+  Suspense,
 } from "react";
 import MaterialReactTable from "material-react-table";
 import { Box, Typography } from "@mui/material";
@@ -16,8 +18,9 @@ import {
   useInfiniteQuery,
 } from "@tanstack/react-query";
 import * as XLSX from "xlsx";
-import Model from "../models/Model";
-import EditContact from "../contacts/EditContact";
+
+const Model = lazy(() => import("../models/Model"));
+const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));
 
 //defining columns outside of the component is fine, is stable
 const columns = [
@@ -41,8 +44,8 @@ const PipelineTable = () => {
   const [globalFilter, setGlobalFilter] = useState();
   const [sorting, setSorting] = useState([]);
 
-  const [isContactEditModelOpen, setIsContactEditModelOpen] = useState(false);
-  const [editRow, setEditRow] = useState({});
+  const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
+    useState(false);
 
   const { data, fetchNextPage, isError, isFetching, isLoading } =
     useInfiniteQuery({
@@ -190,15 +193,6 @@ const PipelineTable = () => {
         rowVirtualizerProps={{ overscan: 4 }}
         renderRowActions={({ row }) => (
           <div className="flex gap-1">
-            <button
-              className="btn-outlined btn-small"
-              onClick={() => {
-                setIsContactEditModelOpen(true);
-                setEditRow(row);
-              }}
-            >
-              <Icon icon={"uil:pen"} />
-            </button>
             <Link
               className="btn-filled btn-small"
               to={"/pipeline/" + row.original._id}
@@ -209,7 +203,13 @@ const PipelineTable = () => {
         )}
         enableRowSelection
         renderTopToolbarCustomActions={({ table }) => (
-          <Box display="flex" gap="5px">
+          <Box display="flex" alignItems={"stretch"} gap="5px">
+            <button
+              onClick={() => setIsCreatePipelineModelOpen(true)}
+              className="btn-filled btn-small h-full"
+            >
+              <Icon icon="uil:plus" className="text-lg" />
+            </button>
             <button
               onClick={() => setDownloadMenuOpen((prev) => !prev)}
               className="btn-filled btn-small h-full"
@@ -262,13 +262,15 @@ const PipelineTable = () => {
           </Box>
         )}
       />
-      <Model
-        isOpen={isContactEditModelOpen}
-        setIsOpen={setIsContactEditModelOpen}
-        title="Edit Pipeline"
-      >
-        <EditContact data={editRow} setIsOpen={setIsContactEditModelOpen} />
-      </Model>
+      <Suspense>
+        <Model
+          isOpen={isCreatePipelineModelOpen}
+          setIsOpen={setIsCreatePipelineModelOpen}
+          title="Edit Pipeline"
+        >
+          <CreatePipelineModel setIsOpen={setIsCreatePipelineModelOpen} />
+        </Model>
+      </Suspense>
     </>
   );
 };

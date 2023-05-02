@@ -18,7 +18,7 @@ export const labelApi = mainApi.injectEndpoints({
       },
     }),
     getLabels: builder.query({
-      query: () => "/get-labels/",
+      query: () => "/api/label/get-labels/",
       providesTags: ["label"],
       transformResponse: (res) => {
         return res.data;

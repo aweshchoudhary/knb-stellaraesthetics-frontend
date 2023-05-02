@@ -15,7 +15,6 @@ const SearchContacts = ({ selectedContacts, setSelectedContacts }) => {
   useEffect(() => {
     const fetchContacts = async (query) => {
       const res = await searchContacts({ search: query, data: true });
-      console.log(res);
       if (res.data) {
         const contacts = res.data.map((item) => ({
           label: `${item.contactPerson} - ${item.company}`,

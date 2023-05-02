@@ -1,12 +1,12 @@
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import { Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
-import Loader from "../global/Loader";
 import { useDispatch } from "react-redux";
 import { addPipeline } from "../../redux/features/globalSlice";
 import Stages from "../stage/Stages";
 
 import { useGetPipelinesQuery } from "../../redux/services/pipelineApi";
+import { useNavigate } from "react-router-dom";
 
 const Model = lazy(() => import("../models/Model"));
 const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));
@@ -14,30 +14,25 @@ const CreateDealModel = lazy(() =>
   import("../models/createDealModel/CreateDealModel")
 );
 
-const Kanban = ({ setIsOpen }) => {
+const Kanban = ({ setIsOpen, pipeline }) => {
   const dispatch = useDispatch();
   const [isStagesLength, setIsStagesLength] = useState(false);
-  const [activePipeline, setActivePipeline] = useState(null);
+  // const [pipeline, setActivePipeline] = useState(null);
+  const navigate = useNavigate();
 
-  const { data, isLoading, isFetching, isSuccess, refetch } =
-    useGetPipelinesQuery({ data: true });
+  const {
+    data,
+    isLoading: isPipelines,
+    isFetching: isPipeinesFetching,
+    isSuccess: isPipelinesSuccess,
+    refetch: refetchPipelines,
+  } = useGetPipelinesQuery({ data: true });
+
   const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
     useState(false);
   const [isCreateDealModelOpen, setIsCreateDealModelOpen] = useState(false);
 
-  useEffect(() => {
-    // if (!data.data.length) return;
-    // if (!savedPipelineIndex) {
-    //   dispatch(addPipeline(0));
-    //   setActivePipeline(data[0]);
-    //   return;
-    // }
-    // if (!data[savedPipelineIndex]) dispatch(addPipeline(0));
-    // setActivePipeline(data[savedPipelineIndex]);
-    setActivePipeline(data?.data[0]);
-  }, [data, isSuccess]);
-
-  return !isLoading && !isFetching && isSuccess ? (
+  return (
     <>
       <Suspense>
         {isCreatePipelineModelOpen && (
@@ -51,21 +46,21 @@ const Kanban = ({ setIsOpen }) => {
         )}
       </Suspense>
       <Suspense>
-        {activePipeline && isCreateDealModelOpen && (
+        {pipeline && isCreateDealModelOpen && (
           <Model
             title={"Create New Deal"}
             isOpen={isCreateDealModelOpen}
             setIsOpen={setIsCreateDealModelOpen}
           >
             <CreateDealModel
-              activePipe={activePipeline}
-              pipelineId={activePipeline?._id}
+              activePipe={pipeline}
+              pipelineId={pipeline?._id}
               setIsOpen={setIsCreateDealModelOpen}
             />
           </Model>
         )}
       </Suspense>
-      {data.data.length !== 0 && (
+      {isPipelinesSuccess && data.data.length !== 0 && (
         <header className="px-5 py-2 flex justify-between items-center border-b">
           <div className="flex items-stretch gap-2">
             <button
@@ -77,7 +72,9 @@ const Kanban = ({ setIsOpen }) => {
             </button>
             <button
               className="btn-outlined btn-small"
-              onClick={() => refetch()}
+              onClick={() => {
+                refetchPipelines();
+              }}
             >
               <Icon icon="tabler:reload" className="text-lg" />
               <span>Refresh</span>
@@ -85,7 +82,7 @@ const Kanban = ({ setIsOpen }) => {
           </div>
           <div>
             <h2 className="text-xl capitalize font-semibold">
-              {activePipeline?.name}
+              {pipeline?.name}
             </h2>
           </div>
           <div className="flex items-stretch gap-2">
@@ -94,12 +91,12 @@ const Kanban = ({ setIsOpen }) => {
               className="input w-[200px]"
               id="pipeline-select"
               onChange={(e) => {
-                setActivePipeline(data[e.target.value]);
                 dispatch(addPipeline(e.target.value));
+                navigate("/pipeline/" + data[e.target.value]._id);
               }}
             >
               {data.data?.map((pipe, index) => {
-                return pipe?._id === activePipeline?._id ? (
+                return pipe?._id === pipeline?._id ? (
                   <option
                     key={index}
                     selected
@@ -135,10 +132,10 @@ const Kanban = ({ setIsOpen }) => {
         </header>
       )}
       <section>
-        {data.data.length && activePipeline ? (
+        {isPipelinesSuccess && data.data.length && pipeline ? (
           <Stages
             setIsStagesLength={setIsStagesLength}
-            pipeline={activePipeline}
+            pipeline={pipeline}
             setIsEditStageView={setIsOpen}
           />
         ) : (
@@ -154,10 +151,6 @@ const Kanban = ({ setIsOpen }) => {
         )}
       </section>
     </>
-  ) : (
-    <section className="h-screen w-full flex justify-center items-center">
-      <Loader />
-    </section>
   );
 };
 

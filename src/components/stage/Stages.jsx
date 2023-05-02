@@ -53,7 +53,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
         />
         {data?.data?.length ? (
           <section
-            className={`h-[calc(100vh-120px)] ${
+            className={`h-[calc(100vh-107px)] ${
               isUpdatingStage && !isUpdateSuccess ? "opacity-50" : null
             }`}
           >

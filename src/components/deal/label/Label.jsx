@@ -9,7 +9,7 @@ const Label = ({ setLabel, label }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenNewLabelModel, setIsOpenNewLabelModel] = useState(false);
   const { data, isLoading, isFetching, isSuccess, isError, error } =
-    useGetLabelsQuery();
+    useGetLabelsQuery({ data: true });
 
   useEffect(() => {
     toast.error(error);
@@ -23,7 +23,7 @@ const Label = ({ setLabel, label }) => {
         className="w-full border py-2 px-3 text-sm rounded mb-2 flex items-center justify-between"
       >
         {label ? (
-          data.map(
+          data?.map(
             (item, index) =>
               item._id === label && (
                 <li

@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import {
   useAddFileMutation,
   useDeleteFileMutation,
   useGetAllFileInfoQuery,
-} from "../../services/fileApi";
+} from "../../redux/services/fileApi";
 
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Skeleton } from "@mui/material";
 import moment from "moment";
-import BASE_URL from "../../config/BASE_URL";
 
+import BASE_URL from "../../config/BASE_URL";
 import DealSelect from "../eventHandlers/DealSelect";
 
 const File = ({ cards }) => {
@@ -26,18 +26,9 @@ const File = ({ cards }) => {
     isSuccess,
   } = useGetAllFileInfoQuery(id);
   const fileInputRef = useRef();
-  const [
-    uploadFile,
-    {
-      isLoading: isUploading,
-      isError: isUploadError,
-      isSuccess: isUploadSuccess,
-    },
-  ] = useAddFileMutation();
-  const [
-    deleteFile,
-    { isLoading: isDeleting, isSuccess: isDeleteSuccess, isError },
-  ] = useDeleteFileMutation();
+  const [uploadFile, { isLoading: isUploading, isSuccess: isUploadSuccess }] =
+    useAddFileMutation();
+  const [deleteFile, { isSuccess: isDeleteSuccess }] = useDeleteFileMutation();
 
   async function handleUploadFile(file) {
     const cardIds = selectedData.map((i) => i.value);

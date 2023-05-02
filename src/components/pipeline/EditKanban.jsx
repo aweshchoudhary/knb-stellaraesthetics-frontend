@@ -1,25 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  useDeletePipelineMutation,
-  useGetPipelineQuery,
-} from "../../services/pipelineApi";
+import { useDeletePipelineMutation } from "../../redux/services/pipelineApi";
 import Model from "../models/Model";
 import CreatePipelineModel from "../models/CreatePipelineModel";
 import EditStages from "../stage/EditStages";
 import EditPipelineName from "./EditPipelineName";
 import { Skeleton } from "@mui/material";
-import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const EditKanban = ({ setIsOpen }) => {
-  const { id } = useParams();
-  const {
-    data = {},
-    isLoading,
-    isFetching,
-    isSuccess,
-    refetch: refetchPipelines,
-  } = useGetPipelineQuery(id);
+const EditKanban = ({ setIsOpen, pipeline, isLoading, isFetching }) => {
+  console.log(pipeline);
   const [
     deletePipeline,
     { isLoading: isPiplineDeleting, isSuccess: isPipelineDeleteSuccess },
@@ -32,19 +21,18 @@ const EditKanban = ({ setIsOpen }) => {
     setIsOpen(false);
   }
   async function handleDeletePipeline() {
-    await deletePipeline(data._id);
-    refetchPipelines();
+    await deletePipeline(pipeline._id);
   }
 
   // useEffect(() => {
-  //   // if (data.length && isSuccess) {
+  //   // if (pipeline.length && isSuccess) {
   //   //   if (!savedPipelineIndex) {
   //   //     addPipeline(0);
-  //   //     setActivePipeline(data[0]);
+  //   //     setActivePipeline(pipeline[0]);
   //   //   }
-  //   //   setActivePipeline(data[savedPipelineIndex]);
+  //   //   setActivePipeline(pipeline[savedPipelineIndex]);
   //   // }
-  // }, [data, isSuccess]);
+  // }, [pipeline, isSuccess]);
 
   useEffect(() => {
     if (isPipelineDeleteSuccess) {
@@ -53,7 +41,7 @@ const EditKanban = ({ setIsOpen }) => {
   }, [isPipelineDeleteSuccess]);
 
   return (
-    isSuccess && (
+    pipeline && (
       <>
         <Model
           title={"Create Pipeline"}
@@ -63,15 +51,11 @@ const EditKanban = ({ setIsOpen }) => {
           <CreatePipelineModel setIsOpen={isCreatePipelineModelOpen} />
         </Model>
         <div
-          className={
-            !isLoading && !isFetching && isSuccess
-              ? "opacity-100"
-              : "opacity-50"
-          }
+          className={!isLoading && !isFetching ? "opacity-100" : "opacity-50"}
         >
           <header className="h-[60px] flex items-center justify-between px-5 py-3 border-b">
-            {data ? (
-              <EditPipelineName name={data?.name} id={data?._id} />
+            {pipeline ? (
+              <EditPipelineName name={pipeline?.name} id={pipeline?._id} />
             ) : (
               <Skeleton width={200} height={"60px"} />
             )}
@@ -91,8 +75,8 @@ const EditKanban = ({ setIsOpen }) => {
             </div>
           </header>
           <section>
-            {data ? (
-              <EditStages pipeline={data} setIsEditStageView={setIsOpen} />
+            {pipeline ? (
+              <EditStages pipeline={pipeline} setIsEditStageView={setIsOpen} />
             ) : (
               <p className="p-10">
                 No pipeline has been created yet.{" "}

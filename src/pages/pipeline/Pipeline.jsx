@@ -12,8 +12,7 @@ const Pipeline = () => {
   const [editPipeline, setEditPipeline] = useState(false);
   const params = useParams();
   const { id } = params;
-  const { data } = useGetPipelineQuery(id);
-
+  const { data, isLoading, isFetching } = useGetPipelineQuery(id);
   return (
     <>
       <Header title={"Pipeline"} />
@@ -25,9 +24,19 @@ const Pipeline = () => {
         }
       >
         {editPipeline ? (
-          <EditKanban pipeline={data} setIsOpen={setEditPipeline} />
+          <EditKanban
+            isFetching={isFetching}
+            isLoading={isLoading}
+            pipeline={data}
+            setIsOpen={setEditPipeline}
+          />
         ) : (
-          <Kanban pipeline={data} setIsOpen={setEditPipeline} />
+          <Kanban
+            isFetching={isFetching}
+            isLoading={isLoading}
+            pipeline={data}
+            setIsOpen={setEditPipeline}
+          />
         )}
       </Suspense>
     </>

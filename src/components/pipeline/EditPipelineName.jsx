@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useUpdatePipelineMutation } from "../../services/pipelineApi";
+import React, { useEffect, useState } from "react";
+import { useUpdatePipelineMutation } from "../../redux/services/pipelineApi";
 import { toast } from "react-toastify";
 import { Icon } from "@iconify/react";
 

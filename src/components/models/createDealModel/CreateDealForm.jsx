@@ -16,7 +16,7 @@ let initialValues = {
   title: "",
   pipeline: "",
   currentStage: "",
-  value: { value: "", type: "inr" },
+  value: { value: 0, type: "inr" },
   label: "",
   expectedClosingDate: new Date(),
 };
@@ -25,7 +25,7 @@ const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
   pipeline: Yup.string().required("Pipeline is required"),
   stage: Yup.string().required("Stage is required"),
-  value: Yup.number().positive("Value must be positive"),
+  value: Yup.number().required("Value is required"),
   currency: Yup.string(),
   label: Yup.string().required("Label is required"),
   expectedClosingDate: Yup.date().required("Expected closing date is required"),
@@ -33,6 +33,7 @@ const validationSchema = Yup.object({
 
 const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   const [getStages, { data: stages }] = useLazyGetStagesQuery();
+  const [expectedDate, setExpectedDate] = useState(new Date());
 
   const [currentCurrency, setCurrentCurrency] = useState({});
   const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
@@ -69,6 +70,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     const newDeal = {
       ...values,
       contacts,
+      expectedClosingDate: expectedDate,
     };
     await createDeal(newDeal);
     setIsOpen(false);
@@ -77,10 +79,6 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   const fetchStages = async (pipeId) => {
     await getStages({ pipelineId: pipeId, data: true });
   };
-
-  function handleDateSelect(date) {
-    formik.values.expectedClosingDate = date;
-  }
 
   // Validation
   const formik = useFormik({
@@ -117,6 +115,10 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   useEffect(() => {
     formik.values.label = label;
   }, [label]);
+
+  useEffect(() => {
+    formik.values.expectedClosingDate = expectedDate;
+  }, [expectedDate]);
 
   useEffect(() => {
     formik.values.currency = currentCurrency.value;
@@ -158,10 +160,11 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
                   name="value"
                   id="amount-value"
                   placeholder="Value"
+                  min={0}
                   className="input w-full"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.value}
+                  value={+formik.values.value}
                 />
                 {formik.touched.value && formik.errors.value ? (
                   <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
@@ -282,15 +285,15 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
             <label htmlFor="close-date" className="text-textColor block mb-2">
               Expected Close Date
             </label>
-
+            {/* <input type="date" name="expectedClosingDate" /> */}
             <ReactDatePicker
               className="input"
-              name="expectedClosingDate"
-              selected={formik.values.expectedClosingDate}
+              // name="expectedClosingDate"
               minDate={new Date()}
-              onChange={handleDateSelect}
-              // onBlur={formik.handleBlur}
-              value={formik.values.expectedClosingDate}
+              onChange={(date) => setExpectedDate(date)}
+              onBlur={formik.handleBlur}
+              selected={expectedDate}
+              value={expectedDate}
             />
             {formik.touched.expectedClosingDate &&
             formik.errors.expectedClosingDate ? (

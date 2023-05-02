@@ -1,3 +1,4 @@
+import React from "react";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -6,12 +7,12 @@ import {
   toggleDarkMode,
   toggleMobileOpen,
 } from "../../redux/features/globalSlice";
-import React from "react";
+import { useGetMeQuery } from "../../redux/services/userApi";
 
 const Header = ({ title }) => {
   const darkMode = useSelector((state) => state.global.darkMode);
-  const picture = useSelector((state) => state.auth?.user?.profile?.picture);
   const dispatch = useDispatch();
+  const { data, isLoading, isFetching } = useGetMeQuery();
 
   const toggleThemeMode = () => dispatch(toggleDarkMode());
   return (
@@ -36,19 +37,14 @@ const Header = ({ title }) => {
         <Link className="block rounded-full">
           <Icon icon="basil:user-plus-outline" className="text-xl" />
         </Link>
-        <Link
-          to="/user"
-          className="rounded-full h-[30px] w-[30px] border uppercase"
-        >
-          {picture && (
-            <img
-              src={picture}
-              className="w-full rounded-full h-full object-cover"
-              width={50}
-              height={50}
-            />
-          )}
-        </Link>
+        {!isLoading && !isFetching && (
+          <Link
+            to={"/user/" + data._id}
+            className="rounded-full h-[30px] w-[30px] border uppercase flex items-center justify-center"
+          >
+            <Icon icon="uil:user" />
+          </Link>
+        )}
       </div>
     </header>
   );

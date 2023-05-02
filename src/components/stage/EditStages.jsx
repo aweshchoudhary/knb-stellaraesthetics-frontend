@@ -5,7 +5,7 @@ import EditColumn from "./EditColumn";
 import {
   useGetStagesQuery,
   useReorderStageMutation,
-} from "../../services/stageApi";
+} from "../../redux/services/stageApi";
 import Model from "../models/Model";
 import CreateStageModel from "../models/CreateStageModel";
 
@@ -20,6 +20,7 @@ const EditStage = ({ pipeline }) => {
     dataFilters: { pipelinId: pipeline._id },
     data: true,
   });
+
   const [reorderStages, { isLoading: isStagesReorderLoading }] =
     useReorderStageMutation();
 
@@ -71,8 +72,8 @@ const EditStage = ({ pipeline }) => {
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
-                  {data.length ? (
-                    data.map((item) => (
+                  {data?.data?.length ? (
+                    data?.data?.map((item) => (
                       <Draggable
                         key={item._id}
                         draggableId={item._id}

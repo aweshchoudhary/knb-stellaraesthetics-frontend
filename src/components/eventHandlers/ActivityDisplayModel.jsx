@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import {
   useDeleteActivityMutation,
   useUpdateActivityMutation,
-} from "../../services/activityApi";
+} from "../../redux/services/activityApi";
 import Model from "../models/Model";
 import EventHandler from "./ActivityHandler";
 

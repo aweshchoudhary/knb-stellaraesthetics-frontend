@@ -4,9 +4,9 @@ import { useFormik } from "formik";
 import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useLoginMutation } from "../../services/authApi";
+import { useLoginMutation } from "../../redux/services/authApi";
 import { useDispatch } from "react-redux";
-import { addAccessToken } from "../../state/features/globalSlice";
+import { setCredentials } from "../../redux/features/authSlice";
 
 let initialValues = {
   user: "",
@@ -21,7 +21,6 @@ const validationSchema = Yup.object().shape({
 const Login = () => {
   const [login, { data, isLoading, isSuccess, isError, error }] =
     useLoginMutation();
-  console.log(error);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -38,7 +37,7 @@ const Login = () => {
 
   useEffect(() => {
     if (data?.accessToken) {
-      dispatch(addAccessToken(data.accessToken));
+      dispatch(setCredentials(data.accessToken));
       navigate("/dashboard");
     }
   }, [data]);

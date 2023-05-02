@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useDeleteContactMutation,
   useGetContactQuery,
-} from "../../services/contactApi";
+} from "../../redux/services/contactApi";
 import Header from "../../components/global/Header";
 import Loader from "../../components/global/Loader";
 import { Icon } from "@iconify/react";
@@ -18,8 +18,8 @@ import NoteHandler from "../../components/eventHandlers/NoteHandler";
 import FileHandler from "../../components/eventHandlers/FileHandler";
 import EmailHandler from "../../components/eventHandlers/EmailHandler";
 
-import { useGetActivitiesQuery } from "../../services/activityApi";
-import { useGetDealsQuery } from "../../services/dealApi";
+import { useGetActivitiesQuery } from "../../redux/services/activityApi";
+import { useGetDealsQuery } from "../../redux/services/dealApi";
 
 const Model = lazy(() => import("../../components/models/Model"));
 const CreateDealModel = lazy(() =>

@@ -1,11 +1,11 @@
 import { Icon } from "@iconify/react";
 import Model from "../models/Model";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateStageModel from "../models/CreateStageModel";
 import {
   useDeleteStageMutation,
   useUpdateStageMutation,
-} from "../../services/stageApi";
+} from "../../redux/services/stageApi";
 import { toast } from "react-toastify";
 
 const EditColumn = ({ provided, item, pipelineId }) => {
@@ -51,7 +51,7 @@ const EditColumn = ({ provided, item, pipelineId }) => {
       </Model>
       <div
         className={
-          "border-r shrink-0 relative bg-bg flex flex-col justify-between flex-1 h-[calc(100vh-135px)]"
+          "border-r shrink-0 relative bg-bg flex flex-col justify-between w-1/3 h-[calc(100vh-125px)]"
         }
         ref={provided.innerRef}
         {...provided.draggableProps}

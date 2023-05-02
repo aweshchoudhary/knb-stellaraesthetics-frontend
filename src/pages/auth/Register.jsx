@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { Icon } from "@iconify/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../../redux/services/authApi";
+import { toast } from "react-toastify";
 // import { toast } from "react-toastify";
 
 let initialValues = {
@@ -32,6 +34,10 @@ const validationSchema = Yup.object().shape({
 });
 
 const Register = () => {
+  const [registerUser, { isLoading, isSuccess, isError, error }] =
+    useRegisterMutation();
+  const navigate = useNavigate();
+
   // Validation
   const formik = useFormik({
     initialValues,
@@ -39,9 +45,20 @@ const Register = () => {
     onSubmit: (values) => handlRegisterUser(values),
   });
 
-  function handlRegisterUser(values) {
-    console.log(values);
+  async function handlRegisterUser(values) {
+    await registerUser(values);
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Registered Successfully");
+      navigate("/login");
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) toast.error(error.data.message);
+  }, [isError]);
 
   return (
     <section className="w-full h-screen py-10 overflow-y-auto flex flex-col items-center justify-center">
@@ -139,7 +156,7 @@ const Register = () => {
           ) : null}
         </div>
         <button type="submit" className="btn-filled w-full justify-center mt-5">
-          Create Account
+          {isLoading ? "Loading..." : "Create Account"}
         </button>
         <p className="mt-2">
           Already have an account?{" "}

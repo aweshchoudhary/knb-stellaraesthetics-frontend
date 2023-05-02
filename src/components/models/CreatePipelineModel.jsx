@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useCreatePipelineMutation } from "../../services/pipelineApi";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useCreatePipelineMutation } from "../../redux/services/pipelineApi";
 
 const CreatePipelineModel = ({ setIsOpen }) => {
   const [name, setName] = useState("");
@@ -15,6 +16,14 @@ const CreatePipelineModel = ({ setIsOpen }) => {
     setName("");
     setIsOpen(false);
   }
+
+  useEffect(() => {
+    if (isSuccess) toast.success("Pipeline created successfully");
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) toast.success(error.data.message);
+  }, [isError]);
   return (
     <div className="p-5">
       <label htmlFor="pipeline-name" className="block mb-2">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import { useLazyGetDealsQuery } from "../../services/dealApi";
+import { useLazyGetDealsQuery } from "../../redux/services/dealApi";
 
 const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
   const [searchedData, setSearchedData] = useState([]);
