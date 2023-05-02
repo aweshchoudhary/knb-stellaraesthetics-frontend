@@ -3,19 +3,19 @@ import BASE_URL from "../config/BASE_URL";
 
 export const noteApi = createApi({
   reducerPath: "noteApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/note" }),
   tagTypes: ["note"],
   endpoints: (builder) => ({
     createNote: builder.mutation({
       query: (data) => ({
-        url: "/note/add",
+        url: "/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["note"],
     }),
     getNote: builder.query({
-      query: (id) => "/note/get-note/" + id,
+      query: (id) => "/get-note/" + id,
       providesTags: ["note"],
       transformResponse: (response) => {
         return response.data;
@@ -23,7 +23,7 @@ export const noteApi = createApi({
     }),
     getNotes: builder.query({
       query: (params) => ({
-        url: "/note/get-notes/",
+        url: "/get-notes/",
         params,
       }),
       providesTags: ["note"],
@@ -33,7 +33,7 @@ export const noteApi = createApi({
     }),
     updateNote: builder.mutation({
       query: (data) => ({
-        url: "/note/update/" + data.id,
+        url: "/update/" + data.id,
         method: "PUT",
         body: data.body,
       }),
@@ -41,7 +41,7 @@ export const noteApi = createApi({
     }),
     deleteNote: builder.mutation({
       query: (id) => ({
-        url: "/note/delete/" + id,
+        url: "/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["note"],

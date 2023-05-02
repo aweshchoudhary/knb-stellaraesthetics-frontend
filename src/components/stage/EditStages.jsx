@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
 import EditColumn from "./EditColumn";
@@ -9,14 +9,17 @@ import {
 import Model from "../models/Model";
 import CreateStageModel from "../models/CreateStageModel";
 
-const EditStage = ({ pipeline, setIsStagesLength }) => {
+const EditStage = ({ pipeline }) => {
   const {
     data = [],
     isLoading,
     isSuccess,
     isFetching,
     isError,
-  } = useGetStagesQuery(pipeline._id);
+  } = useGetStagesQuery({
+    dataFilters: { pipelinId: pipeline._id },
+    data: true,
+  });
   const [reorderStages, { isLoading: isStagesReorderLoading }] =
     useReorderStageMutation();
 
@@ -40,14 +43,6 @@ const EditStage = ({ pipeline, setIsStagesLength }) => {
     }
   }, [isError]);
 
-  useEffect(() => {
-    if (data.length) {
-      setIsStagesLength(true);
-    } else {
-      setIsStagesLength(false);
-    }
-  }, [data]);
-
   return (
     <>
       <Model
@@ -70,7 +65,7 @@ const EditStage = ({ pipeline, setIsStagesLength }) => {
         <DragDropContext onDragEnd={onDragComplete}>
           <div className="overflow-x-auto h-full w-full">
             <Droppable droppableId="drag-drop-list" direction="horizontal">
-              {(provided, snapshot) => (
+              {(provided) => (
                 <div
                   className="flex overflow-x-auto h-full"
                   {...provided.droppableProps}

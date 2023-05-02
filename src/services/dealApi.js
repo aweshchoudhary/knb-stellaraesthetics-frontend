@@ -3,19 +3,19 @@ import BASE_URL from "../config/BASE_URL";
 
 export const dealApi = createApi({
   reducerPath: "dealApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/deal" }),
   tagTypes: ["deal"],
   endpoints: (builder) => ({
     createDeal: builder.mutation({
       query: (data) => ({
-        url: "/deal/add",
+        url: "/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["deal"],
     }),
     getDeal: builder.query({
-      query: (id) => "/deal/get-deal/" + id,
+      query: (id) => "/get-deal/" + id,
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;
@@ -23,7 +23,7 @@ export const dealApi = createApi({
     }),
     getDeals: builder.query({
       query: (params) => ({
-        url: "/deal/get-deals/",
+        url: "/get-deals/",
         params,
       }),
       providesTags: ["deal"],
@@ -33,7 +33,7 @@ export const dealApi = createApi({
     }),
     updateDeal: builder.mutation({
       query: (data) => ({
-        url: "/deal/update/" + data.id,
+        url: "/update/" + data.id,
         method: "PUT",
         body: data.update,
       }),
@@ -41,7 +41,7 @@ export const dealApi = createApi({
     }),
     updateDealStage: builder.mutation({
       query: (data) => ({
-        url: "/deal/deal-stage",
+        url: "-stage",
         method: "PUT",
         body: data,
       }),
@@ -49,7 +49,7 @@ export const dealApi = createApi({
     }),
     deleteDeal: builder.mutation({
       query: (id) => ({
-        url: "/deal/delete/" + id,
+        url: "/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["deal"],
@@ -65,4 +65,5 @@ export const {
   useUpdateDealMutation,
   useUpdateDealStageMutation,
   useGetDealsQuery,
+  useLazyGetDealsQuery,
 } = dealApi;

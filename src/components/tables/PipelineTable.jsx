@@ -48,15 +48,20 @@ const PipelineTable = () => {
     useInfiniteQuery({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam = 0 }) => {
-        const { data } = await axiosInstance.get("/pipeline/get-pipelines", {
-          params: {
-            start: pageParam * fetchSize,
-            size: fetchSize,
-            filters: JSON.stringify(columnFilters ?? []),
-            sorting: JSON.stringify(sorting ?? []),
-            search: globalFilter,
-          },
-        });
+        const { data } = await axiosInstance.get(
+          "/api/pipeline/get-pipelines",
+          {
+            params: {
+              start: pageParam * fetchSize,
+              size: fetchSize,
+              filters: JSON.stringify(columnFilters ?? []),
+              sorting: JSON.stringify(sorting ?? []),
+              search: globalFilter,
+              data: true,
+              count: true,
+            },
+          }
+        );
         return data;
       },
       getNextPageParam: (_lastGroup, groups) => groups.length,

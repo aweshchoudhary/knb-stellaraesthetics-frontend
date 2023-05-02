@@ -3,26 +3,26 @@ import BASE_URL from "../config/BASE_URL";
 
 export const labelApi = createApi({
   reducerPath: "labelApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/label" }),
   tagTypes: ["label"],
   endpoints: (builder) => ({
     createLabel: builder.mutation({
       query: (data) => ({
-        url: "/label/add",
+        url: "/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["label"],
     }),
     getLabel: builder.query({
-      query: (id) => "/label/get-label/" + id,
+      query: (id) => "/get-label/" + id,
       providesTags: ["label"],
       transformResponse: (res) => {
         return res.data;
       },
     }),
     getLabels: builder.query({
-      query: () => "/label/get-labels/",
+      query: () => "/get-labels/",
       providesTags: ["label"],
       transformResponse: (res) => {
         return res.data;
@@ -30,7 +30,7 @@ export const labelApi = createApi({
     }),
     updateLabel: builder.mutation({
       query: (data) => ({
-        url: "/label/update/" + data.id,
+        url: "/update/" + data.id,
         method: "PUT",
         body: data.body,
       }),
@@ -38,7 +38,7 @@ export const labelApi = createApi({
     }),
     deleteLabel: builder.mutation({
       query: (id) => ({
-        url: "/label/delete/" + id,
+        url: "/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["label"],

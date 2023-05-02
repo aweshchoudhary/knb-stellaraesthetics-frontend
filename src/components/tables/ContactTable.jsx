@@ -42,7 +42,7 @@ const columns = [
     header: "Email",
   },
 ];
-const fetchSize = 10;
+const fetchLimit = 10;
 
 const ContactTable = () => {
   const tableContainerRef = useRef(null);
@@ -60,13 +60,15 @@ const ContactTable = () => {
     useInfiniteQuery({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam = 0 }) => {
-        const { data } = await axiosInstance.get("/contact/get-contacts", {
+        const { data } = await axiosInstance.get("/api/contact/get-contacts", {
           params: {
-            start: pageParam * fetchSize,
-            size: fetchSize,
+            start: pageParam * fetchLimit,
+            limit: fetchLimit,
             filters: JSON.stringify(columnFilters ?? []),
-            sorting: JSON.stringify(sorting ?? []),
+            sort: JSON.stringify(sorting ?? []),
             search: globalFilter,
+            data: true,
+            count: true,
           },
         });
         return data;
@@ -152,6 +154,7 @@ const ContactTable = () => {
       Math.floor(Date.now() * Math.random() * 100) + ".xlsx"
     );
   };
+  console.log(data);
   return (
     <>
       <MaterialReactTable

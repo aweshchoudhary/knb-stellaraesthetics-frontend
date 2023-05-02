@@ -19,7 +19,7 @@ const Contacts = lazy(() => import("./pages/contact/Contacts"));
 const Contact = lazy(() => import("./pages/contact/Contact"));
 const ActivityCalendar = lazy(() => import("./pages/ActivityCalendar"));
 const Products = lazy(() => import("./pages/Products"));
-const Services = lazy(() => import("./pages/Services"));
+// const Services = lazy(() => import("./pages/Services"));
 const NotFound = lazy(() => import("./pages/User"));
 const User = lazy(() => import("./pages/User"));
 const Register = lazy(() => import("./pages/auth/Register"));
@@ -27,6 +27,7 @@ const Login = lazy(() => import("./pages/auth/Login"));
 
 const App = () => {
   const darkMode = useSelector((state) => state.global.darkMode);
+  const accessToken = useSelector((state) => state.global.accessToken);
 
   const theme = createTheme({
     palette: {
@@ -60,16 +61,45 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/pipelines" element={<Pipelines />} />
-            <Route path="/pipeline/:id" element={<Pipeline />} />
-            <Route path="/deals/:id" element={<Deal />} />
-            <Route path="/activities" element={<ActivityCalendar />} />
-            <Route path="/contacts" element={<Contacts />} />
-            <Route path="/contacts/:id" element={<Contact />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/user" element={<User />} />
+            <Route
+              path="/dashboard"
+              element={accessToken ? <Dashboard /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/pipelines"
+              element={accessToken ? <Pipelines /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/pipeline/:id"
+              element={accessToken ? <Pipeline /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/deals/:id"
+              element={accessToken ? <Deal /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/activities"
+              element={
+                accessToken ? <ActivityCalendar /> : <Navigate to="/login" />
+              }
+            />
+            <Route
+              path="/contacts"
+              element={accessToken ? <Contacts /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/contacts/:id"
+              element={accessToken ? <Contact /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/user"
+              element={accessToken ? <User /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/products"
+              element={accessToken ? <Products /> : <Navigate to="/login" />}
+            />
+            {/* <Route path="/services" element={<Services />} /> */}
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route
@@ -82,7 +112,7 @@ const App = () => {
                   </section>
                 }
               >
-                <Register />
+                {accessToken ? <Navigate to="/dashboard" /> : <Register />}
               </Suspense>
             }
           />
@@ -96,7 +126,7 @@ const App = () => {
                   </section>
                 }
               >
-                <Login />
+                {accessToken ? <Navigate to="/dashboard" /> : <Login />}
               </Suspense>
             }
           />

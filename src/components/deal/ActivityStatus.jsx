@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { useGetActivitiesByDealIdQuery } from "../../services/activityApi";
+import { useGetActivitiesQuery } from "../../services/activityApi";
 import moment from "moment";
 import { Tooltip } from "@mui/material";
 
-const ActivityStatus = ({ cardId }) => {
+const ActivityStatus = ({ dealId }) => {
   const {
     data = [],
     isLoading,
     isFetching,
     isSuccess,
-  } = useGetActivitiesByDealIdQuery(cardId);
+  } = useGetActivitiesQuery({ dealId });
   const [status, setStatus] = useState("nothing");
 
   useEffect(() => {

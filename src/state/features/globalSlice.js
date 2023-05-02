@@ -4,6 +4,7 @@ const initialState = {
   darkMode: JSON.parse(localStorage.getItem("darkMode")) || false,
   isMobileOpen: false,
   pipelineIndex: localStorage.getItem("pipelineIndex") || 0,
+  accessToken: localStorage.getItem("accessToken") || null,
 };
 
 const globalSlice = createSlice({
@@ -25,9 +26,23 @@ const globalSlice = createSlice({
       state.pipelineIndex = "";
       localStorage.removeItem("pipelineIndex");
     },
+    addAccessToken(state, { payload }) {
+      state.accessToken = payload;
+      localStorage.setItem("accessToken", payload);
+    },
+    removeAccessToken(state) {
+      state.accessToken = null;
+      localStorage.removeItem("accessToken");
+    },
   },
 });
 
-export const { toggleDarkMode, toggleMobileOpen, addPipeline, removePipeline } =
-  globalSlice.actions;
+export const {
+  toggleDarkMode,
+  toggleMobileOpen,
+  addPipeline,
+  removePipeline,
+  addAccessToken,
+  removeAccessToken,
+} = globalSlice.actions;
 export default globalSlice.reducer;

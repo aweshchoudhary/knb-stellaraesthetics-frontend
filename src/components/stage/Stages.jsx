@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Model from "../models/Model";
 import Column from "./Column";
@@ -8,14 +8,11 @@ import { useGetStagesQuery } from "../../services/stageApi";
 import { useUpdateDealStageMutation } from "../../services/dealApi";
 
 const Stages = ({ pipeline, setIsStagesLength }) => {
-  const {
-    data = [],
-    isLoading,
-    isError,
-    isFetching,
-    isSuccess,
-    error,
-  } = useGetStagesQuery(pipeline._id);
+  const { data, isLoading, isError, isFetching, isSuccess, error } =
+    useGetStagesQuery({
+      dataFilters: { pipelinId: pipeline._id },
+      data: true,
+    });
   const [
     updateDealStage,
     { isLoading: isUpdatingStage, isSuccess: isUpdateSuccess },
@@ -37,7 +34,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
   };
 
   useEffect(() => {
-    if (data.length) {
+    if (data?.data?.length) {
       setIsStagesLength(true);
     } else {
       setIsStagesLength(false);
@@ -54,7 +51,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
           setCreateStageModelDisplay={setCreateStageModelDisplay}
           pipeline={pipeline}
         />
-        {data.length ? (
+        {data?.data?.length ? (
           <section
             className={`h-[calc(100vh-120px)] ${
               isUpdatingStage && !isUpdateSuccess ? "opacity-50" : null
@@ -62,14 +59,14 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
           >
             <div className="flex overflow-x-auto w-full h-full">
               <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-                {data &&
-                  data.map((stage) => {
+                {data?.data?.length &&
+                  data?.data?.map((stage) => {
                     return (
                       <Column
                         stage={stage}
                         key={stage._id}
                         loading={isLoading || isFetching}
-                        length={data.length}
+                        length={data?.data?.length}
                       />
                     );
                   })}

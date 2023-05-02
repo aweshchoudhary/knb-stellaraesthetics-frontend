@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import { useLazySearchDealsQuery } from "../../services/dealApi";
+import { useLazyGetDealsQuery } from "../../services/dealApi";
 
 const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
   const [searchedData, setSearchedData] = useState([]);
 
   const [query, setQuery] = useState("");
-  const [searchDeal, { isLoading, isFetching }] = useLazySearchDealsQuery();
+  const [searchDeal, { isLoading, isFetching }] = useLazyGetDealsQuery();
 
   const handleChange = async (selectedOptions) => {
     setSelectedData(selectedOptions);
@@ -14,7 +14,7 @@ const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
 
   useEffect(() => {
     const searchDataFn = async (query) => {
-      const res = await searchDeal(query);
+      const res = await searchDeal({ search: query, data: true });
       const mainOptions = { label: "Open Deals", options: [] };
       const otherOptions = { label: "Other Deals", options: [] };
 

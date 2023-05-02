@@ -32,7 +32,7 @@ const validationSchema = Yup.object({
 });
 
 const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
-  const [getStages, { data = [] }] = useLazyGetStagesQuery();
+  const [getStages, { data: stages }] = useLazyGetStagesQuery();
 
   const [currentCurrency, setCurrentCurrency] = useState({});
   const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
@@ -61,7 +61,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   const [createDeal, { isLoading, isError, error, isSuccess }] =
     useCreateDealMutation();
 
-  const { data: pipelines } = useGetPipelinesQuery();
+  const { data } = useGetPipelinesQuery({ data: true });
 
   async function handleCreateDeal(values) {
     const contacts = selectedContacts.map((item) => item.value);
@@ -75,7 +75,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   }
 
   const fetchStages = async (pipeId) => {
-    await getStages(pipeId);
+    await getStages({ pipelineId: pipeId, data: true });
   };
 
   function handleDateSelect(date) {
@@ -105,8 +105,8 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   }, [pipeId]);
 
   useEffect(() => {
-    if (!pipeId && pipelines?.length) fetchStages(pipelines[0]._id);
-  }, [pipeId, pipelines]);
+    if (!pipeId && data.data?.length) fetchStages(data.data[0]._id);
+  }, [pipeId, data.data]);
 
   useEffect(() => {
     if (data.length) {
@@ -198,7 +198,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               onBlur={formik.handleBlur}
               value={formik.values.pipeline}
             >
-              {pipelines?.map((item, i) => {
+              {data.data?.map((item, i) => {
                 return item._id === formik.values.pipeline ? (
                   <option
                     key={i}
@@ -240,7 +240,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               onBlur={formik.handleBlur}
               value={formik.values.currentStage}
             >
-              {data?.map((item, i) => {
+              {stages?.data?.map((item, i) => {
                 return item._id === formik.values.currentStage ? (
                   <option
                     key={i}

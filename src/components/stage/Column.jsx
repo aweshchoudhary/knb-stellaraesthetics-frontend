@@ -1,7 +1,7 @@
 import { Droppable } from "react-beautiful-dnd";
 import Deal from "../global/Deal";
 import Row from "./Row";
-import { useLazyGetDealsByStageQuery } from "../../services/dealApi";
+import { useLazyGetDealsQuery } from "../../services/dealApi";
 import { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 
@@ -10,11 +10,11 @@ const Column = ({ stage, loading }) => {
     totalDeals: 0,
     totalRevenue: 0,
   });
-  const [getDealsByStageId, { data: deals, isLoading, isFetching, isSuccess }] =
-    useLazyGetDealsByStageQuery();
+  const [getDeals, { data: deals, isLoading, isFetching, isSuccess }] =
+    useLazyGetDealsQuery();
 
   useEffect(() => {
-    getDealsByStageId(stage._id);
+    getDeals({ currentStage: stage._id });
   }, [stage]);
 
   useEffect(() => {

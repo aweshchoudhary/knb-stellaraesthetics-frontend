@@ -3,12 +3,12 @@ import BASE_URL from "../config/BASE_URL";
 
 export const stageApi = createApi({
   reducerPath: "stageApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/stage" }),
   tagTypes: ["stage"],
   endpoints: (builder) => ({
     createStage: builder.mutation({
       query: (data) => ({
-        url: "/stage/add",
+        url: "/add",
         method: "POST",
         body: data,
       }),
@@ -16,16 +16,13 @@ export const stageApi = createApi({
     }),
     getStages: builder.query({
       query: (params) => ({
-        url: "/stage/get-stages/",
+        url: "/get-stages/",
         params,
       }),
       providesTags: ["stage"],
-      transformResponse: (response) => {
-        return response.data;
-      },
     }),
     getStage: builder.query({
-      query: (id) => "/stage/get-stage/" + id,
+      query: (id) => "/get-stage/" + id,
       providesTags: ["stage"],
       transformResponse: (response) => {
         return response.data;
@@ -33,7 +30,7 @@ export const stageApi = createApi({
     }),
     updateStage: builder.mutation({
       query: (data) => ({
-        url: "/stage/update/" + data.stageId,
+        url: "/update/" + data.stageId,
         method: "PUT",
         body: { name: data.name },
       }),
@@ -41,7 +38,7 @@ export const stageApi = createApi({
     }),
     reorderStage: builder.mutation({
       query: (stage) => ({
-        url: "/stage/reorder/" + stage.pipelineId,
+        url: "/reorder/" + stage.pipelineId,
         method: "PUT",
         body: stage.data,
       }),
@@ -49,7 +46,7 @@ export const stageApi = createApi({
     }),
     deleteStage: builder.mutation({
       query: (stage) => ({
-        url: `/stage/${stage.pipelineId}/${stage.position}`,
+        url: `/${stage.pipelineId}/${stage.position}`,
         method: "DELETE",
       }),
       invalidatesTags: ["stage"],

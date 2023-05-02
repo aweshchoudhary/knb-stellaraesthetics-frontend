@@ -1,9 +1,9 @@
 import { useLazyGetContactsQuery } from "../../../services/contactApi";
 import Select from "react-select";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const SearchContacts = ({ selectedContacts, setSelectedContacts }) => {
-  const [searchContact, { isLoading, isFetching }] = useLazyGetContactsQuery();
+  const [searchContacts, { isLoading, isFetching }] = useLazyGetContactsQuery();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedContacts, setSearchedContacts] = useState([]);
@@ -14,7 +14,7 @@ const SearchContacts = ({ selectedContacts, setSelectedContacts }) => {
 
   useEffect(() => {
     const fetchContacts = async (query) => {
-      const res = await searchContact({ params: { search: query } });
+      const res = await searchContacts({ search: query, data: true });
       if (res.data) {
         const contacts = res.data.map((item) => ({
           label: `${item.contactPerson} - ${item.company}`,

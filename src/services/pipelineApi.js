@@ -3,19 +3,19 @@ import BASE_URL from "../config/BASE_URL";
 
 export const pipelineApi = createApi({
   reducerPath: "pipelineApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/pipeline" }),
   tagTypes: ["pipeline"],
   endpoints: (builder) => ({
     createPipeline: builder.mutation({
       query: (data) => ({
-        url: "/pipeline/add",
+        url: "/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["pipeline"],
     }),
     getPipeline: builder.query({
-      query: (id) => "/pipeline/get-pipeline/" + id,
+      query: (id) => "/get-pipeline/" + id,
       providesTags: ["pipeline"],
       transformResponse: (response) => {
         return response.data;
@@ -23,14 +23,14 @@ export const pipelineApi = createApi({
     }),
     getPipelines: builder.query({
       query: (params) => ({
-        url: "/pipeline/get-pipelines/",
+        url: "/get-pipelines/",
         params,
       }),
       providesTags: ["pipeline"],
     }),
     updatePipeline: builder.mutation({
       query: (data) => ({
-        url: "/pipeline/update/" + data.id,
+        url: "/update/" + data.id,
         method: "PUT",
         body: data.update,
       }),
@@ -38,7 +38,7 @@ export const pipelineApi = createApi({
     }),
     deletePipeline: builder.mutation({
       query: (id) => ({
-        url: "/pipeline/delete/" + id,
+        url: "/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["pipeline"],

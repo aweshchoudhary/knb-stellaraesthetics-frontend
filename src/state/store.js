@@ -15,6 +15,7 @@ import { pipelineApi } from "../services/pipelineApi";
 import { activityApi } from "../services/activityApi";
 import { noteApi } from "../services/noteApi";
 import { fileApi } from "../services/fileApi";
+import { authApi } from "../services/authApi";
 
 const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ const store = configureStore({
     [activityApi.reducerPath]: activityApi.reducer,
     [noteApi.reducerPath]: noteApi.reducer,
     [fileApi.reducerPath]: fileApi.reducer,
+    [authApi.reducerPath]: authApi.reducer,
     global: globalSlice,
     // deals: dealSlice,
     // note: noteSlice,
@@ -45,6 +47,7 @@ const store = configureStore({
       noteApi.middleware,
       activityApi.middleware,
       fileApi.middleware,
+      authApi.middleware,
     ]),
 });
 

@@ -1,12 +1,12 @@
 import React, { lazy, useState } from "react";
 import Header from "../../components/global/Header";
 import { Suspense } from "react";
-import Loader from "../components/global/Loader";
+import Loader from "../../components/global/Loader";
 import { useGetPipelineQuery } from "../../services/pipelineApi";
 import { useParams } from "react-router-dom";
 
-const Kanban = lazy(() => import("../components/pipeline/Kanban"));
-const EditKanban = lazy(() => import("../components/pipeline/EditKanban"));
+const Kanban = lazy(() => import("../../components/pipeline/Kanban"));
+const EditKanban = lazy(() => import("../../components/pipeline/EditKanban"));
 
 const Pipeline = () => {
   const [editPipeline, setEditPipeline] = useState(false);

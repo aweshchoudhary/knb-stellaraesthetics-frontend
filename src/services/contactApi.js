@@ -3,11 +3,11 @@ import BASE_URL from "../config/BASE_URL";
 
 export const contactApi = createApi({
   reducerPath: "contactApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/contact" }),
   tagTypes: ["contact"],
   endpoints: (builder) => ({
     getContact: builder.query({
-      query: (id) => "/contact/get-contact/" + id,
+      query: (id) => "/get-contact/" + id,
       providesTags: ["contact"],
       transformResponse: (response) => {
         return response.data;
@@ -15,7 +15,7 @@ export const contactApi = createApi({
     }),
     getContacts: builder.query({
       query: (params) => ({
-        url: "/contact/get-contacts/",
+        url: "/get-contacts/",
         params,
       }),
       providesTags: ["contact"],
@@ -25,7 +25,7 @@ export const contactApi = createApi({
     }),
     createContact: builder.mutation({
       query: (data) => ({
-        url: "/contact/add",
+        url: "/add",
         method: "POST",
         body: data,
       }),
@@ -36,7 +36,7 @@ export const contactApi = createApi({
     }),
     updateContact: builder.mutation({
       query: (data) => ({
-        url: "/contact/update/" + data.id,
+        url: "/update/" + data.id,
         method: "PUT",
         body: data.body,
       }),
@@ -44,7 +44,7 @@ export const contactApi = createApi({
     }),
     deleteContact: builder.mutation({
       query: (id) => ({
-        url: "/contact/delete/" + id,
+        url: "/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["contact"],

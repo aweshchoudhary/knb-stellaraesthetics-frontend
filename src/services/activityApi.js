@@ -3,19 +3,19 @@ import BASE_URL from "../config/BASE_URL";
 
 export const activityApi = createApi({
   reducerPath: "activityApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL + "/api/activity" }),
   tagTypes: ["activity"],
   endpoints: (builder) => ({
     createActivity: builder.mutation({
       query: (data) => ({
-        url: "/activity/add",
+        url: "/add",
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["activity"],
     }),
     getActivity: builder.query({
-      query: (id) => "/activity/get-activity/" + id,
+      query: (id) => "/get-activity/" + id,
       providesTags: ["activity"],
       transformResponse: (response) => {
         return response.data;
@@ -23,7 +23,7 @@ export const activityApi = createApi({
     }),
     getActivities: builder.query({
       query: (params) => ({
-        url: "/activity/get-activities/",
+        url: "/get-activities/",
         params,
       }),
       providesTags: ["activity"],
@@ -33,7 +33,7 @@ export const activityApi = createApi({
     }),
     updateActivity: builder.mutation({
       query: (data) => ({
-        url: "/activity/update/" + data.id,
+        url: "/update/" + data.id,
         method: "PUT",
         body: data.update,
       }),
@@ -41,7 +41,7 @@ export const activityApi = createApi({
     }),
     deleteActivity: builder.mutation({
       query: (id) => ({
-        url: "/activity/delete/" + id,
+        url: "/delete/" + id,
         method: "DELETE",
       }),
       invalidatesTags: ["activity"],

@@ -1,5 +1,6 @@
-import PageHeader from "../components/global/Header";
-import ContactTable from "../components/tables/ContactTable";
+import React from "react";
+import PageHeader from "../../components/global/Header";
+import ContactTable from "../../components/tables/ContactTable";
 const Contacts = () => {
   return (
     <>

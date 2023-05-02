@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { Icon } from "@iconify/react";
-import { Link } from "react-router-dom";
-// import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useLoginMutation } from "../../services/authApi";
+import { useDispatch } from "react-redux";
+import { addAccessToken } from "../../state/features/globalSlice";
 
 let initialValues = {
   user: "",
@@ -11,11 +14,17 @@ let initialValues = {
 };
 
 const validationSchema = Yup.object().shape({
-  user: Yup.string().required("Full name is required"),
+  user: Yup.string().required("Email or Username is required"),
   password: Yup.string().required("Password is required"),
 });
 
-const Register = () => {
+const Login = () => {
+  const [login, { data, isLoading, isSuccess, isError, error }] =
+    useLoginMutation();
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // Validation
   const formik = useFormik({
     initialValues,
@@ -24,8 +33,23 @@ const Register = () => {
   });
 
   function handleLogin(values) {
-    console.log(values);
+    login(values);
   }
+
+  useEffect(() => {
+    if (data?.accessToken) {
+      dispatch(addAccessToken(data.accessToken));
+      navigate("/dashboard");
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (isSuccess) toast.success("Logged In Successfully");
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) toast.error(error);
+  }, [isError]);
 
   return (
     <section className="w-full h-screen py-10 overflow-y-auto flex flex-col items-center justify-center">
@@ -35,18 +59,18 @@ const Register = () => {
         <div className="my-2">
           <input
             className="input py-3"
-            type="email"
-            name="email"
-            id="email"
-            placeholder="email"
+            type="text"
+            name="user"
+            id="user"
+            placeholder="user"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.email}
+            value={formik.values.user}
           />
-          {formik.touched.email && formik.errors.email ? (
+          {formik.touched.user && formik.errors.user ? (
             <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
               <Icon icon="ic:round-error" className="text-lg" />
-              {formik.errors.email}
+              {formik.errors.user}
             </div>
           ) : null}
         </div>
@@ -69,7 +93,7 @@ const Register = () => {
           ) : null}
         </div>
         <button type="submit" className="btn-filled w-full justify-center mt-5">
-          Login
+          {isLoading ? "Loading..." : "Login"}
         </button>
         <p className="mt-2">
           Don&apos;t have an account?{" "}
@@ -82,4 +106,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
