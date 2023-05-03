@@ -17,37 +17,229 @@ import {
   QueryClientProvider,
   useInfiniteQuery,
 } from "@tanstack/react-query";
+import { useGetDealsQuery } from "../../redux/services/dealApi";
 import * as XLSX from "xlsx";
+import { useGetUserQuery } from "../../redux/services/userApi";
+import { useDeletePipelineMutation } from "../../redux/services/pipelineApi";
+import { toast } from "react-toastify";
 
 const Model = lazy(() => import("../models/Model"));
 const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));
 
-//defining columns outside of the component is fine, is stable
-const columns = [
-  {
-    accessorKey: "name",
-    header: "Pipeline Name",
-  },
-  {
-    accessorKey: "stages",
-    header: "Stages",
-  },
-];
 const fetchSize = 10;
 
 const PipelineTable = () => {
+  //defining columns outside of the component is fine, is stable
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: "Name",
+        size: 250,
+      },
+      {
+        accessorKey: "open-deals",
+        id: "open-deals",
+        header: "Open Deals",
+        // size: 250,
+        Cell: ({ row }) => {
+          return (
+            <Box>
+              {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
+              <CardList pipelineId={row?.original?._id} />
+            </Box>
+          );
+        },
+      },
+      {
+        accessorFn: (row) => `${row?.deals?.length}`,
+        id: "total-deals",
+        header: "Total Deals",
+        // size: 250,
+        Cell: ({ renderedCellValue }) => {
+          return (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+              }}
+            >
+              {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
+              <span>{renderedCellValue}</span>
+            </Box>
+          );
+        },
+      },
+      {
+        accessorKey: "won-deals",
+        id: "won-deals",
+        header: "Won Deals",
+        // size: 250,
+        Cell: ({ row }) => {
+          return (
+            <Box>
+              <CardList status="won" pipelineId={row?.original?._id} />
+            </Box>
+          );
+        },
+      },
+      {
+        accessorKey: "lost-deals",
+        id: "lost-deals",
+        header: "Lost Deals",
+        // size: 250,
+        Cell: ({ row }) => {
+          return (
+            <Box>
+              <CardList status="lost" pipelineId={row?.original?._id} />
+            </Box>
+          );
+        },
+      },
+      {
+        // size: 250,
+        accessorKey: "owner",
+        header: "Owner",
+        Cell: ({ renderedCellValue }) => {
+          return renderedCellValue && <Owner ownerId={renderedCellValue} />;
+        },
+      },
+    ],
+    // [
+    //   {
+    //     id: "employee", //id used to define `group` column
+    //     header: "Employee",
+    //     columns: [
+    //       {
+    //         accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+    //         id: "name",
+    //         header: "Name",
+    //         size: 250,
+    //         Cell: ({ renderedCellValue, row }) => (
+    //           <Box
+    //             sx={{
+    //               display: "flex",
+    //               alignItems: "center",
+    //               gap: "1rem",
+    //             }}
+    //           >
+    //             <img
+    //               alt="avatar"
+    //               height={30}
+    //               src={row.original.avatar}
+    //               loading="lazy"
+    //               style={{ borderRadius: "50%" }}
+    //             />
+    //             {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
+    //             <span>{renderedCellValue}</span>
+    //           </Box>
+    //         ),
+    //       },
+    //       {
+    //         accessorKey: "email",
+    //         enableClickToCopy: true,
+    //         header: "Email",
+    //         size: 300,
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     id: "id",
+    //     header: "Job Info",
+    //     columns: [
+    //       {
+    //         accessorKey: "salary",
+    //         // filterVariant: 'range', //if not using filter modes feature, use this instead of filterFn
+    //         filterFn: "between",
+    //         header: "Salary",
+    //         size: 200,
+    //         //custom conditional format and styling
+    //         Cell: ({ cell }) => (
+    //           <Box
+    //             component="span"
+    //             sx={(theme) => ({
+    //               backgroundColor:
+    //                 cell.getValue() < 50_000
+    //                   ? theme.palette.error.dark
+    //                   : cell.getValue() >= 50_000 && cell.getValue() < 75_000
+    //                   ? theme.palette.warning.dark
+    //                   : theme.palette.success.dark,
+    //               borderRadius: "0.25rem",
+    //               color: "#fff",
+    //               maxWidth: "9ch",
+    //               p: "0.25rem",
+    //             })}
+    //           >
+    //             {cell.getValue()?.toLocaleString?.("en-US", {
+    //               style: "currency",
+    //               currency: "USD",
+    //               minimumFractionDigits: 0,
+    //               maximumFractionDigits: 0,
+    //             })}
+    //           </Box>
+    //         ),
+    //       },
+    //       {
+    //         accessorKey: "jobTitle", //hey a simple column for once
+    //         header: "Job Title",
+    //         size: 350,
+    //       },
+    //       {
+    //         accessorFn: (row) => new Date(row.startDate), //convert to Date for sorting and filtering
+    //         id: "startDate",
+    //         header: "Start Date",
+    //         filterFn: "lessThanOrEqualTo",
+    //         sortingFn: "datetime",
+    //         Cell: ({ cell }) => cell.getValue()?.toLocaleDateString(), //render Date as a string
+    //         Header: ({ column }) => <em>{column.columnDef.header}</em>, //custom header markup
+    //         //Custom Date Picker Filter from @mui/x-date-pickers
+    //         Filter: ({ column }) => (
+    //           <LocalizationProvider dateAdapter={AdapterDayjs}>
+    //             <DatePicker
+    //               onChange={(newValue) => {
+    //                 column.setFilterValue(newValue);
+    //               }}
+    //               slotProps={{
+    //                 textField: {
+    //                   helperText: "Filter Mode: Less Than",
+    //                   sx: { minWidth: "120px" },
+    //                   variant: "standard",
+    //                 },
+    //               }}
+    //               value={column.getFilterValue()}
+    //             />
+    //           </LocalizationProvider>
+    //         ),
+    //       },
+    //     ],
+    //   },
+    // ],
+    []
+  );
+
+  const [
+    deletePipeline,
+    {
+      isLoading: isPipelineDeleteLoading,
+      isSuccess: isPipelineDeleteSuccess,
+      isError: isPipelineDeleteError,
+      error: deleteError,
+    },
+  ] = useDeletePipelineMutation();
+
   const tableContainerRef = useRef(null);
   const rowVirtualizerInstanceRef = useRef(null);
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
 
   const [columnFilters, setColumnFilters] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState();
+  const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState([]);
 
   const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
     useState(false);
 
-  const { data, fetchNextPage, isError, isFetching, isLoading } =
+  const { data, fetchNextPage, isError, isFetching, isLoading, refetch } =
     useInfiniteQuery({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam = 0 }) => {
@@ -57,8 +249,8 @@ const PipelineTable = () => {
             params: {
               start: pageParam * fetchSize,
               size: fetchSize,
-              filters: JSON.stringify(columnFilters ?? []),
-              sorting: JSON.stringify(sorting ?? []),
+              filter: JSON.stringify(columnFilters ?? []),
+              sort: JSON.stringify(sorting ?? []),
               search: globalFilter,
               data: true,
               count: true,
@@ -148,6 +340,23 @@ const PipelineTable = () => {
       Math.floor(Date.now() * Math.random() * 100) + ".xlsx"
     );
   };
+  async function handleDeletePipeline(id) {
+    await deletePipeline(id);
+  }
+
+  useEffect(() => {
+    if (isPipelineDeleteSuccess) {
+      toast.success("Pipeline has been deleted");
+      refetch();
+    }
+  }, [isPipelineDeleteSuccess]);
+
+  useEffect(() => {
+    if (isPipelineDeleteError) {
+      toast.success(deleteError.data.message);
+    }
+  }, [isPipelineDeleteError]);
+
   return (
     <>
       <MaterialReactTable
@@ -199,6 +408,16 @@ const PipelineTable = () => {
             >
               <Icon className="text-lg" icon={"ic:baseline-remove-red-eye"} />
             </Link>
+            <button
+              onClick={() => handleDeletePipeline(row.original._id)}
+              className="btn-filled bg-red-600 border-red-600 btn-small"
+            >
+              {isPipelineDeleteLoading ? (
+                "..."
+              ) : (
+                <Icon className="text-lg" icon={"uil:trash"} />
+              )}
+            </button>
           </div>
         )}
         enableRowSelection
@@ -211,8 +430,14 @@ const PipelineTable = () => {
               <Icon icon="uil:plus" className="text-lg" />
             </button>
             <button
+              onClick={() => refetch()}
+              className="btn-outlined btn-small h-full"
+            >
+              <Icon icon={"tabler:reload"} className="text-lg" />
+            </button>
+            <button
               onClick={() => setDownloadMenuOpen((prev) => !prev)}
-              className="btn-filled btn-small h-full"
+              className="btn-outlined btn-small h-full"
             >
               <Icon
                 icon={
@@ -272,6 +497,36 @@ const PipelineTable = () => {
         </Model>
       </Suspense>
     </>
+  );
+};
+
+const CardList = ({ pipelineId, status }) => {
+  const { data, isLoading, isFetching } = useGetDealsQuery({
+    filters: JSON.stringify([
+      { id: "status", value: status || "open" },
+      { id: "pipelineId", value: pipelineId },
+    ]),
+    count: true,
+  });
+
+  return (
+    <span className={status === "lost" ? "text-red-600" : "text-green-600"}>
+      {isLoading && isFetching ? "Loading..." : data?.meta?.total}
+    </span>
+  );
+};
+const Owner = ({ ownerId, status }) => {
+  const { data, isLoading, isFetching } = useGetUserQuery(ownerId);
+
+  return (
+    <Link
+      to={"/user/" + data?._id}
+      className={`capitalize ${
+        status === "lost" ? "text-red-600" : "text-green-600"
+      }`}
+    >
+      {isLoading && isFetching ? "Loading..." : data?.fullname}
+    </Link>
   );
 };
 

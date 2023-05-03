@@ -4,7 +4,7 @@ import Accordian, { AccordianBody } from "../global/Accordian";
 import formatNumber from "../functions/formatNumber";
 import moment from "moment";
 import Loader from "../global/Loader";
-import { useGetContactQuery } from "../../services/contactApi";
+import { useGetContactQuery } from "../../redux/services/contactApi";
 import { Link } from "react-router-dom";
 
 const DealSideBar = ({ data }) => {

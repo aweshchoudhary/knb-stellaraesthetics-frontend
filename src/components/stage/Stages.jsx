@@ -10,7 +10,7 @@ import { useUpdateDealStageMutation } from "../../redux/services/dealApi";
 const Stages = ({ pipeline, setIsStagesLength }) => {
   const { data, isLoading, isError, isFetching, isSuccess, error } =
     useGetStagesQuery({
-      dataFilters: { pipelinId: pipeline._id },
+      filters: JSON.stringify([{ id: "pipelineId", value: pipeline._id }]),
       data: true,
     });
   const [

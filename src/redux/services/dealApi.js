@@ -23,9 +23,6 @@ export const dealApi = mainApi.injectEndpoints({
         params,
       }),
       providesTags: ["deal"],
-      transformResponse: (response) => {
-        return response.data;
-      },
     }),
     updateDeal: builder.mutation({
       query: (data) => ({

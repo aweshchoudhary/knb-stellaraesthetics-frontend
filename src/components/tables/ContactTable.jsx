@@ -18,33 +18,100 @@ import {
 import * as XLSX from "xlsx";
 import Model from "../models/Model";
 import EditContact from "../contacts/EditContact";
+import { useGetDealsQuery } from "../../redux/services/dealApi";
+import { useGetActivitiesQuery } from "../../redux/services/activityApi";
 
-//defining columns outside of the component is fine, is stable
-const columns = [
-  {
-    accessorKey: "contactPerson",
-    header: "Contact Person",
-  },
-  {
-    accessorKey: "company",
-    header: "Company",
-  },
-  {
-    accessorKey: "mobile",
-    header: "Mobile",
-  },
-  {
-    accessorKey: "whatsapp",
-    header: "Whatsapp",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-];
 const fetchLimit = 10;
 
 const ContactTable = () => {
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "contactPerson",
+        header: "Contact Person",
+        size: 250,
+      },
+      {
+        accessorKey: "company",
+        header: "Company",
+        size: 250,
+      },
+      {
+        id: "total-deals",
+        header: "Deals",
+        // size: 250,
+        Cell: ({ row }) => {
+          return row?.original?._id && <Deals contactId={row.original._id} />;
+        },
+      },
+      {
+        id: "next-activites",
+        header: "Next Deal",
+        // size: 250,
+        Cell: ({ row }) => {
+          return (
+            row?.original?._id && <NextActivity contactId={row.original._id} />
+          );
+        },
+      },
+      // {
+      //   accessorFn: (row) => `${row?.deals?.length}`,
+      //   id: "total-deals",
+      //   header: "Total Deals",
+      //   // size: 250,
+      //   Cell: ({ renderedCellValue }) => {
+      //     return (
+      //       <Box
+      //         sx={{
+      //           display: "flex",
+      //           alignItems: "center",
+      //           gap: "1rem",
+      //         }}
+      //       >
+      //         {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
+      //         <span>{renderedCellValue}</span>
+      //       </Box>
+      //     );
+      //   },
+      // },
+      // {
+      //   accessorKey: "won-deals",
+      //   id: "won-deals",
+      //   header: "Won Deals",
+      //   // size: 250,
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <Box>
+      //         <CardList status="won" pipelineId={row?.original?._id} />
+      //       </Box>
+      //     );
+      //   },
+      // },
+      // {
+      //   accessorKey: "lost-deals",
+      //   id: "lost-deals",
+      //   header: "Lost Deals",
+      //   // size: 250,
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <Box>
+      //         <CardList status="lost" pipelineId={row?.original?._id} />
+      //       </Box>
+      //     );
+      //   },
+      // },
+      // {
+      //   // size: 250,
+      //   accessorKey: "owner",
+      //   header: "Owner",
+      //   Cell: ({ renderedCellValue }) => {
+      //     return renderedCellValue && <Owner ownerId={renderedCellValue} />;
+      //   },
+      // },
+    ],
+    []
+  );
+
   const tableContainerRef = useRef(null);
   const rowVirtualizerInstanceRef = useRef(null);
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
@@ -64,7 +131,7 @@ const ContactTable = () => {
           params: {
             start: pageParam * fetchLimit,
             limit: fetchLimit,
-            filters: JSON.stringify(columnFilters ?? []),
+            filter: JSON.stringify(columnFilters ?? []),
             sort: JSON.stringify(sorting ?? []),
             search: globalFilter,
             data: true,
@@ -154,7 +221,6 @@ const ContactTable = () => {
       Math.floor(Date.now() * Math.random() * 100) + ".xlsx"
     );
   };
-  console.log(data);
   return (
     <>
       <MaterialReactTable
@@ -280,6 +346,41 @@ const ContactTable = () => {
         <EditContact data={editRow} setIsOpen={setIsContactEditModelOpen} />
       </Model>
     </>
+  );
+};
+
+const Deals = ({ contactId, status }) => {
+  const { data, isLoading, isFetching } = useGetDealsQuery({
+    filters: JSON.stringify([
+      { id: "status", value: status || "open" },
+      { id: "contacts", value: contactId },
+    ]),
+    count: true,
+  });
+
+  return (
+    <span className={status === "lost" ? "text-red-600" : "text-green-600"}>
+      {isLoading && isFetching ? "Loading..." : data?.meta?.total}
+    </span>
+  );
+};
+
+const NextActivity = ({ contactId, status }) => {
+  const { data, isLoading, isFetching } = useGetActivitiesQuery({
+    filters: JSON.stringify([{ id: "contacts", value: contactId }]),
+    data: true,
+  });
+
+  useEffect(() => {
+    if (data?.data?.length) {
+      // data.data.for
+    }
+  }, [data?.data]);
+
+  return (
+    <span className={status === "lost" ? "text-red-600" : "text-green-600"}>
+      {isLoading && isFetching ? "Loading..." : data?.meta?.total}
+    </span>
   );
 };
 

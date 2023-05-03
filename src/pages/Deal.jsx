@@ -37,12 +37,6 @@ const Deal = () => {
     navigate("/pipeline");
   }
 
-  const [currentTab, setCurrentTab] = useState(1);
-
-  function handleTabChange(event, newTab) {
-    setCurrentTab(newTab);
-  }
-
   return !isLoading && !isFetching && isSuccess ? (
     <>
       <Header title={"Deal"} />
@@ -80,38 +74,7 @@ const Deal = () => {
       <section className="flex min-h-[calc(100%-180px)] items-stretch">
         <DealSideBar data={data} />
         <div className="flex-1 p-5 bg-paper">
-          <Box>
-            <Box className="bg-bg border-b">
-              <Tabs
-                value={currentTab}
-                onChange={handleTabChange}
-                textColor="primary"
-                indicatorColor="primary"
-                aria-label="primary tabs example"
-              >
-                <Tab value={1} label="Note" />
-                <Tab value={2} label="Activity" />
-                <Tab value={3} label="File" />
-                <Tab value={4} label="Email" />
-              </Tabs>
-            </Box>
-            <Box className="bg-bg">
-              {currentTab === 1 && (
-                <NoteHandler cards={[{ value: id, label: data?.title }]} />
-              )}
-              {currentTab === 2 && (
-                <ActivityHandler cards={[{ value: id, label: data?.title }]} />
-              )}
-              {currentTab === 3 && (
-                <FileHandler cards={[{ value: id, label: data?.title }]} />
-              )}
-              {currentTab === 4 && (
-                <EmailHandler cards={[{ value: id, label: data?.title }]} />
-              )}
-            </Box>
-          </Box>
-          <FocusActivitiesTabs cardId={id} />
-          <EventTabsContainer cardId={id} />
+          <TabsContainer data={data} id={id} />
         </div>
       </section>
     </>
@@ -119,6 +82,50 @@ const Deal = () => {
     <section className="h-screen w-full flex items-center justify-center">
       <Loader />
     </section>
+  );
+};
+
+const TabsContainer = ({ data, id }) => {
+  const [currentTab, setCurrentTab] = useState(1);
+
+  function handleTabChange(event, newTab) {
+    setCurrentTab(newTab);
+  }
+  return (
+    <>
+      <Box>
+        <Box className="bg-bg border-b">
+          <Tabs
+            value={currentTab}
+            onChange={handleTabChange}
+            textColor="primary"
+            indicatorColor="primary"
+            aria-label="primary tabs example"
+          >
+            <Tab value={1} label="Note" />
+            <Tab value={2} label="Activity" />
+            <Tab value={3} label="File" />
+            <Tab value={4} label="Email" />
+          </Tabs>
+        </Box>
+        <Box className="bg-bg">
+          {currentTab === 1 && (
+            <NoteHandler cards={[{ value: id, label: data?.title }]} />
+          )}
+          {currentTab === 2 && (
+            <ActivityHandler cards={[{ value: id, label: data?.title }]} />
+          )}
+          {currentTab === 3 && (
+            <FileHandler cards={[{ value: id, label: data?.title }]} />
+          )}
+          {currentTab === 4 && (
+            <EmailHandler cards={[{ value: id, label: data?.title }]} />
+          )}
+        </Box>
+      </Box>
+      <FocusActivitiesTabs cardId={id} />
+      <EventTabsContainer cardId={id} />
+    </>
   );
 };
 

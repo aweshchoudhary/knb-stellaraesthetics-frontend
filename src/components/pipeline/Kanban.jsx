@@ -1,12 +1,11 @@
 import React, { Suspense, lazy, useState } from "react";
 import { Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { useDispatch } from "react-redux";
-import { addPipeline } from "../../redux/features/globalSlice";
 import Stages from "../stage/Stages";
 
 import { useGetPipelinesQuery } from "../../redux/services/pipelineApi";
 import { useNavigate } from "react-router-dom";
+import Loader from "../global/Loader";
 
 const Model = lazy(() => import("../models/Model"));
 const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));
@@ -14,15 +13,13 @@ const CreateDealModel = lazy(() =>
   import("../models/createDealModel/CreateDealModel")
 );
 
-const Kanban = ({ setIsOpen, pipeline }) => {
-  const dispatch = useDispatch();
+const Kanban = ({ setIsOpen, pipeline, isFetching, isLoading }) => {
   const [isStagesLength, setIsStagesLength] = useState(false);
-  // const [pipeline, setActivePipeline] = useState(null);
   const navigate = useNavigate();
 
   const {
     data,
-    isLoading: isPipelines,
+    isLoading: isPipelinesLoading,
     isFetching: isPipeinesFetching,
     isSuccess: isPipelinesSuccess,
     refetch: refetchPipelines,
@@ -86,32 +83,33 @@ const Kanban = ({ setIsOpen, pipeline }) => {
             </h2>
           </div>
           <div className="flex items-stretch gap-2">
-            <select
-              name="pipeline-select"
-              className="input w-[200px]"
-              id="pipeline-select"
-              onChange={(e) => {
-                dispatch(addPipeline(e.target.value));
-                navigate("/pipeline/" + data[e.target.value]._id);
-              }}
-            >
-              {data.data?.map((pipe, index) => {
-                return pipe?._id === pipeline?._id ? (
-                  <option
-                    key={index}
-                    selected
-                    defaultValue={pipe._id}
-                    value={pipe._id}
-                  >
-                    {pipe.name}
-                  </option>
-                ) : (
-                  <option key={index} value={index}>
-                    {pipe.name}
-                  </option>
-                );
-              })}
-            </select>
+            {!isPipeinesFetching && !isPipelinesLoading && (
+              <select
+                name="pipeline-select"
+                className="input w-[200px]"
+                id="pipeline-select"
+                onChange={(e) => {
+                  navigate("/pipeline/" + e.target.value);
+                }}
+              >
+                {data?.data?.map((pipe, index) => {
+                  return pipe?._id === pipeline?._id ? (
+                    <option
+                      key={index}
+                      selected
+                      defaultValue={pipe._id}
+                      value={pipe._id}
+                    >
+                      {pipe.name}
+                    </option>
+                  ) : (
+                    <option key={index} value={pipe._id}>
+                      {pipe.name}
+                    </option>
+                  );
+                })}
+              </select>
+            )}
             <Tooltip title="Edit Pipeline" arrow>
               <button
                 className="btn-outlined btn-small"
@@ -132,22 +130,16 @@ const Kanban = ({ setIsOpen, pipeline }) => {
         </header>
       )}
       <section>
-        {isPipelinesSuccess && data.data.length && pipeline ? (
+        {!isLoading && !isFetching ? (
           <Stages
             setIsStagesLength={setIsStagesLength}
             pipeline={pipeline}
             setIsEditStageView={setIsOpen}
           />
         ) : (
-          <p className="p-10">
-            No pipeline has been created yet.{" "}
-            <button
-              className="underline"
-              onClick={() => setIsCreatePipelineModelOpen(true)}
-            >
-              Create
-            </button>
-          </p>
+          <section className="flex h-[calc(100vh-108px)] w-full items-center justify-center">
+            <Loader />
+          </section>
         )}
       </section>
     </>

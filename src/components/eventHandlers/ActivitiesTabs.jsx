@@ -1,11 +1,14 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import { Icon } from "@iconify/react";
 import moment from "moment";
 import Loader from "../global/Loader";
-import { updateActivity } from "../../state/features/dealFeatures/activitySlice";
-import { deleteActivity } from "../../state/features/dealFeatures/activitySlice";
-import { useGetActivitiesQuery } from "../../services/activityApi";
+import {
+  useGetActivitiesQuery,
+  useDeleteActivityMutation,
+  useUpdateActivityMutation,
+} from "../../redux/services/activityApi";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const FocusActivities = ({ dealId }) => {
   return (
@@ -50,20 +53,62 @@ const Activites = ({ dealId }) => {
 };
 
 const ActivityDeal = ({ data }) => {
-  const dispatch = useDispatch();
-  function handleDeleteActivity() {
-    dispatch(deleteActivity(data._id));
+  const [
+    deleteActivity,
+    {
+      isLoading: isDeleteLoading,
+      isSuccess: isDeleteSuccess,
+      isError: isDeleteError,
+      error: deleteError,
+    },
+  ] = useDeleteActivityMutation();
+  const [
+    updateActivity,
+    {
+      isLoading: isUpdateLoading,
+      isSuccess: isUpdateSuccess,
+      isError: isUpdateError,
+      error: updateError,
+    },
+  ] = useUpdateActivityMutation();
+
+  async function handleDeleteActivity() {
+    await deleteActivity(data._id);
   }
-  function handleMarkDoneActivity() {
-    dispatch(
-      updateActivity({
-        id: data._id,
-        update: {
-          markDone: true,
-        },
-      })
-    );
+
+  async function handleMarkDoneActivity() {
+    await updateActivity({
+      id: data._id,
+      update: {
+        markDone: true,
+      },
+    });
   }
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      toast.success("Activity deleted successfully");
+    }
+  }, [isDeleteSuccess]);
+
+  useEffect(() => {
+    if (isDeleteError) {
+      toast.success(deleteError.data?.message);
+    }
+  }, [isDeleteError]);
+
+  useEffect(() => {
+    if (isUpdateSuccess) {
+      toast.success("Activity updated successfully");
+    }
+  }, [isUpdateSuccess]);
+
+  useEffect(() => {
+    if (isUpdateError) {
+      toast.success(updateError.data?.message);
+    }
+  }, [isUpdateError]);
+
   return (
     <div className="flex">
       <div className="w-[60px] flex flex-col items-center">
@@ -85,12 +130,16 @@ const ActivityDeal = ({ data }) => {
             </span>
           </div>
           <div className="flex gap-1">
-            <button className="btn-outlined btn-small">
+            <button
+              className="btn-outlined btn-small"
+              disabled={isDeleteLoading || isUpdateLoading}
+            >
               <Icon icon={"uil:pen"} />
             </button>
             <button
               className="btn-outlined btn-small"
               onClick={handleDeleteActivity}
+              disabled={isDeleteLoading || isUpdateLoading}
             >
               <Icon icon={"uil:trash"} />
             </button>

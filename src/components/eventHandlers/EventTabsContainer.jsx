@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import {
   useGetNotesQuery,
   useDeleteNoteMutation,
-} from "../../services/noteApi";
+} from "../../redux/services/noteApi";
 
 const EventTabsContainer = ({ cardId }) => {
   const [activeTab, setActiveTab] = useState("notes");

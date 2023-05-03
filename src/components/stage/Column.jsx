@@ -14,7 +14,13 @@ const Column = ({ stage, loading }) => {
     useLazyGetDealsQuery();
 
   useEffect(() => {
-    getDeals({ currentStage: stage._id });
+    getDeals({
+      filters: JSON.stringify([
+        { id: "currentStage", value: stage._id },
+        { id: "status", value: "open" },
+      ]),
+      data: true,
+    });
   }, [stage]);
 
   useEffect(() => {
@@ -34,6 +40,9 @@ const Column = ({ stage, loading }) => {
       isMounted = false;
     };
   }, [deals]);
+
+  console.log(deals);
+
   return (
     <div className={"border-r shrink-0 flex flex-col w-1/3"} key={stage._id}>
       <header
@@ -64,7 +73,7 @@ const Column = ({ stage, loading }) => {
                 {!loading &&
                   !isLoading &&
                   isSuccess &&
-                  deals?.map((deal, index) => {
+                  deals?.data?.map((deal, index) => {
                     return (
                       <Row itemId={deal._id} index={index} key={index}>
                         <Deal deal={deal} />

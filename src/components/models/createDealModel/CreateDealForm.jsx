@@ -12,33 +12,39 @@ import { Country } from "country-state-city";
 import Select from "react-select";
 import { Icon } from "@iconify/react";
 
-let initialValues = {
+const initialValues = {
   title: "",
-  pipeline: "",
+  pipelineId: "",
   currentStage: "",
-  value: { value: 0, type: "inr" },
+  value: 0,
+  currency: "INR",
   label: "",
   expectedClosingDate: new Date(),
 };
 
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
-  pipeline: Yup.string().required("Pipeline is required"),
-  stage: Yup.string().required("Stage is required"),
+  pipelineId: Yup.string().required("Pipeline is required"),
+  currentStage: Yup.string().required("Stage is required"),
   value: Yup.number().required("Value is required"),
-  currency: Yup.string(),
+  currency: Yup.string().required("Currency is required"),
   label: Yup.string().required("Label is required"),
   expectedClosingDate: Yup.date().required("Expected closing date is required"),
 });
-
 const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: (values) => handleCreateDeal(values),
+  });
+
   const [getStages, { data: stages }] = useLazyGetStagesQuery();
   const [expectedDate, setExpectedDate] = useState(new Date());
 
   const [currentCurrency, setCurrentCurrency] = useState({});
+
   const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
     if (!currentCurrency?.label && country.currency === "INR") {
-      console.log("wokring");
       setCurrentCurrency({
         label: `${country.flag} ${country.name} (${country.currency})`,
         value: country.currency,
@@ -67,6 +73,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   async function handleCreateDeal(values) {
     const contacts = selectedContacts.map((item) => item.value);
 
+    // Validation
     const newDeal = {
       ...values,
       contacts,
@@ -80,37 +87,27 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     await getStages({ pipelineId: pipeId, data: true });
   };
 
-  // Validation
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: (values) => handleCreateDeal(values),
-  });
-
   useEffect(() => {
     if (isSuccess) toast.success("Deal has been created");
   }, [isSuccess]);
 
   useEffect(() => {
-    if (isError) toast.error(error);
+    if (isError) toast.error(error?.data?.message);
   }, [isError]);
 
   useEffect(() => {
     if (pipeId) {
-      formik.values.pipeline = pipeId;
+      formik.values.pipelineId = pipeId;
       fetchStages(pipeId);
     }
-  }, [pipeId]);
-
-  useEffect(() => {
     if (!pipeId && data.data?.length) fetchStages(data.data[0]._id);
   }, [pipeId, data.data]);
 
   useEffect(() => {
-    if (data.length) {
-      formik.values.currentStage = data[0]._id;
+    if (stages?.data?.length) {
+      formik.values.currentStage = stages?.data[0]._id;
     }
-  }, [data]);
+  }, [stages?.data]);
 
   useEffect(() => {
     formik.values.label = label;
@@ -164,7 +161,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
                   className="input w-full"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={+formik.values.value}
+                  value={Number(formik.values.value)}
                 />
                 {formik.touched.value && formik.errors.value ? (
                   <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
@@ -191,18 +188,18 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
               Pipeline
             </label>
             <select
-              name="pipeline"
-              id="pipeline"
+              name="pipelineId"
+              id="pipelineId"
               className="input capitalize"
               onChange={(e) => {
                 formik.handleChange(e);
                 setPipeId(e.target.value);
               }}
               onBlur={formik.handleBlur}
-              value={formik.values.pipeline}
+              value={formik.values.pipelineId}
             >
               {data.data?.map((item, i) => {
-                return item._id === formik.values.pipeline ? (
+                return item._id === formik.values.pipelineId ? (
                   <option
                     key={i}
                     selected
@@ -224,10 +221,10 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
                 );
               })}
             </select>
-            {formik.touched.pipeline && formik.errors.pipeline ? (
+            {formik.touched.pipelineId && formik.errors.pipelineId ? (
               <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
                 <Icon icon="ic:round-error" className="text-lg" />
-                {formik.errors.pipeline}
+                {formik.errors.pipelineId}
               </div>
             ) : null}
           </div>
@@ -288,7 +285,8 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
             {/* <input type="date" name="expectedClosingDate" /> */}
             <ReactDatePicker
               className="input"
-              // name="expectedClosingDate"
+              name="expectedClosingDate"
+              id="expectedClosingDate"
               minDate={new Date()}
               onChange={(date) => setExpectedDate(date)}
               onBlur={formik.handleBlur}
@@ -307,7 +305,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
       </section>
       <footer className="modal-footer">
         <button
-          className="btn-outlined"
+          className="btn-outlined btn-small"
           disabled={isLoading}
           onClick={() => setIsOpen(false)}
           type="button"
@@ -315,12 +313,11 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
           cancel
         </button>
         <button
-          // onClick={handleCreateDeal}
           disabled={isLoading}
-          className="btn-filled"
+          className="btn-filled btn-small"
           type="submit"
         >
-          {isLoading ? "Loading..." : "add deal"}
+          {isLoading ? "Loading..." : "create deal"}
         </button>
       </footer>
     </form>

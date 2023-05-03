@@ -36,12 +36,18 @@ const Contact = () => {
     data: activities,
     // isLoading: isActivitiesLoading,
     // isFetching: isActivitiesFetching,
-  } = useGetActivitiesQuery({ dataFilters: { contactId: id }, data: true });
+  } = useGetActivitiesQuery({
+    filters: JSON.stringify([{ id: "contactId", value: id }]),
+    data: true,
+  });
   const {
     data: cards,
     isLoading: isDealsLoading,
     isFetching: isDealsFetching,
-  } = useGetDealsQuery({ dataFilters: { contactId: id } });
+  } = useGetDealsQuery({
+    filters: JSON.stringify([{ id: "contactId", value: id }]),
+    data: true,
+  });
 
   const { data, isLoading, isSuccess, isFetching } = useGetContactQuery(id);
 
@@ -56,7 +62,7 @@ const Contact = () => {
     useDeleteContactMutation();
 
   const selectedDeals =
-    cards?.map((i) => ({
+    cards?.data?.map((i) => ({
       label: i.title,
       value: i._id,
     })) || [];
@@ -89,8 +95,8 @@ const Contact = () => {
         )}
       </Suspense>
       {!isLoading && !isFetching && isSuccess ? (
-        <>
-          <section className="px-5 py-3 border-b flex justify-between items-center">
+        <section className="h-full">
+          <div className="px-5 py-3 h-[60px] border-b flex justify-between items-center">
             <button
               onClick={() => setIsCreateDealModeOpen(true)}
               className="btn-filled btn-small"
@@ -111,8 +117,8 @@ const Contact = () => {
               </button>
               <button className="btn-filled btn-small">Update</button>
             </div>
-          </section>
-          <section className="flex w-full border-b">
+          </div>
+          <div className="flex w-full h-[calc(100vh-60px)] border-b">
             <div className="w-[350px] shrink-0">
               <div className="flex-1 border-r">
                 <header className="py-3 px-5 bg-primary text-white border-b">
@@ -160,10 +166,14 @@ const Contact = () => {
                 </header>
                 <div className="p-5 flex flex-col gap-2">
                   {!isDealsFetching &&
-                    !isDealsLoading &&
-                    cards?.data?.map((card) => {
+                  !isDealsLoading &&
+                  cards?.data?.length ? (
+                    cards.data.map((card) => {
                       return <Deal card={card} key={card._id} />;
-                    })}
+                    })
+                  ) : (
+                    <p>No Deals to show</p>
+                  )}
                 </div>
               </div>
               <div className="flex-1 border-r">
@@ -171,8 +181,8 @@ const Contact = () => {
                   <h2>Next Activities</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-3">
-                  {activities?.data?.length !== 0 &&
-                    activities?.data?.map((activity, index) => {
+                  {activities?.length !== 0 ? (
+                    activities.map((activity, index) => {
                       return (
                         <div
                           key={index}
@@ -192,7 +202,10 @@ const Contact = () => {
                           </div>
                         </div>
                       );
-                    })}
+                    })
+                  ) : (
+                    <p>No activites to show</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -226,8 +239,8 @@ const Contact = () => {
                 <ActivitiesTabs cardId={id} /> */}
               </div>
             </div>
-          </section>
-        </>
+          </div>
+        </section>
       ) : (
         <section className="w-full h-screen flex items-center justify-center">
           <Loader />

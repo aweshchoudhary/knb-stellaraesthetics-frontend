@@ -4,8 +4,8 @@ import { useCreateContactMutation } from "../../../redux/services/contactApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Select from "react-select";
-import { Country, State, City } from "country-state-city";
+// import Select from "react-select";
+// import { Country, State, City } from "country-state-city";
 import { Icon } from "@iconify/react";
 
 let contactDetails = {
@@ -91,30 +91,30 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
     setSameNumber(false);
   }
 
-  const [currentCountry, setCurrentCountry] = useState(null);
-  const [currentState, setCurrentState] = useState(null);
-  const [currentCity, setCurrentCity] = useState(null);
+  // const [currentCountry, setCurrentCountry] = useState(null);
+  // const [currentState, setCurrentState] = useState(null);
+  // const [currentCity, setCurrentCity] = useState(null);
 
-  const countries = Country.getAllCountries();
+  // const countries = Country.getAllCountries();
 
-  const updatedCountries = countries.map((country) => ({
-    label: country.name,
-    value: country.isoCode,
-    ...country,
-  }));
+  // const updatedCountries = countries.map((country) => ({
+  //   label: country.name,
+  //   value: country.isoCode,
+  //   ...country,
+  // }));
 
-  const updatedStates = (countryCode) =>
-    State.getStatesOfCountry(countryCode).map((state) => ({
-      label: state.name,
-      value: state.isoCode,
-      ...state,
-    }));
-  const updatedCities = (countryCode, stateCode) =>
-    City.getCitiesOfState(countryCode, stateCode).map((city) => ({
-      label: city.name,
-      value: city.id,
-      ...city,
-    }));
+  // const updatedStates = (countryCode) =>
+  //   State.getStatesOfCountry(countryCode).map((state) => ({
+  //     label: state.name,
+  //     value: state.isoCode,
+  //     ...state,
+  //   }));
+  // const updatedCities = (countryCode, stateCode) =>
+  //   City.getCitiesOfState(countryCode, stateCode).map((city) => ({
+  //     label: city.name,
+  //     value: city.id,
+  //     ...city,
+  //   }));
 
   useEffect(() => {
     formik.values.mobile = mobile;
@@ -124,17 +124,17 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
     formik.values.whatsapp = sameNumber ? mobile : whatsapp;
   }, [whatsapp, sameNumber]);
 
-  useEffect(() => {
-    formik.values.address.country = currentCountry || "";
-  }, [currentCountry]);
+  // useEffect(() => {
+  //   formik.values.address.country = currentCountry || "";
+  // }, [currentCountry]);
 
-  useEffect(() => {
-    formik.values.address.state = currentState || "";
-  }, [currentState]);
+  // useEffect(() => {
+  //   formik.values.address.state = currentState || "";
+  // }, [currentState]);
 
-  useEffect(() => {
-    formik.values.address.city = currentCity || "";
-  }, [currentCity]);
+  // useEffect(() => {
+  //   formik.values.address.city = currentCity || "";
+  // }, [currentCity]);
 
   useEffect(() => {
     if (isSuccess) toast.success("Contact has been created");
@@ -268,7 +268,7 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
             </div>
           ) : null}
         </div>
-        <div className="input-address mb-3">
+        {/* <div className="input-address mb-3">
           <div className="text-sm">
             <label htmlFor="personName" className="text-textColor block  mb-2">
               Address
@@ -392,7 +392,7 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
       <footer className="flex items-center p-5 pt-0 gap-2">
         <button

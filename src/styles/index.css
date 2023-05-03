@@ -1075,8 +1075,16 @@ thead.css-120bgvu-MuiTableHead-root{
   height: calc(100vh - 107px);
 }
 
+.h-\[calc\(100vh-108px\)\] {
+  height: calc(100vh - 108px);
+}
+
 .h-\[calc\(100vh-125px\)\] {
   height: calc(100vh - 125px);
+}
+
+.h-\[calc\(100vh-60px\)\] {
+  height: calc(100vh - 60px);
 }
 
 .h-full {
@@ -1085,6 +1093,22 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .h-screen {
   height: 100vh;
+}
+
+.h-\[calc\(100vh-40px\)\] {
+  height: calc(100vh - 40px);
+}
+
+.h-\[calc\(100vh-10px\)\] {
+  height: calc(100vh - 10px);
+}
+
+.h-\[calc\(100vh\)\] {
+  height: calc(100vh);
+}
+
+.h-\[calc\(100vh-20px\)\] {
+  height: calc(100vh - 20px);
 }
 
 .max-h-\[90\%\] {
@@ -1564,6 +1588,11 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
+.text-green-600 {
+  --tw-text-opacity: 1;
+  color: rgb(22 163 74 / var(--tw-text-opacity));
+}
+
 .text-primary {
   color: var(--primary);
 }
@@ -1587,10 +1616,6 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(202 138 4 / var(--tw-text-opacity));
 }
 
-.text-paper {
-  color: var(--paper);
-}
-
 .underline {
   text-decoration-line: underline;
 }
@@ -1611,6 +1636,10 @@ thead.css-120bgvu-MuiTableHead-root{
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 .transition {
