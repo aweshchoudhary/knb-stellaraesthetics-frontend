@@ -47,7 +47,7 @@ const Login = () => {
   }, [isSuccess]);
 
   useEffect(() => {
-    if (isError) toast.error(error.data.message);
+    if (isError) toast.error(error?.data?.message);
   }, [isError]);
 
   return (
