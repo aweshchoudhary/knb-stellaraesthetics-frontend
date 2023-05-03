@@ -34,7 +34,7 @@ export const dealApi = mainApi.injectEndpoints({
     }),
     updateDealStage: builder.mutation({
       query: (data) => ({
-        url: "-stage",
+        url: "/api/deal/deal-stage",
         method: "PUT",
         body: data,
       }),

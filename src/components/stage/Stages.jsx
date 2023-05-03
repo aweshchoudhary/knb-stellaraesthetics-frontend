@@ -26,7 +26,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
     const { source, destination, draggableId } = result;
     if (source.droppableId !== destination.droppableId) {
       await updateDealStage({
-        cardId: draggableId,
+        dealId: draggableId,
         prevStageId: source.droppableId,
         newStageId: destination.droppableId,
       });

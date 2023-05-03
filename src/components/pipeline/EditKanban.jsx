@@ -8,7 +8,6 @@ import { Skeleton } from "@mui/material";
 import { toast } from "react-toastify";
 
 const EditKanban = ({ setIsOpen, pipeline, isLoading, isFetching }) => {
-  console.log(pipeline);
   const [
     deletePipeline,
     { isLoading: isPiplineDeleting, isSuccess: isPipelineDeleteSuccess },

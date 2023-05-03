@@ -41,8 +41,6 @@ const Column = ({ stage, loading }) => {
     };
   }, [deals]);
 
-  console.log(deals);
-
   return (
     <div className={"border-r shrink-0 flex flex-col w-1/3"} key={stage._id}>
       <header
