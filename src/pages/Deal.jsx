@@ -29,12 +29,12 @@ const Deal = () => {
 
   async function handleDeleteDeal() {
     await deleteDeal(id);
-    navigate("/pipeline");
+    navigate("/pipelines");
   }
 
   async function handleUpdateDealStatus(status) {
     await updateDeal({ id, update: { status } });
-    navigate("/pipeline");
+    navigate(-1);
   }
 
   return !isLoading && !isFetching && isSuccess ? (

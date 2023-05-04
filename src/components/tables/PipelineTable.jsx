@@ -22,6 +22,7 @@ import * as XLSX from "xlsx";
 import { useGetUserQuery } from "../../redux/services/userApi";
 import { useDeletePipelineMutation } from "../../redux/services/pipelineApi";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const Model = lazy(() => import("../models/Model"));
 const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));
@@ -29,6 +30,8 @@ const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));
 const fetchSize = 10;
 
 const PipelineTable = () => {
+  const accessToken = useSelector((state) => state.auth.accessToken);
+
   //defining columns outside of the component is fine, is stable
   const columns = useMemo(
     () => [
@@ -254,6 +257,9 @@ const PipelineTable = () => {
               search: globalFilter,
               data: true,
               count: true,
+            },
+            headers: {
+              Authorization: accessToken,
             },
           }
         );
@@ -515,15 +521,13 @@ const CardList = ({ pipelineId, status }) => {
     </span>
   );
 };
-const Owner = ({ ownerId, status }) => {
+const Owner = ({ ownerId }) => {
   const { data, isLoading, isFetching } = useGetUserQuery(ownerId);
 
   return (
     <Link
       to={"/user/" + data?._id}
-      className={`capitalize ${
-        status === "lost" ? "text-red-600" : "text-green-600"
-      }`}
+      className="underline capitalize font-medium hover:text-primary"
     >
       {isLoading && isFetching ? "Loading..." : data?.fullname}
     </Link>

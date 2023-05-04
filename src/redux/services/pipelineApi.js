@@ -10,6 +10,9 @@ export const pipelineApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ["pipeline"],
     }),
+    verifyPipelineUser: builder.query({
+      query: (pipelineId) => "/api/pipeline/verify-user/" + pipelineId,
+    }),
     getPipeline: builder.query({
       query: (id) => "/api/pipeline/get-pipeline/" + id,
       providesTags: ["pipeline"],
@@ -50,4 +53,6 @@ export const {
   useLazyGetPipelineQuery,
   useLazyGetPipelinesQuery,
   useGetPipelinesQuery,
+  useVerifyPipelineUserQuery,
+  useLazyVerifyPipelineUserQuery,
 } = pipelineApi;

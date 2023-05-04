@@ -1095,22 +1095,6 @@ thead.css-120bgvu-MuiTableHead-root{
   height: 100vh;
 }
 
-.h-\[calc\(100vh-40px\)\] {
-  height: calc(100vh - 40px);
-}
-
-.h-\[calc\(100vh-10px\)\] {
-  height: calc(100vh - 10px);
-}
-
-.h-\[calc\(100vh\)\] {
-  height: calc(100vh);
-}
-
-.h-\[calc\(100vh-20px\)\] {
-  height: calc(100vh - 20px);
-}
-
 .max-h-\[90\%\] {
   max-height: 90%;
 }
@@ -1683,6 +1667,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .hover\:bg-primary:hover {
   background-color: var(--primary);
+}
+
+.hover\:text-primary:hover {
+  color: var(--primary);
 }
 
 .hover\:text-white:hover {

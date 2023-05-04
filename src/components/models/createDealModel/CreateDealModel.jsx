@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
@@ -7,6 +7,7 @@ import Step from "@mui/material/Step";
 import CreateContactModel from "../createContactModel/CreateContactModel";
 import { StepLabel } from "@mui/material";
 import CreateDealForm from "./CreateDealForm";
+import { useGetMeQuery } from "../../../redux/services/userApi";
 
 const steps = ["Create Contact", "Create Deal"];
 

@@ -20,6 +20,7 @@ import Model from "../models/Model";
 import EditContact from "../contacts/EditContact";
 import { useGetDealsQuery } from "../../redux/services/dealApi";
 import { useGetActivitiesQuery } from "../../redux/services/activityApi";
+import { useSelector } from "react-redux";
 
 const fetchLimit = 10;
 
@@ -111,7 +112,7 @@ const ContactTable = () => {
     ],
     []
   );
-
+  const accessToken = useSelector((state) => state.auth.accessToken);
   const tableContainerRef = useRef(null);
   const rowVirtualizerInstanceRef = useRef(null);
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
@@ -136,6 +137,9 @@ const ContactTable = () => {
             search: globalFilter,
             data: true,
             count: true,
+          },
+          headers: {
+            Authorization: accessToken,
           },
         });
         return data;
