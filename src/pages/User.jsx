@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/global/Header";
 import { logOut } from "../redux/features/authSlice";
@@ -7,6 +7,8 @@ import { useGetUserQuery } from "../redux/services/userApi";
 import Loader from "../components/global/Loader";
 
 const User = () => {
+  const loggedUserId = useSelector((state) => state.auth.loggedUserId);
+
   const { id } = useParams();
   const { data: user, isLoading, isFetching, isSuccess } = useGetUserQuery(id);
   const dispatch = useDispatch();
@@ -37,9 +39,11 @@ const User = () => {
             {user.phone && <p>Phone: {user.phone}</p>}
           </div>
         </div>
-        <button onClick={handleLogout} className="btn-filled">
-          Logout
-        </button>
+        {loggedUserId === user._id && (
+          <button onClick={handleLogout} className="btn-filled">
+            Logout
+          </button>
+        )}
       </section>
       <section className="md:p-10 p-5">
         <h2 className="text-3xl">Your Role</h2>

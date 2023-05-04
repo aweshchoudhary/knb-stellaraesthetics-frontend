@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   accessToken: localStorage.getItem("accessToken") || null,
+  loggedUserId: localStorage.getItem("userId") || null,
 };
 
 const authSlice = createSlice({
@@ -9,12 +10,20 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, { payload }) => {
-      state.accessToken = payload;
-      localStorage.setItem("accessToken", payload);
+      if (payload?.accessToken) {
+        state.accessToken = payload.accessToken;
+        localStorage.setItem("accessToken", payload.accessToken);
+      }
+      if (payload?.userId) {
+        state.loggedUserId = payload.userId;
+        localStorage.setItem("userId", payload.userId);
+      }
     },
     logOut: (state) => {
       state.accessToken = null;
+      state.loggedUserId = null;
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("userId");
     },
   },
 });

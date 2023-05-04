@@ -9,6 +9,9 @@ import Loader from "../../components/global/Loader";
 import { Icon } from "@iconify/react";
 import { toast } from "react-toastify";
 
+import EventTabsContainer from "../../components/eventHandlers/EventTabsContainer";
+import ActivitiesTabs from "../../components/eventHandlers/ActivitiesTabs";
+
 import moment from "moment";
 import Deal from "../../components/global/Deal";
 import { Box, Tab, Tabs } from "@mui/material";
@@ -20,6 +23,7 @@ import EmailHandler from "../../components/eventHandlers/EmailHandler";
 
 import { useGetActivitiesQuery } from "../../redux/services/activityApi";
 import { useGetDealsQuery } from "../../redux/services/dealApi";
+import { useGetMeQuery } from "../../redux/services/userApi";
 
 const Model = lazy(() => import("../../components/models/Model"));
 const CreateDealModel = lazy(() =>
@@ -29,7 +33,7 @@ const CreateDealModel = lazy(() =>
 const Contact = () => {
   const params = useParams();
   const { id } = params;
-
+  const { data: loggedUser } = useGetMeQuery();
   const [isCreateDealModelOpen, setIsCreateDealModeOpen] = useState(false);
 
   const {
@@ -118,7 +122,7 @@ const Contact = () => {
               <button className="btn-filled btn-small">Update</button>
             </div>
           </div>
-          <div className="flex w-full h-[calc(100vh-60px)] border-b">
+          <div className="flex w-full min-h-[calc(100vh-60px)] border-b">
             <div className="w-[350px] shrink-0">
               <div className="flex-1 border-r">
                 <header className="py-3 px-5 bg-primary text-white border-b">
@@ -181,8 +185,8 @@ const Contact = () => {
                   <h2>Next Activities</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-3">
-                  {activities?.length !== 0 ? (
-                    activities.map((activity, index) => {
+                  {activities?.data?.length !== 0 ? (
+                    activities?.data?.map((activity, index) => {
                       return (
                         <div
                           key={index}
@@ -211,32 +215,48 @@ const Contact = () => {
             </div>
             <div className="flex flex-1">
               <div className="flex-1 p-5 bg-paper">
-                <Box>
-                  <Box className="bg-bg border-b">
-                    <Tabs
-                      value={currentTab}
-                      onChange={handleTabChange}
-                      textColor="primary"
-                      indicatorColor="primary"
-                      aria-label="primary tabs example"
-                    >
-                      <Tab value={1} label="Note" />
-                      <Tab value={2} label="Activity" />
-                      <Tab value={3} label="File" />
-                      <Tab value={4} label="Email" />
-                    </Tabs>
-                  </Box>
-                  <Box className="bg-bg">
-                    {currentTab === 1 && <NoteHandler cards={selectedDeals} />}
-                    {currentTab === 2 && (
-                      <ActivityHandler cards={selectedDeals} />
-                    )}
-                    {currentTab === 3 && <FileHandler cards={selectedDeals} />}
-                    {currentTab === 4 && <EmailHandler cards={selectedDeals} />}
-                  </Box>
-                </Box>
-                {/* <EventTabsContainer cardId={id} />
-                <ActivitiesTabs cardId={id} /> */}
+                <Suspense
+                  className={
+                    <section className="p-5 bg-bg">
+                      <Loader />
+                    </section>
+                  }
+                >
+                  {loggedUser?.role !== "member" && (
+                    <Box>
+                      <Box className="bg-bg border-b">
+                        <Tabs
+                          value={currentTab}
+                          onChange={handleTabChange}
+                          textColor="primary"
+                          indicatorColor="primary"
+                          aria-label="primary tabs example"
+                        >
+                          <Tab value={1} label="Note" />
+                          <Tab value={2} label="Activity" />
+                          <Tab value={3} label="File" />
+                          <Tab value={4} label="Email" />
+                        </Tabs>
+                      </Box>
+                      <Box className="bg-bg">
+                        {currentTab === 1 && (
+                          <NoteHandler cards={selectedDeals} />
+                        )}
+                        {currentTab === 2 && (
+                          <ActivityHandler cards={selectedDeals} />
+                        )}
+                        {currentTab === 3 && (
+                          <FileHandler cards={selectedDeals} />
+                        )}
+                        {currentTab === 4 && (
+                          <EmailHandler cards={selectedDeals} />
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+                </Suspense>
+                <EventTabsContainer cardId={id} />
+                <ActivitiesTabs cardId={id} />
               </div>
             </div>
           </div>

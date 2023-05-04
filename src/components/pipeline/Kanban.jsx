@@ -54,6 +54,9 @@ const PipelineView = ({
         )}
       </Suspense>
       <header className="px-5 py-2 flex justify-between items-center border-b">
+        <div>
+          <h2 className="text-xl capitalize font-semibold">{pipeline?.name}</h2>
+        </div>
         <div className="flex items-stretch gap-2">
           <Tooltip title={viewOnly ? "View Only" : "Create Deal"}>
             <button
@@ -73,11 +76,6 @@ const PipelineView = ({
             <Icon icon="tabler:reload" className="text-lg" />
             <span>Refresh</span>
           </button>
-        </div>
-        <div>
-          <h2 className="text-xl capitalize font-semibold">{pipeline?.name}</h2>
-        </div>
-        <div className="flex items-stretch gap-2">
           <PipelineMenuDropDown
             setIsOpen={setIsOpen}
             setIsCreatePipelineModelOpen={setIsCreatePipelineModelOpen}
@@ -119,7 +117,7 @@ const PipelineMenuDropDown = ({
   return (
     <div>
       <button
-        className="btn-filled h-full btn-small"
+        className="btn-outlined h-full btn-small"
         disabled={viewOnly}
         onClick={handleClick}
       >

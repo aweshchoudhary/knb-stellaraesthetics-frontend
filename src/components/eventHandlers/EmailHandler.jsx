@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import RichTextEditor from "../global/RichTextEditor";
 import DealSelect from "./DealSelect";
 
@@ -46,9 +46,9 @@ const Email = ({ cards }) => {
           <RichTextEditor setContent={setEmailBody} />
         </div>
       </div>
-      <footer className="flex gap-2 px-5 py-3 border-t">
-        <button className="btn-outlined">cancel</button>
-        <button className="btn-filled">send email</button>
+      <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">
+        <button className="btn-outlined btn-small">cancel</button>
+        <button className="btn-filled btn-small">send email</button>
       </footer>
     </section>
   );

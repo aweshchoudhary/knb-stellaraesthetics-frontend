@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import { useLazyGetDealsQuery } from "../../redux/services/dealApi";
+import { useLazyGetContactsQuery } from "../../redux/services/contactApi";
 
-const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
+const ContactSelect = ({ selectedData, setSelectedData, compare = [] }) => {
   const [searchedData, setSearchedData] = useState([]);
 
   const [query, setQuery] = useState("");
-  const [searchDeal, { isLoading, isFetching }] = useLazyGetDealsQuery();
+  const [searchContact, { isLoading, isFetching }] = useLazyGetContactsQuery();
 
   const handleChange = async (selectedOptions) => {
     setSelectedData(selectedOptions);
@@ -14,9 +14,9 @@ const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
 
   useEffect(() => {
     const searchDataFn = async (query) => {
-      const res = await searchDeal({ search: query, data: true });
-      const mainOptions = { label: "Open Deals", options: [] };
-      const otherOptions = { label: "Other Deals", options: [] };
+      const res = await searchContact({ search: query, data: true });
+      const mainOptions = { label: "Open Contacts", options: [] };
+      const otherOptions = { label: "Other Contacts", options: [] };
 
       if (!res.data) return;
 
@@ -53,14 +53,14 @@ const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
     <div className="w-full">
       <Select
         classNamePrefix="select"
-        id="deal"
-        name="deal"
-        label="deal"
+        id="Contact"
+        name="Contact"
+        label="Contact"
         isMulti
         value={selectedData}
         isLoading={isFetching || isLoading}
         options={searchedData}
-        placeholder="Search Deal"
+        placeholder="Search Contact"
         onChange={handleChange}
         onInputChange={(value) => setQuery(value)}
       ></Select>
@@ -68,4 +68,4 @@ const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
   );
 };
 
-export default DealSelect;
+export default ContactSelect;

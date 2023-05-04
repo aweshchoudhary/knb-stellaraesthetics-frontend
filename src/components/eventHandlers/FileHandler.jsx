@@ -140,7 +140,7 @@ const File = ({ cards }) => {
           </div>
         )}
       </section>
-      <footer className="p-5 border-t">
+      <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">
         <input
           type="file"
           onChange={(e) => handleUploadFile(e.target.files[0])}

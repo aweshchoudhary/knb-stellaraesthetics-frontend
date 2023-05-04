@@ -37,7 +37,7 @@ const Login = () => {
 
   useEffect(() => {
     if (data?.accessToken) {
-      dispatch(setCredentials(data.accessToken));
+      dispatch(setCredentials({ accessToken: data.accessToken }));
       navigate("/dashboard");
     }
   }, [data]);

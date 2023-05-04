@@ -19,9 +19,7 @@ import {
 } from "@tanstack/react-query";
 import { useGetDealsQuery } from "../../redux/services/dealApi";
 import * as XLSX from "xlsx";
-import { useGetUserQuery } from "../../redux/services/userApi";
-import { useDeletePipelineMutation } from "../../redux/services/pipelineApi";
-import { toast } from "react-toastify";
+import { useGetMeQuery, useGetUserQuery } from "../../redux/services/userApi";
 import { useSelector } from "react-redux";
 
 const Model = lazy(() => import("../models/Model"));
@@ -31,6 +29,7 @@ const fetchSize = 10;
 
 const PipelineTable = () => {
   const accessToken = useSelector((state) => state.auth.accessToken);
+  const { data: loggedUser } = useGetMeQuery();
 
   //defining columns outside of the component is fine, is stable
   const columns = useMemo(
@@ -221,16 +220,6 @@ const PipelineTable = () => {
     []
   );
 
-  const [
-    deletePipeline,
-    {
-      isLoading: isPipelineDeleteLoading,
-      isSuccess: isPipelineDeleteSuccess,
-      isError: isPipelineDeleteError,
-      error: deleteError,
-    },
-  ] = useDeletePipelineMutation();
-
   const tableContainerRef = useRef(null);
   const rowVirtualizerInstanceRef = useRef(null);
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
@@ -346,23 +335,6 @@ const PipelineTable = () => {
       Math.floor(Date.now() * Math.random() * 100) + ".xlsx"
     );
   };
-  async function handleDeletePipeline(id) {
-    await deletePipeline(id);
-  }
-
-  useEffect(() => {
-    if (isPipelineDeleteSuccess) {
-      toast.success("Pipeline has been deleted");
-      refetch();
-    }
-  }, [isPipelineDeleteSuccess]);
-
-  useEffect(() => {
-    if (isPipelineDeleteError) {
-      toast.success(deleteError.data.message);
-    }
-  }, [isPipelineDeleteError]);
-
   return (
     <>
       <MaterialReactTable
@@ -414,27 +386,20 @@ const PipelineTable = () => {
             >
               <Icon className="text-lg" icon={"ic:baseline-remove-red-eye"} />
             </Link>
-            <button
-              onClick={() => handleDeletePipeline(row.original._id)}
-              className="btn-filled bg-red-600 border-red-600 btn-small"
-            >
-              {isPipelineDeleteLoading ? (
-                "..."
-              ) : (
-                <Icon className="text-lg" icon={"uil:trash"} />
-              )}
-            </button>
           </div>
         )}
         enableRowSelection
         renderTopToolbarCustomActions={({ table }) => (
           <Box display="flex" alignItems={"stretch"} gap="5px">
-            <button
-              onClick={() => setIsCreatePipelineModelOpen(true)}
-              className="btn-filled btn-small h-full"
-            >
-              <Icon icon="uil:plus" className="text-lg" />
-            </button>
+            {loggedUser && loggedUser?.role !== "member" && (
+              <button
+                onClick={() => setIsCreatePipelineModelOpen(true)}
+                className="btn-filled btn-small h-full"
+                disabled={loggedUser?.role === "member"}
+              >
+                <Icon icon="uil:plus" className="text-lg" />
+              </button>
+            )}
             <button
               onClick={() => refetch()}
               className="btn-outlined btn-small h-full"
@@ -494,13 +459,15 @@ const PipelineTable = () => {
         )}
       />
       <Suspense>
-        <Model
-          isOpen={isCreatePipelineModelOpen}
-          setIsOpen={setIsCreatePipelineModelOpen}
-          title="Edit Pipeline"
-        >
-          <CreatePipelineModel setIsOpen={setIsCreatePipelineModelOpen} />
-        </Model>
+        {loggedUser?.role !== "member" && isCreatePipelineModelOpen && (
+          <Model
+            isOpen={isCreatePipelineModelOpen}
+            setIsOpen={setIsCreatePipelineModelOpen}
+            title="Edit Pipeline"
+          >
+            <CreatePipelineModel setIsOpen={setIsCreatePipelineModelOpen} />
+          </Model>
+        )}
       </Suspense>
     </>
   );

@@ -3,16 +3,23 @@ import RichTextEditor from "../global/RichTextEditor";
 import { useCreateNoteMutation } from "../../redux/services/noteApi";
 import DealSelect from "./DealSelect";
 import { toast } from "react-toastify";
+import ContactSelect from "./ContactSelect";
 
-const Notes = ({ cards = [] }) => {
+const Notes = ({ cards = [], contacts = [] }) => {
   const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
   const [isClear, setIsClear] = useState(false);
   const [selectedDeals, setSelectedDeals] = useState(cards);
+  const [selectedContacts, setSelectedContacts] = useState(contacts);
 
   async function handleCreateNote() {
-    const selectedDeals = selectedDeals.map((item) => item.value);
-    await createNote({ noteBody, cardId: selectedDeals });
+    const selectedContactsFiltered = selectedContacts.map((item) => item.value);
+    const selectedDealsFiltered = selectedDeals.map((item) => item.value);
+    await createNote({
+      noteBody,
+      deals: selectedDealsFiltered,
+      contacts: selectedContactsFiltered,
+    });
     handleClear();
   }
   function handleClear() {
@@ -27,36 +34,47 @@ const Notes = ({ cards = [] }) => {
   }, [isSuccess]);
 
   return (
-    <section className="p-5">
-      <div>
-        <DealSelect
-          selectedData={selectedDeals}
-          setSelectedData={setSelectedDeals}
-          compare={cards}
-        />
+    <section>
+      <div className="px-5 py-3">
         <RichTextEditor
           setContent={setNoteBody}
           setIsClear={setIsClear}
           clear={isClear}
           placeholder={"Enter a note"}
         />
-        <div className="flex items-center mt-3 gap-2">
-          <button
-            disabled={isLoading}
-            className="btn-outlined"
-            onClick={handleClear}
-          >
-            clear
-          </button>
-          <button
-            className="btn-filled flex items-center justify-center"
-            onClick={handleCreateNote}
-            disabled={isLoading}
-          >
-            {isLoading ? "Loading..." : "add note"}
-          </button>
+        <div className="my-3 ">
+          <p className="mb-1">Deals</p>
+          <DealSelect
+            selectedData={selectedDeals}
+            setSelectedData={setSelectedDeals}
+            compare={cards}
+          />
+        </div>
+        <div className="my-3">
+          <p className="mb-1">Contacts</p>
+          <ContactSelect
+            selectedData={selectedContacts}
+            setSelectedData={setSelectedContacts}
+            compare={contacts}
+          />
         </div>
       </div>
+      <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">
+        <button
+          disabled={isLoading}
+          className="btn-outlined btn-small"
+          onClick={handleClear}
+        >
+          clear
+        </button>
+        <button
+          className="btn-filled flex btn-small items-center justify-center"
+          onClick={handleCreateNote}
+          disabled={isLoading}
+        >
+          {isLoading ? "Loading..." : "add note"}
+        </button>
+      </footer>
     </section>
   );
 };

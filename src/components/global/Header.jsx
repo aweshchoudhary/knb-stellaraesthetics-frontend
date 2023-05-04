@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -8,13 +8,20 @@ import {
   toggleMobileOpen,
 } from "../../redux/features/globalSlice";
 import { useGetMeQuery } from "../../redux/services/userApi";
+import { setCredentials } from "../../redux/features/authSlice";
 
 const Header = ({ title }) => {
   const darkMode = useSelector((state) => state.global.darkMode);
   const dispatch = useDispatch();
-  const { data, isLoading, isFetching } = useGetMeQuery();
+  const { data = {}, isLoading, isFetching } = useGetMeQuery();
 
   const toggleThemeMode = () => dispatch(toggleDarkMode());
+
+  useEffect(() => {
+    if (data?._id) {
+      dispatch(setCredentials({ userId: data._id }));
+    }
+  }, [data]);
   return (
     <header className="px-5 h-[50px] border-b flex items-center justify-between">
       <div className="flex items-center gap-4">

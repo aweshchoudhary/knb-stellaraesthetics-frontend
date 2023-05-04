@@ -286,9 +286,9 @@ const ActivityHandler = ({
           </div>
         </div>
       </div>
-      <footer className="flex items-center justify-end border-t mt-2 p-3 gap-2">
+      <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">
         <button
-          className="btn-outlined"
+          className="btn-outlined btn-small"
           disabled={isLoading}
           onClick={handleCancel}
         >
@@ -296,7 +296,7 @@ const ActivityHandler = ({
         </button>
         {isUpdate ? (
           <button
-            className="btn-filled"
+            className="btn-filled btn-small"
             disabled={isActivityLoading || isActivityFetching || isUpdating}
             onClick={handleUpdateActivity}
           >
@@ -304,7 +304,7 @@ const ActivityHandler = ({
           </button>
         ) : (
           <button
-            className="btn-filled"
+            className="btn-filled btn-small"
             disabled={isLoading}
             onClick={handleCreateActivity}
           >

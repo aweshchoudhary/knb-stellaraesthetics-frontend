@@ -959,6 +959,11 @@ thead.css-120bgvu-MuiTableHead-root{
   margin-bottom: 1.25rem;
 }
 
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -1095,6 +1100,10 @@ thead.css-120bgvu-MuiTableHead-root{
   height: 100vh;
 }
 
+.h-\[120px\] {
+  height: 120px;
+}
+
 .max-h-\[90\%\] {
   max-height: 90%;
 }
@@ -1109,6 +1118,30 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .min-h-\[calc\(100\%-180px\)\] {
   min-height: calc(100% - 180px);
+}
+
+.min-h-\[calc\(100vh-60px\)\] {
+  min-height: calc(100vh - 60px);
+}
+
+.min-h-\[calc\(100vh-70px\)\] {
+  min-height: calc(100vh - 70px);
+}
+
+.min-h-\[calc\(100vh-40px\)\] {
+  min-height: calc(100vh - 40px);
+}
+
+.min-h-\[calc\(100vh-10px\)\] {
+  min-height: calc(100vh - 10px);
+}
+
+.min-h-\[calc\(100\%-10px\)\] {
+  min-height: calc(100% - 10px);
+}
+
+.min-h-\[calc\(100\%-60px\)\] {
+  min-height: calc(100% - 60px);
 }
 
 .w-1\/3 {
