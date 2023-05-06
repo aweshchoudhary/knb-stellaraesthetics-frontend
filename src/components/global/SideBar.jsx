@@ -23,16 +23,11 @@ const menuLinks = [
     link: "/contacts",
     icon: "material-symbols:contacts-outline-rounded",
   },
-  // {
-  //   label: "Products",
-  //   link: "/products",
-  //   icon: "mdi:box-outline",
-  // },
-  // {
-  //   label: "Services",
-  //   link: "/services",
-  //   icon: "eva:shopping-bag-outline",
-  // },
+  {
+    label: "Items",
+    link: "/products-services",
+    icon: "mdi:box-outline",
+  },
 ];
 const SideBar = ({ setIsOpen, isOpen }) => {
   const { pathname } = useLocation();

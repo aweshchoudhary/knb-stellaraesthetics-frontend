@@ -19,7 +19,7 @@ const Deal = lazy(() => import("./pages/Deal"));
 const Contacts = lazy(() => import("./pages/contact/Contacts"));
 const Contact = lazy(() => import("./pages/contact/Contact"));
 const ActivityCalendar = lazy(() => import("./pages/ActivityCalendar"));
-const Products = lazy(() => import("./pages/Products"));
+const ProductsServices = lazy(() => import("./pages/ProductsServices"));
 // const Services = lazy(() => import("./pages/Services"));
 const NotFound = lazy(() => import("./pages/User"));
 const User = lazy(() => import("./pages/User"));
@@ -101,8 +101,10 @@ const App = () => {
               element={accessToken ? <User /> : <Navigate to="/login" />}
             />
             <Route
-              path="/products"
-              element={accessToken ? <Products /> : <Navigate to="/login" />}
+              path="/products-services"
+              element={
+                accessToken ? <ProductsServices /> : <Navigate to="/login" />
+              }
             />
             {/* <Route path="/services" element={<Services />} /> */}
             <Route path="*" element={<NotFound />} />

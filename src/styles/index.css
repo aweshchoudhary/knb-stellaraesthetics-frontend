@@ -859,16 +859,8 @@ thead.css-120bgvu-MuiTableHead-root{
   }
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+.invisible {
+  visibility: hidden;
 }
 
 .absolute {
@@ -1024,10 +1016,6 @@ thead.css-120bgvu-MuiTableHead-root{
   display: none;
 }
 
-.h-4 {
-  height: 1rem;
-}
-
 .h-\[100px\] {
   height: 100px;
 }
@@ -1042,6 +1030,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .h-\[20px\] {
   height: 20px;
+}
+
+.h-\[250px\] {
+  height: 250px;
 }
 
 .h-\[25px\] {
@@ -1120,12 +1112,12 @@ thead.css-120bgvu-MuiTableHead-root{
   width: 25%;
 }
 
-.w-4 {
-  width: 1rem;
-}
-
 .w-\[100px\] {
   width: 100px;
+}
+
+.w-\[150px\] {
+  width: 150px;
 }
 
 .w-\[15px\] {
@@ -1150,10 +1142,6 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .w-\[230px\] {
   width: 230px;
-}
-
-.w-\[25\%\] {
-  width: 25%;
 }
 
 .w-\[25px\] {
@@ -1238,6 +1226,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .flex-col {
   flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .items-start {
@@ -1372,11 +1364,6 @@ thead.css-120bgvu-MuiTableHead-root{
   background-color: var(--background);
 }
 
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
 .bg-green-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity));
@@ -1395,8 +1382,9 @@ thead.css-120bgvu-MuiTableHead-root{
   background-color: rgb(220 38 38 / var(--tw-bg-opacity));
 }
 
-.bg-transparent {
-  background-color: transparent;
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 
 .object-cover {
@@ -1424,10 +1412,6 @@ thead.css-120bgvu-MuiTableHead-root{
   padding: 0.75rem;
 }
 
-.p-4 {
-  padding: 1rem;
-}
-
 .p-5 {
   padding: 1.25rem;
 }
@@ -1452,11 +1436,6 @@ thead.css-120bgvu-MuiTableHead-root{
   padding-right: 1.25rem;
 }
 
-.px-6 {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -1475,11 +1454,6 @@ thead.css-120bgvu-MuiTableHead-root{
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .py-5 {
@@ -1524,6 +1498,11 @@ thead.css-120bgvu-MuiTableHead-root{
 .text-4xl {
   font-size: 2.25rem;
   line-height: 2.5rem;
+}
+
+.text-8xl {
+  font-size: 6rem;
+  line-height: 1;
 }
 
 .text-lg {
@@ -1571,11 +1550,6 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 
-.text-blue-600 {
-  --tw-text-opacity: 1;
-  color: rgb(37 99 235 / var(--tw-text-opacity));
-}
-
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
@@ -1607,6 +1581,14 @@ thead.css-120bgvu-MuiTableHead-root{
 .text-yellow-600 {
   --tw-text-opacity: 1;
   color: rgb(202 138 4 / var(--tw-text-opacity));
+}
+
+.text-paper {
+  color: var(--paper);
+}
+
+.text-borderColor {
+  color: var(--border-color);
 }
 
 .underline {
@@ -1685,21 +1667,6 @@ thead.css-120bgvu-MuiTableHead-root{
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.hover\:underline:hover {
-  text-decoration-line: underline;
-}
-
-.focus\:ring-2:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus\:ring-blue-500:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
 }
 
 @media (min-width: 640px) {

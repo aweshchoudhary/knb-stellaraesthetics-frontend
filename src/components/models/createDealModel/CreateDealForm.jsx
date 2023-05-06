@@ -102,7 +102,6 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     }
     if (!pipeId && data?.data?.length) fetchStages(data.data[0]._id);
   }, [pipeId, data?.data]);
-  console.log(data);
 
   useEffect(() => {
     if (stages?.data?.length) {

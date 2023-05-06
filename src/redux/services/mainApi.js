@@ -48,6 +48,7 @@ export const mainApi = createApi({
     "note",
     "label",
     "contact",
+    "productService",
   ],
   endpoints: (builder) => ({}),
 });
