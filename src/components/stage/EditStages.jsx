@@ -17,9 +17,11 @@ const EditStage = ({ pipeline }) => {
     isFetching,
     isError,
   } = useGetStagesQuery({
-    dataFilters: { pipelinId: pipeline._id },
+    filters: JSON.stringify([{ id: "pipelineId", value: pipeline._id }]),
     data: true,
   });
+
+  console.log(data);
 
   const [reorderStages, { isLoading: isStagesReorderLoading }] =
     useReorderStageMutation();

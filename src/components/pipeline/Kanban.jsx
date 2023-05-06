@@ -4,9 +4,9 @@ import { Icon } from "@iconify/react";
 import Stages from "../stage/Stages";
 
 import Loader from "../global/Loader";
+import PipelineUsersModel from "../models/PipelineUsersModel";
 
 const Model = lazy(() => import("../models/Model"));
-const CreatePipelineModel = lazy(() => import("../models/CreatePipelineModel"));
 const CreateDealModel = lazy(() =>
   import("../models/createDealModel/CreateDealModel")
 );
@@ -17,27 +17,18 @@ const PipelineView = ({
   isFetching,
   isLoading,
   viewOnly,
+  viewUserRole,
   refetchPipeline,
 }) => {
   const [isStagesLength, setIsStagesLength] = useState(false);
 
-  const [isCreatePipelineModelOpen, setIsCreatePipelineModelOpen] =
-    useState(false);
+  useState(false);
   const [isCreateDealModelOpen, setIsCreateDealModelOpen] = useState(false);
-
+  const [isPipelineUsersModelOpen, setIsPipelineUsersModelOpen] =
+    useState(false);
+  console.log(isPipelineUsersModelOpen);
   return (
     <>
-      <Suspense>
-        {isCreatePipelineModelOpen && !viewOnly && (
-          <Model
-            title={"Create Pipeline"}
-            isOpen={isCreatePipelineModelOpen}
-            setIsOpen={setIsCreatePipelineModelOpen}
-          >
-            <CreatePipelineModel setIsOpen={setIsCreatePipelineModelOpen} />
-          </Model>
-        )}
-      </Suspense>
       <Suspense>
         {pipeline && !viewOnly && isCreateDealModelOpen && (
           <Model
@@ -46,9 +37,22 @@ const PipelineView = ({
             setIsOpen={setIsCreateDealModelOpen}
           >
             <CreateDealModel
-              activePipe={pipeline}
               pipelineId={pipeline?._id}
               setIsOpen={setIsCreateDealModelOpen}
+            />
+          </Model>
+        )}
+      </Suspense>
+      <Suspense>
+        {pipeline && !viewOnly && isPipelineUsersModelOpen && (
+          <Model
+            title={"Authorized Users"}
+            isOpen={isPipelineUsersModelOpen}
+            setIsOpen={setIsPipelineUsersModelOpen}
+          >
+            <PipelineUsersModel
+              pipeline={pipeline}
+              setIsOpen={setIsPipelineUsersModelOpen}
             />
           </Model>
         )}
@@ -78,8 +82,9 @@ const PipelineView = ({
           </button>
           <PipelineMenuDropDown
             setIsOpen={setIsOpen}
-            setIsCreatePipelineModelOpen={setIsCreatePipelineModelOpen}
+            setIsPipelineUsersModelOpen={setIsPipelineUsersModelOpen}
             viewOnly={viewOnly}
+            viewUserRole={viewUserRole}
           />
         </div>
       </header>
@@ -89,6 +94,7 @@ const PipelineView = ({
             setIsStagesLength={setIsStagesLength}
             pipeline={pipeline}
             setIsEditStageView={setIsOpen}
+            viewOnly={viewOnly}
           />
         ) : (
           <section className="flex h-[calc(100vh-108px)] w-full items-center justify-center">
@@ -102,8 +108,9 @@ const PipelineView = ({
 
 const PipelineMenuDropDown = ({
   setIsOpen,
-  setIsCreatePipelineModelOpen,
   viewOnly,
+  setIsPipelineUsersModelOpen,
+  viewUserRole,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -114,6 +121,7 @@ const PipelineMenuDropDown = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <div>
       <button
@@ -132,29 +140,31 @@ const PipelineMenuDropDown = ({
           "aria-labelledby": "basic-button",
         }}
       >
+        {viewUserRole === "owner" && (
+          <MenuItem
+            onClick={() => {
+              setIsOpen(true);
+              handleClose();
+            }}
+          >
+            <Tooltip title="Edit Pipeline" arrow>
+              <button className="flex gap-2 items-center">
+                <Icon icon="uil:pen" />
+                Edit Pipeline
+              </button>
+            </Tooltip>
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => {
-            setIsOpen(true);
-            handleClose();
-          }}
-        >
-          <Tooltip title="Edit Pipeline" arrow>
-            <button className="flex gap-2 items-center">
-              <Icon icon="uil:pen" />
-              Edit Pipeline
-            </button>
-          </Tooltip>
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setIsCreatePipelineModelOpen(true);
+            setIsPipelineUsersModelOpen(true);
             handleClose();
           }}
         >
           <Tooltip title="Create Pipeline" arrow>
             <button className="flex gap-2 items-center">
-              <Icon icon="uil:plus" className="text-lg" />
-              Create Pipeline
+              <Icon icon="mdi:eye" className="text-lg" />
+              Pipeline Users
             </button>
           </Tooltip>
         </MenuItem>

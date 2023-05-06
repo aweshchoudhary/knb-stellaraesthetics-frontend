@@ -35,6 +35,30 @@ export const pipelineApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ["pipeline"],
     }),
+    assignPipelineUser: builder.mutation({
+      query: (data) => ({
+        url: "/api/pipeline/assign/" + data.id,
+        method: "PUT",
+        body: data.update,
+      }),
+      invalidatesTags: ["pipeline"],
+    }),
+    removePipelineUser: builder.mutation({
+      query: (data) => ({
+        url: "/api/pipeline/remove/" + data.id,
+        method: "PUT",
+        body: data.update,
+      }),
+      invalidatesTags: ["pipeline"],
+    }),
+    transferPipelineOwnership: builder.mutation({
+      query: (data) => ({
+        url: "/api/pipeline/transfer-ownership/" + data.id,
+        method: "PUT",
+        body: data.update,
+      }),
+      invalidatesTags: ["pipeline"],
+    }),
     deletePipeline: builder.mutation({
       query: (id) => ({
         url: "/api/pipeline/delete/" + id,
@@ -55,4 +79,7 @@ export const {
   useGetPipelinesQuery,
   useVerifyPipelineUserQuery,
   useLazyVerifyPipelineUserQuery,
+  useAssignPipelineUserMutation,
+  useRemovePipelineUserMutation,
+  useTransferPipelineOwnershipMutation,
 } = pipelineApi;

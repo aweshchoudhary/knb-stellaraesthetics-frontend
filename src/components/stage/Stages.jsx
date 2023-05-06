@@ -7,7 +7,7 @@ import CreateStageModel from "../models/CreateStageModel";
 import { useGetStagesQuery } from "../../redux/services/stageApi";
 import { useUpdateDealStageMutation } from "../../redux/services/dealApi";
 
-const Stages = ({ pipeline, setIsStagesLength }) => {
+const Stages = ({ pipeline, setIsStagesLength, viewOnly }) => {
   const { data, isLoading, isError, isFetching, isSuccess, error } =
     useGetStagesQuery({
       filters: JSON.stringify([{ id: "pipelineId", value: pipeline._id }]),
@@ -60,7 +60,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
             <div className="flex overflow-x-auto w-full h-full">
               <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
                 {data?.data?.length &&
-                  data?.data?.map((stage) => {
+                  data.data.map((stage) => {
                     return (
                       <Column
                         stage={stage}
@@ -77,12 +77,15 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
           <section className="md:p-10 p-5">
             <p>
               No stages has been created yet.{" "}
-              <button
-                onClick={() => setCreateStageModelDisplay(true)}
-                className="underline"
-              >
-                Create One
-              </button>
+              {!viewOnly && (
+                <button
+                  disabled={viewOnly}
+                  onClick={() => setCreateStageModelDisplay(true)}
+                  className="underline"
+                >
+                  Create One
+                </button>
+              )}
             </p>
           </section>
         )}

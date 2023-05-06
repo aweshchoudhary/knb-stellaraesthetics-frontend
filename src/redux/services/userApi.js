@@ -10,11 +10,18 @@ export const userApi = mainApi.injectEndpoints({
       },
     }),
     getUser: builder.query({
-      query: (id) => "/api/user/" + id,
+      query: (id) => "/api/user/get-user/" + id,
       providesTags: ["user"],
       transformResponse: (response) => {
         return response.data;
       },
+    }),
+    getUsers: builder.query({
+      query: (params) => ({
+        url: "/api/user/get-users/",
+        params,
+      }),
+      providesTags: ["user"],
     }),
     updateUser: builder.mutation({
       query: (data) => ({
@@ -42,4 +49,6 @@ export const {
   useGetUserQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,
+  useLazyGetUsersQuery,
+  useGetUsersQuery,
 } = userApi;

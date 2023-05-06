@@ -24,7 +24,7 @@ const CreateStageModel = ({ setIsOpen, position, pipelineId }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success(stageName + " has been created.");
+      toast.success(stageName + " Stage has been created.");
     }
   }, [isSuccess]);
 

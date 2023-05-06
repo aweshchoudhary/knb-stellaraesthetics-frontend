@@ -8,8 +8,8 @@ import Loader from "../components/global/Loader";
 
 const User = () => {
   const loggedUserId = useSelector((state) => state.auth.loggedUserId);
-
   const { id } = useParams();
+  console.log(id);
   const { data: user, isLoading, isFetching, isSuccess } = useGetUserQuery(id);
   const dispatch = useDispatch();
   const navigate = useNavigate();

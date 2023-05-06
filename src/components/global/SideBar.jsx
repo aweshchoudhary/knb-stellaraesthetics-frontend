@@ -1,9 +1,6 @@
 import { Icon } from "@iconify/react";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { toggleMobileOpen } from "../../redux/features/globalSlice";
 
 const menuLinks = [
   {
@@ -38,8 +35,6 @@ const menuLinks = [
   // },
 ];
 const SideBar = ({ setIsOpen, isOpen }) => {
-  const isMobileOpen = useSelector((state) => state.global.isMobileOpen);
-  const dispatch = useDispatch();
   const { pathname } = useLocation();
   const [active, setActive] = useState(pathname);
 
@@ -48,9 +43,9 @@ const SideBar = ({ setIsOpen, isOpen }) => {
   }, [pathname]);
   return (
     <aside
-      className={`${isOpen ? "w-[230px]" : "md:w-[70px] w-[230px]"} ${
-        isMobileOpen ? "left-0" : "md:left-0 -left-full"
-      } border-r md:sticky absolute bg-bg z-50 top-0 left-0 h-screen shrink-0 transition-all`}
+      className={`${
+        isOpen ? "w-[230px]" : "md:w-[70px] w-[230px]"
+      } border-r sticky bg-bg z-50 top-0 left-0 h-screen shrink-0 transition-all`}
     >
       <header
         className={`flex items-center h-[50px] border-b ${
@@ -69,12 +64,6 @@ const SideBar = ({ setIsOpen, isOpen }) => {
                 : "ic:baseline-keyboard-arrow-right"
             }
           />
-        </button>
-        <button
-          onClick={() => dispatch(toggleMobileOpen())}
-          className="md:hidden block"
-        >
-          <Icon icon={"uil:times"} className="text-2xl" />
         </button>
       </header>
       <nav className={isOpen ? "px-4 py-5" : "px-2 py-5"}>

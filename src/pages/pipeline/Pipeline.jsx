@@ -17,7 +17,7 @@ const Pipeline = () => {
   const { id } = params;
   const { data, isLoading, isFetching, refetch } = useGetPipelineQuery(id);
 
-  const { data: checkedUser = { viewOnly: true } } =
+  const { data: checkedUser = { viewOnly: true, userRole: "assignee" } } =
     useVerifyPipelineUserQuery(id);
   return (
     <>
@@ -42,8 +42,9 @@ const Pipeline = () => {
             isLoading={isLoading}
             pipeline={data}
             setIsOpen={setEditPipeline}
-            viewOnly={checkedUser?.viewOnly}
+            viewOnly={checkedUser.viewOnly}
             refetchPipeline={refetch}
+            viewUserRole={checkedUser.userRole}
           />
         )}
       </Suspense>

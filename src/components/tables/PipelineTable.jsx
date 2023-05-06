@@ -489,15 +489,24 @@ const CardList = ({ pipelineId, status }) => {
   );
 };
 const Owner = ({ ownerId }) => {
-  const { data, isLoading, isFetching } = useGetUserQuery(ownerId);
-
+  const { data, isLoading, isFetching, isSuccess } = useGetUserQuery(ownerId);
   return (
-    <Link
-      to={"/user/" + data?._id}
-      className="underline capitalize font-medium hover:text-primary"
-    >
-      {isLoading && isFetching ? "Loading..." : data?.fullname}
-    </Link>
+    isSuccess &&
+    !isLoading &&
+    !isFetching && (
+      <>
+        {data ? (
+          <Link
+            to={"/user/" + data._id}
+            className="underline capitalize font-medium hover:text-primary"
+          >
+            {isLoading && isFetching ? "Loading..." : data.fullname}
+          </Link>
+        ) : (
+          <p className="text-red-600">Owner Deleted</p>
+        )}
+      </>
+    )
   );
 };
 

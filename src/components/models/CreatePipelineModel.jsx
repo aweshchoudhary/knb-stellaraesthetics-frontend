@@ -25,7 +25,7 @@ const CreatePipelineModel = ({ setIsOpen }) => {
   }, [isSuccess]);
 
   useEffect(() => {
-    if (isError) toast.success(error.data.message);
+    if (isError) toast.error(error.data.message);
   }, [isError]);
   return (
     <section>

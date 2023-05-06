@@ -97,6 +97,10 @@ const App = () => {
               element={accessToken ? <User /> : <Navigate to="/login" />}
             />
             <Route
+              path="/users/:id"
+              element={accessToken ? <User /> : <Navigate to="/login" />}
+            />
+            <Route
               path="/products"
               element={accessToken ? <Products /> : <Navigate to="/login" />}
             />

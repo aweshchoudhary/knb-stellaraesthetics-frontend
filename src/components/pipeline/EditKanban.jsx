@@ -23,16 +23,6 @@ const EditKanban = ({ setIsOpen, pipeline, isLoading, isFetching }) => {
     await deletePipeline(pipeline._id);
   }
 
-  // useEffect(() => {
-  //   // if (pipeline.length && isSuccess) {
-  //   //   if (!savedPipelineIndex) {
-  //   //     addPipeline(0);
-  //   //     setActivePipeline(pipeline[0]);
-  //   //   }
-  //   //   setActivePipeline(pipeline[savedPipelineIndex]);
-  //   // }
-  // }, [pipeline, isSuccess]);
-
   useEffect(() => {
     if (isPipelineDeleteSuccess) {
       toast.success("Pipeline has been deleted");
