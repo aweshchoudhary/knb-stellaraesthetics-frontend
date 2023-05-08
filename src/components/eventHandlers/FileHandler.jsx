@@ -12,7 +12,7 @@ import { Skeleton } from "@mui/material";
 import moment from "moment";
 
 import BASE_URL from "../../config/BASE_URL";
-import DealSelect from "../eventHandlers/DealSelect";
+import DealSelect from "../select/DealSelect";
 
 const File = ({ cards }) => {
   const [selectedData, setSelectedData] = useState(cards ? cards : []);

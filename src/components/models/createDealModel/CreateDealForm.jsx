@@ -350,18 +350,26 @@ const AddProductTable = ({
   setSelectedCurrency,
   selectedCurrency,
 }) => {
+  const [isSelectOpen, setIsSelectOpen] = useState(true);
   return (
     <div className="my-5">
       <header className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium">Items Table</h2>
-        <button className="btn-outlined btn-small">
-          <Icon icon="uil:plus" className="text-xl" />
-          <span>Add Item</span>
-        </button>
+        {!isSelectOpen && (
+          <button
+            onClick={() => setIsSelectOpen(true)}
+            className="btn-outlined btn-small"
+          >
+            <Icon icon="uil:plus" className="text-xl" />
+            <span>Add Item</span>
+          </button>
+        )}
       </header>
       <DraftItem
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
+        isSelectOpen={isSelectOpen}
+        setIsSelectOpen={setIsSelectOpen}
       />
       <div className="w-1/3">
         <CurrencySelect
@@ -453,56 +461,87 @@ const AddProductTable = ({
   );
 };
 
-const DraftItem = ({ selectedProduct, setSelectedProduct }) => {
+const DraftItem = ({
+  selectedProduct,
+  setSelectedProduct,
+  isSelectOpen,
+  setIsSelectOpen,
+}) => {
+  const [isDraftOpen, setIsDraftOpen] = useState(true);
+
   return (
-    <>
-      <div className="my-3 flex gap-3">
-        <ProductSelect
-          selectedData={selectedProduct}
-          setSelectedData={setSelectedProduct}
-        />
-        <button className="btn-filled btn-small shrink-0 grow-1">
-          Select Item
-        </button>
-      </div>
-      <section className="flex gap-5 my-4">
-        <div className="w-1/3">
-          <div className="h-[200px] w-full border"></div>
+    isSelectOpen && (
+      <>
+        <div className="my-3 flex gap-3">
+          <ProductSelect
+            selectedData={selectedProduct}
+            setSelectedData={setSelectedProduct}
+          />
+          <button
+            onClick={() => setIsDraftOpen(true)}
+            className="btn-filled btn-small shrink-0 grow-1"
+            type="button"
+          >
+            Select
+          </button>
+          <button
+            onClick={() => setIsSelectOpen(false)}
+            className="btn-outlined btn-small shrink-0 grow-1"
+            type="button"
+          >
+            cancel
+          </button>
         </div>
-        <div className="flex-1">
-          <h2 className="text-xl mb-3">Product Title Here</h2>
-          <div className="h-[80px] py-2 px-4 overflow-y-auto border">
-            <p>this is a product description</p>
-          </div>
-          <div className="flex gap-3 my-3">
-            <div className="flex-1">
-              <label htmlFor="rate" className="block mb-1">
-                Rate
-              </label>
-              <input
-                type="number"
-                className="input"
-                name="rate"
-                id="rate"
-                placeholder="Rate"
-              />
+        {isDraftOpen && (
+          <section className="flex gap-5 my-4 p-5 border">
+            <div className="w-1/3">
+              <div className="h-[200px] w-full border"></div>
             </div>
             <div className="flex-1">
-              <label htmlFor="rate" className="block mb-1">
-                Discount
-              </label>
-              <input
-                type="number"
-                className="input"
-                name="discount"
-                id="discount"
-                placeholder="Discount"
-              />
+              <h2 className="text-xl mb-3">Product Title Here</h2>
+              <div className="h-[80px] py-2 px-4 overflow-y-auto border">
+                <p>this is a product description</p>
+              </div>
+              <div className="flex gap-3 my-3">
+                <div className="flex-1">
+                  <label htmlFor="rate" className="block mb-1">
+                    Rate
+                  </label>
+                  <input
+                    type="number"
+                    className="input"
+                    name="rate"
+                    id="rate"
+                    placeholder="Rate"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="rate" className="block mb-1">
+                    Discount
+                  </label>
+                  <input
+                    type="number"
+                    className="input"
+                    name="discount"
+                    id="discount"
+                    placeholder="Discount"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 justify-end mt-5">
+                <button
+                  className="btn-outlined btn-small"
+                  onClick={() => setIsDraftOpen(false)}
+                >
+                  Discard
+                </button>
+                <button className="btn-filled btn-small">Add Item</button>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-    </>
+          </section>
+        )}
+      </>
+    )
   );
 };
 

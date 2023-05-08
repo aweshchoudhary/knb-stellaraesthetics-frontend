@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import RichTextEditor from "../global/RichTextEditor";
 import { useCreateNoteMutation } from "../../redux/services/noteApi";
-import DealSelect from "./DealSelect";
+import DealSelect from "../select/DealSelect";
 import { toast } from "react-toastify";
 import ContactSelect from "./ContactSelect";
 

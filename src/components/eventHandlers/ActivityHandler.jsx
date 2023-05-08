@@ -7,7 +7,7 @@ import {
 } from "../../redux/services/activityApi";
 import { toast } from "react-toastify";
 import { Skeleton } from "@mui/material";
-import DealSelect from "./DealSelect";
+import DealSelect from "../select/DealSelect";
 import ReactDatePicker from "react-datepicker";
 
 const activityOptions = [

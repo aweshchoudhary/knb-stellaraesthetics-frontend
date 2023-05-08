@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import RichTextEditor from "../global/RichTextEditor";
-import DealSelect from "./DealSelect";
+import DealSelect from "../select/DealSelect";
 
 const Email = ({ cards }) => {
   const [emailBody, setEmailBody] = useState("");
