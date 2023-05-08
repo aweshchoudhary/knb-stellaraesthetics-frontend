@@ -700,6 +700,11 @@ option {
   outline: 2px solid transparent;
   outline-offset: 2px;
   outline-width: 0px;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 .input:hover {
@@ -750,6 +755,10 @@ option {
   background-color: var(--background) !important;
   color: inherit !important;
   border-radius: 0 !important;
+}
+
+.select__option{
+  background-color: var(--background) !important;
 }
 
 .select__option--is-focused{
@@ -1040,6 +1049,10 @@ thead.css-120bgvu-MuiTableHead-root{
   height: 25px;
 }
 
+.h-\[300px\] {
+  height: 300px;
+}
+
 .h-\[30px\] {
   height: 30px;
 }
@@ -1084,12 +1097,24 @@ thead.css-120bgvu-MuiTableHead-root{
   height: 100vh;
 }
 
+.h-\[200px\] {
+  height: 200px;
+}
+
+.h-\[80px\] {
+  height: 80px;
+}
+
 .max-h-\[90\%\] {
   max-height: 90%;
 }
 
 .min-h-\[100px\] {
   min-height: 100px;
+}
+
+.min-h-\[120px\] {
+  min-height: 120px;
 }
 
 .min-h-\[350px\] {
@@ -1170,6 +1195,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .w-\[65px\] {
   width: 65px;
+}
+
+.w-\[80px\] {
+  width: 80px;
 }
 
 .w-\[calc\(100vw-230px\)\] {
@@ -1274,6 +1303,10 @@ thead.css-120bgvu-MuiTableHead-root{
 
 .gap-5 {
   gap: 1.25rem;
+}
+
+.overflow-hidden {
+  overflow: hidden;
 }
 
 .overflow-x-auto {
@@ -1485,6 +1518,10 @@ thead.css-120bgvu-MuiTableHead-root{
   text-align: center;
 }
 
+.text-right {
+  text-align: right;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1503,6 +1540,11 @@ thead.css-120bgvu-MuiTableHead-root{
 .text-8xl {
   font-size: 6rem;
   line-height: 1;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 .text-lg {
@@ -1550,6 +1592,10 @@ thead.css-120bgvu-MuiTableHead-root{
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 
+.text-borderColor {
+  color: var(--border-color);
+}
+
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
@@ -1558,6 +1604,10 @@ thead.css-120bgvu-MuiTableHead-root{
 .text-green-600 {
   --tw-text-opacity: 1;
   color: rgb(22 163 74 / var(--tw-text-opacity));
+}
+
+.text-paper {
+  color: var(--paper);
 }
 
 .text-primary {
@@ -1581,14 +1631,6 @@ thead.css-120bgvu-MuiTableHead-root{
 .text-yellow-600 {
   --tw-text-opacity: 1;
   color: rgb(202 138 4 / var(--tw-text-opacity));
-}
-
-.text-paper {
-  color: var(--paper);
-}
-
-.text-borderColor {
-  color: var(--border-color);
 }
 
 .underline {

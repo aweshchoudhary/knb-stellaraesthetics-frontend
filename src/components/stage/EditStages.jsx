@@ -21,8 +21,6 @@ const EditStage = ({ pipeline }) => {
     data: true,
   });
 
-  console.log(data);
-
   const [reorderStages, { isLoading: isStagesReorderLoading }] =
     useReorderStageMutation();
 

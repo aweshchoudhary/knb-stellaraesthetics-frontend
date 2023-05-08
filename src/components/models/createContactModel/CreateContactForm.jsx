@@ -4,8 +4,6 @@ import { useCreateContactMutation } from "../../../redux/services/contactApi";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import Select from "react-select";
-// import { Country, State, City } from "country-state-city";
 import { Icon } from "@iconify/react";
 
 let contactDetails = {
@@ -91,31 +89,6 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
     setSameNumber(false);
   }
 
-  // const [currentCountry, setCurrentCountry] = useState(null);
-  // const [currentState, setCurrentState] = useState(null);
-  // const [currentCity, setCurrentCity] = useState(null);
-
-  // const countries = Country.getAllCountries();
-
-  // const updatedCountries = countries.map((country) => ({
-  //   label: country.name,
-  //   value: country.isoCode,
-  //   ...country,
-  // }));
-
-  // const updatedStates = (countryCode) =>
-  //   State.getStatesOfCountry(countryCode).map((state) => ({
-  //     label: state.name,
-  //     value: state.isoCode,
-  //     ...state,
-  //   }));
-  // const updatedCities = (countryCode, stateCode) =>
-  //   City.getCitiesOfState(countryCode, stateCode).map((city) => ({
-  //     label: city.name,
-  //     value: city.id,
-  //     ...city,
-  //   }));
-
   useEffect(() => {
     formik.values.mobile = mobile;
   }, [mobile]);
@@ -123,18 +96,6 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
   useEffect(() => {
     formik.values.whatsapp = sameNumber ? mobile : whatsapp;
   }, [whatsapp, sameNumber]);
-
-  // useEffect(() => {
-  //   formik.values.address.country = currentCountry || "";
-  // }, [currentCountry]);
-
-  // useEffect(() => {
-  //   formik.values.address.state = currentState || "";
-  // }, [currentState]);
-
-  // useEffect(() => {
-  //   formik.values.address.city = currentCity || "";
-  // }, [currentCity]);
 
   useEffect(() => {
     if (isSuccess) toast.success("Contact has been created");
@@ -268,137 +229,12 @@ const CreateContactForm = ({ setIsOpen, setSelectedContacts }) => {
             </div>
           ) : null}
         </div>
-        {/* <div className="input-address mb-3">
-          <div className="text-sm">
-            <label htmlFor="personName" className="text-textColor block  mb-2">
-              Address
-            </label>
-            <div className="flex items-center gap-2 mb-2">
-              <input
-                type="line1"
-                name="address.line1"
-                id="line1"
-                placeholder="Address Line 1"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.address.line1}
-              />
-              {formik.touched.address?.line1 && formik.errors.address?.line1 ? (
-                <div className="text-sm mt-2 text-red-600 flex items-center gap-2">
-                  <Icon
-                    icon="material-symbols:error-rounded"
-                    className="text-xl"
-                  />{" "}
-                  {formik.errors.address?.line1}
-                </div>
-              ) : null}
-            </div>
-            <div className="flex items-center gap-2 mb-2">
-              <input
-                type="line2"
-                name="address.line2"
-                id="line2"
-                placeholder="Address Line 2"
-                className="input"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.address.line2}
-              />
-              {formik.touched.address?.line2 && formik.errors.address?.line2 ? (
-                <div className="text-sm mt-2 text-red-600 flex items-center gap-2">
-                  <Icon
-                    icon="material-symbols:error-rounded"
-                    className="text-xl"
-                  />{" "}
-                  {formik.errors.address?.line2}
-                </div>
-              ) : null}
-            </div>
-            <div>
-              <div>
-                <Select
-                  id="country"
-                  name="country"
-                  label="country"
-                  options={updatedCountries}
-                  placeholder="Country"
-                  className="mb-2"
-                  classNamePrefix={"select"}
-                  onBlur={formik.handleBlur}
-                  value={currentCountry}
-                  onChange={(value) => {
-                    setCurrentCountry(value);
-                  }}
-                />
-                {formik.touched.address?.country &&
-                formik.errors.address?.country ? (
-                  <div className="text-sm mt-2 text-red-600 flex items-center gap-2">
-                    <Icon
-                      icon="material-symbols:error-rounded"
-                      className="text-xl"
-                    />{" "}
-                    {formik.errors.address?.country}
-                  </div>
-                ) : null}
-                <Select
-                  id="state"
-                  name="state"
-                  options={updatedStates(currentCountry?.value || null)}
-                  onBlur={formik.handleBlur}
-                  value={currentState}
-                  onChange={(value) => {
-                    setCurrentState(value);
-                  }}
-                  placeholder="State"
-                  className="mb-2"
-                  classNamePrefix={"select"}
-                />
-                {formik.touched.address?.state &&
-                formik.errors.address?.state ? (
-                  <div className="text-sm mt-2 text-red-600 flex items-center gap-2">
-                    <Icon
-                      icon="material-symbols:error-rounded"
-                      className="text-xl"
-                    />{" "}
-                    {formik.errors.address?.state}
-                  </div>
-                ) : null}
-                <Select
-                  id="city"
-                  name="city"
-                  placeholder="City"
-                  options={updatedCities(
-                    currentCountry?.value,
-                    currentState?.value
-                  )}
-                  value={currentCity}
-                  onBlur={formik.handleBlur}
-                  onChange={(value) => {
-                    setCurrentCity(value);
-                  }}
-                  className="mb-2"
-                  classNamePrefix={"select"}
-                />
-                {formik.touched.address?.city && formik.errors.address?.city ? (
-                  <div className="text-sm mt-2 text-red-600 flex items-center gap-2">
-                    <Icon
-                      icon="material-symbols:error-rounded"
-                      className="text-xl"
-                    />{" "}
-                    {formik.errors.address?.city}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </div> */}
       </section>
       <footer className="flex items-center p-5 pt-0 gap-2">
         <button
           className="btn-outlined btn-small"
           type="button"
-          // disabled={isLoading}
+          disabled={isLoading}
           onClick={() => setIsOpen(false)}
         >
           cancel

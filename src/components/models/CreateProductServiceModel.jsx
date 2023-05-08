@@ -3,7 +3,11 @@ import Select from "react-select";
 import { Icon } from "@iconify/react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useCreateProductServiceMutation } from "../../redux/services/productServiceApi";
+import {
+  useCreateProductServiceMutation,
+  useLazyGetProductServiceQuery,
+  useUpdateProductServiceMutation,
+} from "../../redux/services/productServiceApi";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { Country } from "country-state-city";
@@ -70,11 +74,14 @@ const validationSchema = Yup.object().shape({
   qty_type: Yup.string().required("Quantity type is required"),
 });
 
-const CreateProductServiceModel = ({ setIsOpen }) => {
+const CreateProductServiceModel = ({ setIsOpen, isUpdate, id }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values) => handleCreateProductService(values),
+    onSubmit: (values) =>
+      isUpdate
+        ? handleUpdateProductService(values)
+        : handleCreateProductService(values),
   });
   const imageInputRef = useRef();
   const [type, setType] = useState(formik.values.type);
@@ -84,10 +91,29 @@ const CreateProductServiceModel = ({ setIsOpen }) => {
 
   const [createProductService, { isLoading, isError, isSuccess, error }] =
     useCreateProductServiceMutation();
+
+  const [
+    getProductService,
+    {
+      // isLoading: isItemLoading,
+      // isFetching: isItemFetching,
+      // isSuccess: isItemSuccess,
+      isError: isItemError,
+      error: itemError,
+    },
+  ] = useLazyGetProductServiceQuery();
+  const [
+    updateProductService,
+    {
+      isLoading: isUpdating,
+      isError: isUpdateError,
+      isSuccess: isUpdateSuccess,
+      error: updateError,
+    },
+  ] = useUpdateProductServiceMutation();
   const loggedUserId = useSelector((state) => state.auth.loggedUserId);
 
   const [currentCurrency, setCurrentCurrency] = useState({});
-
   const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
     if (!currentCurrency?.label && country.currency === "INR") {
       setCurrentCurrency({
@@ -115,6 +141,20 @@ const CreateProductServiceModel = ({ setIsOpen }) => {
     await createProductService(data);
   }
 
+  async function handleUpdateProductService(values) {
+    const data = new FormData();
+    data.append("title", values.title);
+    data.append("description", values.description);
+    data.append("type", values.type);
+    data.append("image", image);
+    data.append("rate", values.rate);
+    data.append("qty", values.qty);
+    data.append("qty_type", values.qty_type);
+    data.append("currency", values.currency);
+    data.append("creator", loggedUserId);
+    await updateProductService({ id, update: data });
+  }
+
   useEffect(() => {
     if (isSuccess) {
       toast.success("Product created successfully");
@@ -123,8 +163,21 @@ const CreateProductServiceModel = ({ setIsOpen }) => {
   }, [isSuccess]);
 
   useEffect(() => {
+    if (isUpdateSuccess) {
+      toast.success("Product updated successfully");
+      setIsOpen(false);
+    }
+  }, [isUpdateSuccess]);
+
+  useEffect(() => {
     if (isError) toast.success(error.data?.message);
   }, [isError]);
+  useEffect(() => {
+    if (isUpdateError) toast.success(updateError.data?.message);
+  }, [isUpdateError]);
+  useEffect(() => {
+    if (isItemError) toast.success(itemError.data?.message);
+  }, [isItemError]);
 
   useEffect(() => {
     let fileReader,
@@ -146,6 +199,11 @@ const CreateProductServiceModel = ({ setIsOpen }) => {
       }
     };
   }, [image]);
+
+  useEffect(() => {
+    const fetchProduct = async (id) => await getProductService(id);
+    if (isUpdate && id) fetchProduct(id);
+  }, [isUpdate, id]);
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -262,7 +320,6 @@ const CreateProductServiceModel = ({ setIsOpen }) => {
                 </div>
               ) : null}
             </div>
-
             <div className="input-group mb-4">
               <label htmlFor="description" className="mb-2 block">
                 Description
@@ -378,13 +435,23 @@ const CreateProductServiceModel = ({ setIsOpen }) => {
         >
           cancel
         </button>
-        <button
-          disabled={isLoading}
-          className="btn-filled btn-small"
-          type="submit"
-        >
-          {isLoading ? "Creating..." : "create"}
-        </button>
+        {isUpdate ? (
+          <button
+            disabled={isUpdating}
+            className="btn-filled btn-small"
+            type="submit"
+          >
+            {isUpdating ? "Updating..." : "Update"}
+          </button>
+        ) : (
+          <button
+            disabled={isLoading}
+            className="btn-filled btn-small"
+            type="submit"
+          >
+            {isLoading ? "Creating..." : "create"}
+          </button>
+        )}
       </footer>
     </form>
   );

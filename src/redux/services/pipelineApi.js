@@ -55,7 +55,7 @@ export const pipelineApi = mainApi.injectEndpoints({
       query: (data) => ({
         url: "/api/pipeline/transfer-ownership/" + data.id,
         method: "PUT",
-        body: data.update,
+        body: data.newOwnerId,
       }),
       invalidatesTags: ["pipeline"],
     }),

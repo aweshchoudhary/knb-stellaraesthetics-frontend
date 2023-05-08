@@ -14,13 +14,16 @@ const Column = ({ stage, loading }) => {
     useLazyGetDealsQuery();
 
   useEffect(() => {
-    getDeals({
-      filters: JSON.stringify([
-        { id: "currentStage", value: stage._id },
-        { id: "status", value: "open" },
-      ]),
-      data: true,
-    });
+    const fetchDeals = async () =>
+      await getDeals({
+        filters: JSON.stringify([
+          { id: "currentStage", value: stage._id },
+          { id: "status", value: "open" },
+        ]),
+        data: true,
+      });
+
+    if (stage?.deals?.length > 0) fetchDeals();
   }, [stage]);
 
   useEffect(() => {

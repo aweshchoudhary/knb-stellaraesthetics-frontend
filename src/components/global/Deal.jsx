@@ -72,9 +72,8 @@ const Deal = ({ deal }) => {
           </Tooltip>
         </div>
         <div className="amount flex items-center">
-          {formatNumber(deal?.value?.value, {
-            country: "en-IN",
-            type: "INR",
+          {formatNumber(deal?.value, {
+            type: deal?.currency,
           })}
         </div>
       </div>

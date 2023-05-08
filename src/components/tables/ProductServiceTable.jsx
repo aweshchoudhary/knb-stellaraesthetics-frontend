@@ -228,7 +228,7 @@ const ProductServiceTable = () => {
           <div className="flex gap-1">
             <Link
               className="btn-filled btn-small"
-              to={"/pipeline/" + row.original._id}
+              to={"/products-services/" + row.original._id}
             >
               <Icon className="text-lg" icon={"ic:baseline-remove-red-eye"} />
             </Link>

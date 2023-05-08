@@ -5,6 +5,7 @@ import { useGetMeQuery } from "../../redux/services/userApi";
 
 const CreatePipelineModel = ({ setIsOpen }) => {
   const { data } = useGetMeQuery();
+  console.log(data);
   const [name, setName] = useState("");
   const [createPipeline, { isLoading, isError, isSuccess, error }] =
     useCreatePipelineMutation();

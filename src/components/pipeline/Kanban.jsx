@@ -26,7 +26,6 @@ const PipelineView = ({
   const [isCreateDealModelOpen, setIsCreateDealModelOpen] = useState(false);
   const [isPipelineUsersModelOpen, setIsPipelineUsersModelOpen] =
     useState(false);
-  console.log(isPipelineUsersModelOpen);
   return (
     <>
       <Suspense>
@@ -62,15 +61,13 @@ const PipelineView = ({
           <h2 className="text-xl capitalize font-semibold">{pipeline?.name}</h2>
         </div>
         <div className="flex items-stretch gap-2">
-          <Tooltip title={viewOnly ? "View Only" : "Create Deal"}>
-            <button
-              className="btn-filled btn-small"
-              onClick={() => setIsCreateDealModelOpen(true)}
-              disabled={!isStagesLength || viewOnly}
-            >
-              <Icon icon="uil:plus" className="text-lg" /> <span>Deal</span>
-            </button>
-          </Tooltip>
+          <button
+            className="btn-filled btn-small h-full"
+            onClick={() => setIsCreateDealModelOpen(true)}
+            disabled={!isStagesLength || viewOnly}
+          >
+            <Icon icon="uil:plus" className="text-lg" /> <span>Deal</span>
+          </button>
           <button
             className="btn-outlined btn-small"
             onClick={() => {

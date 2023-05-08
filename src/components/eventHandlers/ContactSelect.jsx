@@ -22,7 +22,7 @@ const ContactSelect = ({ selectedData, setSelectedData, compare = [] }) => {
 
       res.data.map((item) => {
         const option = {
-          label: item.title,
+          label: item.contactPerson,
           value: item._id,
         };
         if (!compare.length > 0) {

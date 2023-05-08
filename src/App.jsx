@@ -20,6 +20,7 @@ const Contacts = lazy(() => import("./pages/contact/Contacts"));
 const Contact = lazy(() => import("./pages/contact/Contact"));
 const ActivityCalendar = lazy(() => import("./pages/ActivityCalendar"));
 const ProductsServices = lazy(() => import("./pages/ProductsServices"));
+const Item = lazy(() => import("./pages/Item"));
 // const Services = lazy(() => import("./pages/Services"));
 const NotFound = lazy(() => import("./pages/User"));
 const User = lazy(() => import("./pages/User"));
@@ -105,6 +106,10 @@ const App = () => {
               element={
                 accessToken ? <ProductsServices /> : <Navigate to="/login" />
               }
+            />
+            <Route
+              path="/products-services/:id"
+              element={accessToken ? <Item /> : <Navigate to="/login" />}
             />
             {/* <Route path="/services" element={<Services />} /> */}
             <Route path="*" element={<NotFound />} />

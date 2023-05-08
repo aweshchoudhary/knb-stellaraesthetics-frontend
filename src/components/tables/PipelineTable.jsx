@@ -463,7 +463,7 @@ const PipelineTable = () => {
           <Model
             isOpen={isCreatePipelineModelOpen}
             setIsOpen={setIsCreatePipelineModelOpen}
-            title="Edit Pipeline"
+            title="Create Pipeline"
           >
             <CreatePipelineModel setIsOpen={setIsCreatePipelineModelOpen} />
           </Model>
