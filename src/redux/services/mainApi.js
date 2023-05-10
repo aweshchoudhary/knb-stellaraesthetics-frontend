@@ -1,4 +1,4 @@
-import BASE_URL from "../../config/BASE_URL";
+import BASE_URL from "@/modules/common/utils/BASE_URL";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setCredentials, logOut } from "../features/authSlice";
 

@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+
+html.darkMode:root {
+    --primary: #571168;
+    --text-color: #ffffff;
+    --secondary: #cc0000;
+    --paper: rgb(59, 59, 59);
+    --background: #212121;
+    --border-color: rgb(98, 98, 98);
+}
+
+html:root {
+    --primary: #571168;
+    --secondary: #cc0000;
+    --text-color: #000000;
+    --paper: rgb(236, 236, 236);
+    --background: #fff;
+    --border-color: rgb(218, 218, 218);
+}
+
+* {
+    /* transition: all 0.2s ease; */
+    accent-color: var(--primary);
+    border-color: var(--border-color);
+    outline: transparent !important;
+}
+
+html,
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: "Poppins", sans-serif !important;
+    color: var(--text-color);
+    background: var(--background);
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e0e0e0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-track:hover {
+    background: #555;
+}
+
+option {
+    @apply text-black
+}
+
+.toolbarClassName {
+    color: black !important;
+}
+
+.btn-filled {
+    @apply capitalize border border-primary px-4 py-2 text-white flex items-center gap-2 bg-primary rounded hover:opacity-80 transition disabled:bg-paper disabled:border-paper disabled:text-gray-500 disabled:hover:opacity-100;
+}
+
+.btn-outlined {
+    @apply px-4 py-2 text-textColor hover:border-textColor disabled:hover:border-borderColor flex items-center gap-2 border rounded capitalize hover:bg-paper transition disabled:text-paper disabled:hover:bg-transparent;
+}
+
+.btn-small {
+    @apply px-3 py-2 text-sm;
+}
+
+.input {
+    @apply border focus:border-textColor transition hover:border-textColor bg-transparent px-3 py-2 rounded w-full outline-0 outline-none text-sm;
+}
+
+.modal-footer {
+    @apply py-2 px-5 h-[60px] border-t flex items-center justify-end gap-2 sticky bottom-0 left-0 bg-bg;
+}
+
+
+.select__control {
+    background: transparent !important;
+    border-color: var(--border-color) !important;
+    box-shadow: none !important;
+}
+
+.select__input-container {
+    color: var(--text-color) !important;
+}
+
+.select__indicators {
+    color: var(--text-color) !important;
+    opacity: 70 !important;
+}
+
+.select__indicators:hover {
+    opacity: 100 !important;
+}
+
+.select__menu {
+    background-color: var(--background) !important;
+    color: inherit !important;
+    border-radius: 0 !important;
+}
+
+.select__option {
+    background-color: var(--background) !important;
+    color: var(--text-color) !important;
+}
+
+.select__option--is-focused {
+    background-color: var(--paper) !important;
+    color: var(--text-color) !important;
+}
+
+.select__multi-value {
+    background: var(--paper) !important;
+}
+
+.select__multi-value__label,
+.select__single-value {
+    color: inherit !important;
+}
+
+
+.fc-event-main {
+    color: inherit !important;
+    border: none !important;
+}
+
+.fc-h-event {
+    @apply py-1 px-2 hover:bg-paper gap-2;
+    /* background-color: var(--background);
+  border: none !important; */
+}
+
+.fc-event {
+    @apply py-1 px-2 hover:bg-paper gap-2;
+}
+
+.fc-event {
+    background-color: var(--background);
+    border: 1px solid var(--border-color) !important;
+    height: auto;
+}
+
+
+.rdw-editor-toolbar {
+    background: var(--bg) !important;
+    border-color: inherit !important;
+}
+
+.rdw-option-wrapper {
+    border-color: inherit !important;
+    /* background-color: var(--background) !important; */
+    color: var(--text-color) !important;
+}
+
+input {
+    outline: none;
+}
+
+.PhoneInputInput {
+    background: transparent;
+    width: 100%;
+}
+
+.loader {
+    overflow: hidden;
+    position: relative;
+    background: var(--paper);
+}
+
+.loader::before {
+    content: "";
+    position: absolute;
+    left: -130%;
+    width: 100%;
+    height: 100%;
+    background: var(--primary);
+    -webkit-animation: progress 1s linear infinite;
+    animation: progress 1s linear infinite;
+}
+
+.css-q4cnup-MuiTableHead-root {
+    box-shadow: none !important;
+    border-top: 1px solid var(--border-color);
+}
+
+thead.css-120bgvu-MuiTableHead-root {
+    border-top: 1px solid var(--border-color);
+
+}
+
+@keyframes progress {
+    0% {
+        left: -130%;
+    }
+
+    100% {
+        left: 130%;
+    }
+}
+
+@tailwind utilities;
