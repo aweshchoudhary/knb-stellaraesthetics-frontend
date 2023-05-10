@@ -9,11 +9,10 @@ import {
 import { useLazyGetUserQuery } from "@/redux/services/userApi";
 
 import { toast } from "react-toastify";
-import { Header, Loader, BASE_URL, lazyLoad } from "@/modules/common";
+import { Header, Loader, BASE_URL, Model } from "@/modules/common";
 import { Icon } from "@iconify/react";
 
-const CreateItemModel = lazyLoad("@/modules/item", "CreateItemModel");
-const Model = lazyLoad("@/modules/common", "Model");
+import { CreateItemModel } from "@/modules/item";
 
 const Item = () => {
   const params = useParams();

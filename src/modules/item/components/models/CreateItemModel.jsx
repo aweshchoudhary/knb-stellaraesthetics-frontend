@@ -7,7 +7,7 @@ import {
   useCreateProductServiceMutation,
   useLazyGetProductServiceQuery,
   useUpdateProductServiceMutation,
-} from "../../redux/services/productServiceApi";
+} from "@/redux/services/productServiceApi";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { Country } from "country-state-city";
