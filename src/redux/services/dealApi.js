@@ -8,6 +8,9 @@ export const dealApi = mainApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      transformResponse: (response) => {
+        return response.data;
+      },
       invalidatesTags: ["deal"],
     }),
     getDeal: builder.query({
@@ -38,7 +41,7 @@ export const dealApi = mainApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["deal"],
+      // invalidatesTags: ["deal"],
     }),
     deleteDeal: builder.mutation({
       query: (id) => ({

@@ -38,7 +38,7 @@ const Deal = () => {
   const navigate = useNavigate();
   async function handleDeleteDeal() {
     await deleteDeal(id);
-    navigate("/pipelines");
+    navigate(-1);
   }
 
   async function handleUpdateDealStatus(status) {

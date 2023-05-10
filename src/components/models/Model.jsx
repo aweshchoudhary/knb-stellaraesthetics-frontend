@@ -1,12 +1,18 @@
 import { Icon } from "@iconify/react";
-import { Box, Modal, Typography } from "@mui/material";
+import { Modal, Typography } from "@mui/material";
+import React from "react";
 
 const Model = ({ children, isOpen, setIsOpen, title }) => {
+  const handleClose = (event, reason) => {
+    if (reason !== "backdropClick") {
+      setIsOpen(false);
+    }
+  };
   return (
     isOpen && (
       <Modal
         open={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={handleClose}
         className="h-screen flex items-center"
       >
         <div className="bg-bg md:w-[60%] mx-auto max-h-[90%] flex flex-col relative">

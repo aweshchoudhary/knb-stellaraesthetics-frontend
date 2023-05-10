@@ -100,10 +100,12 @@ option{
 }
 .select__option{
   background-color: var(--background) !important;
+  color: var(--text-color) !important;
 }
 
 .select__option--is-focused{
   background-color: var(--paper) !important;
+  color: var(--text-color) !important;
 }
 
 .select__multi-value{

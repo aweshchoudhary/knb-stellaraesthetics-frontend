@@ -5,7 +5,9 @@ import formatNumber from "../functions/formatNumber";
 import moment from "moment";
 import Loader from "../global/Loader";
 import { useGetContactQuery } from "../../redux/services/contactApi";
+import { useGetDealProductServiceQuery } from "../../redux/services/dealProductService";
 import { Link } from "react-router-dom";
+import BASE_URL from "../../config/BASE_URL";
 
 const DealSideBar = ({ data }) => {
   return data ? (
@@ -30,6 +32,15 @@ const DealSideBar = ({ data }) => {
             : null}
         </AccordianBody>
       </Accordian>
+      {data?.items?.length !== 0 && (
+        <Accordian title={"Items"}>
+          <AccordianBody>
+            {data.items.map((itemId, index) => {
+              return <ItemCard key={index} itemId={itemId} />;
+            })}
+          </AccordianBody>
+        </Accordian>
+      )}
       <Accordian title={"Overview"}>
         <AccordianBody>
           <div>
@@ -80,6 +91,42 @@ const ContactAccordian = ({ clientId }) => {
           <p>{client.company}</p>
         </div>
       </Link>
+    )
+  );
+};
+
+const ItemCard = ({ itemId }) => {
+  const { data, isLoading, isFetching, isSuccess } =
+    useGetDealProductServiceQuery({
+      id: itemId,
+      params: { populate: "productServiceId" },
+    });
+  return (
+    !isLoading &&
+    !isFetching &&
+    isSuccess && (
+      <div className="flex gap-3 items-start border-b py-3">
+        {data?.productServiceId.image?.path && (
+          <div className="w-[80px] h-[60px]">
+            <img
+              src={BASE_URL + data.productServiceId.image.path}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        <div className="flex-1">
+          <h2 className="font-medium mb-1">{data.productServiceId.title}</h2>
+          <div className="flex gap-1">
+            <span className="border px-2 py-1">{formatNumber(data.rate)}</span>
+            <span className="border px-2 py-1">
+              {data.qty} {data.qty_type}
+            </span>
+            <span className="capitalize border px-2 py-1">
+              {data.productServiceId.type}
+            </span>
+          </div>
+        </div>
+      </div>
     )
   );
 };

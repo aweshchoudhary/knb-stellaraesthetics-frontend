@@ -3,13 +3,21 @@ import React, { useEffect, useState } from "react";
 import formatNumber from "../functions/formatNumber";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
-// import { useLazyGetContactQuery } from "../../redux/services/contactApi";
 import { useLazyGetLabelQuery } from "../../redux/services/labelApi";
 import ActivityStatus from "../deal/ActivityStatus";
 import moment from "moment";
+import { useGetDealQuery } from "../../redux/services/dealApi";
 
-const Deal = ({ deal }) => {
+const Deal = ({ dealId }) => {
   const [label, setLabel] = useState({});
+
+  const {
+    data: deal,
+    isLoading,
+    isFetching,
+    isSuccess,
+  } = useGetDealQuery(dealId);
+
   const [
     getLabelById,
     {
@@ -36,7 +44,7 @@ const Deal = ({ deal }) => {
     // }
   }, [deal]);
 
-  return deal ? (
+  return !isLoading && !isFetching && isSuccess ? (
     <Link
       to={"/deals/" + deal._id}
       className={
@@ -130,5 +138,20 @@ const Deal = ({ deal }) => {
 //     <p className="text-gray-500 text-xs flex gap-2 mt-1">Loading...</p>
 //   );
 // };
+
+// const useGetProductsTotal = ({deals=[]})=>{
+//   const [total, setTotal] = useState(0);
+//   const [getProductById, {isLoading, isFetching, isSuccess}] = useLazyGetProductServiceQuery()
+
+//   useEffect(()=>{
+//     if(deals.length){
+//       deals.forEach(async (deal)=>{
+//         const {data} = await getProductById(deal);
+//         setTotal(prev=> +prev)
+//       })
+//     }
+//   },[deals]);
+//   return tooltipClasses;
+// }
 
 export default Deal;

@@ -26,6 +26,7 @@ const PipelineView = ({
   const [isCreateDealModelOpen, setIsCreateDealModelOpen] = useState(false);
   const [isPipelineUsersModelOpen, setIsPipelineUsersModelOpen] =
     useState(false);
+  console.log(viewOnly);
   return (
     <>
       <Suspense>
@@ -62,7 +63,7 @@ const PipelineView = ({
         </div>
         <div className="flex items-stretch gap-2">
           <button
-            className="btn-filled btn-small h-full"
+            className="btn-filled btn-small"
             onClick={() => setIsCreateDealModelOpen(true)}
             disabled={!isStagesLength || viewOnly}
           >
