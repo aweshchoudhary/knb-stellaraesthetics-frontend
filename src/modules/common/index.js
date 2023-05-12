@@ -13,6 +13,5 @@ export const Model = lazy(() => import("./components/Model"));
 export const RichTextEditor = lazy(() => import("./components/RichTextEditor"));
 export const SideBar = lazy(() => import("./components/SideBar"));
 export const CurrencySelect = lazy(() => import("./components/CurrencySelect"));
-export const ToggleInput = lazy(() => import("./components/ToggleInput"));
 
 export { BASE_URL, axiosInstance, formatNumber };
