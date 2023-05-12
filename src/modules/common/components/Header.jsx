@@ -5,20 +5,29 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { toggleDarkMode, toggleMobileOpen } from "@/redux/features/globalSlice";
 import { useGetMeQuery } from "@/redux/services/userApi";
-import { setCredentials } from "@/redux/features/authSlice";
+import { logOut, setCredentials } from "@/redux/features/authSlice";
+import { toast } from "react-toastify";
 
 const Header = ({ title }) => {
   const darkMode = useSelector((state) => state.global.darkMode);
   const dispatch = useDispatch();
-  const { data = {}, isLoading, isFetching } = useGetMeQuery();
+  const { data = {}, isLoading, isFetching, isError, error } = useGetMeQuery();
 
   const toggleThemeMode = () => dispatch(toggleDarkMode());
 
   useEffect(() => {
     if (data?._id) {
-      dispatch(setCredentials({ userId: data._id }));
+      dispatch(setCredentials({ userId: data._id, name: data.fullname }));
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isError && error.originalStatus === 401) {
+      toast.error(error.data);
+      dispatch(logOut());
+    }
+  }, [data]);
+
   return (
     <Suspense>
       <header className="px-5 h-[50px] border-b flex items-center justify-between">

@@ -146,7 +146,20 @@ option {
     border: 1px solid var(--border-color) !important;
     height: auto;
 }
-
+.fc-button-primary{
+    text-transform: capitalize !important;
+    font-size: 0.875rem !important;
+    border-color: inherit !important;
+    background-color: inherit !important;
+    color: inherit !important;
+}
+.fc-button-active{
+    background-color: var(--primary) !important;
+    color: white !important;
+}
+.fc-list-event td{
+    padding: 1rem !important;
+}
 
 .rdw-editor-toolbar {
     background: var(--bg) !important;

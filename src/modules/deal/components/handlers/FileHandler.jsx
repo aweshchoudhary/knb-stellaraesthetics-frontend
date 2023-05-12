@@ -14,8 +14,8 @@ import moment from "moment";
 import { BASE_URL } from "@/modules/common";
 import { DealSelect } from "@/modules/deal";
 
-const File = ({ cards }) => {
-  const [selectedData, setSelectedData] = useState(cards ? cards : []);
+const File = ({ cards = [] }) => {
+  const [selectedData, setSelectedData] = useState(cards);
   const params = useParams();
   const { id } = params;
 

@@ -26,7 +26,12 @@ import { useVerifyPipelineUserQuery } from "@/redux/services/pipelineApi";
 const Deal = () => {
   const params = useParams();
   const { id } = params;
-  const { data = {}, isLoading, isFetching, isSuccess } = useGetDealQuery(id);
+  const {
+    data = {},
+    isLoading,
+    isFetching,
+    isSuccess,
+  } = useGetDealQuery({ id });
   const [
     getContactsByDealId,
     { data: contacts, isSuccess: isContactsSuccess },
@@ -100,7 +105,12 @@ const Deal = () => {
         <DealSideBar data={data} />
         <div className="flex-1 p-5 bg-paper">
           {!checkedUser.viewOnly && (
-            <TabsContainer contacts={contacts} deal={data} dealId={id} />
+            <TabsContainer
+              contacts={contacts}
+              deal={data}
+              dealId={id}
+              pipelineId={id}
+            />
           )}
           <ActivitiesTabs cardId={id} />
           <EventTabsContainer cardId={id} />
@@ -114,7 +124,7 @@ const Deal = () => {
   );
 };
 
-const TabsContainer = ({ deal, dealId, contacts = [] }) => {
+const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
   const [currentTab, setCurrentTab] = useState(1);
   const [filteredContacts, setFilteredContacts] = useState([]);
 
@@ -153,24 +163,28 @@ const TabsContainer = ({ deal, dealId, contacts = [] }) => {
             <NoteHandler
               cards={[{ value: dealId, label: deal?.title }]}
               contacts={filteredContacts}
+              pipelineId={pipelineId}
             />
           )}
           {currentTab === 2 && (
             <ActivityHandler
               cards={[{ value: dealId, label: deal?.title }]}
               contacts={filteredContacts}
+              pipelineId={pipelineId}
             />
           )}
           {currentTab === 3 && (
             <FileHandler
               cards={[{ value: dealId, label: deal?.title }]}
               contacts={filteredContacts}
+              pipelineId={pipelineId}
             />
           )}
           {currentTab === 4 && (
             <EmailHandler
               cards={[{ value: dealId, label: deal?.title }]}
               contacts={filteredContacts}
+              pipelineId={pipelineId}
             />
           )}
         </Box>

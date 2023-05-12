@@ -14,7 +14,10 @@ export const dealApi = mainApi.injectEndpoints({
       invalidatesTags: ["deal"],
     }),
     getDeal: builder.query({
-      query: (id) => "/api/deal/get-deal/" + id,
+      query: (data) => ({
+        url: "/api/deal/get-deal/" + data.id,
+        params: data.params,
+      }),
       providesTags: ["deal"],
       transformResponse: (response) => {
         return response.data;

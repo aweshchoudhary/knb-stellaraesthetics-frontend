@@ -31,6 +31,23 @@ const UserSelect = ({ selectedData, setSelectedData }) => {
       clearTimeout(interval);
     };
   }, [query]);
+
+  useEffect(() => {
+    const preFetchData = async () => {
+      const { data } = await searchUser({ data: true });
+      if (data?.data?.length !== 0) {
+        const items = data.data.map((item) => {
+          return {
+            label: `${item.fullname} (${item.username})`,
+            value: item._id,
+          };
+        });
+        setSearchedData(items);
+      }
+    };
+    preFetchData();
+  }, []);
+
   return (
     <Suspense>
       <div className="w-full">

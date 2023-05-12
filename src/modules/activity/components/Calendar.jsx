@@ -2,6 +2,8 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import listPlugin from "@fullcalendar/list";
+
 import React, { Suspense, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import {
@@ -10,8 +12,9 @@ import {
 } from "@/redux/services/activityApi";
 import { Model } from "@/modules/common";
 import { ActivityDisplayModel, ActivityHandler } from "@/modules/deal";
+import moment from "moment";
 
-const Calendar = () => {
+const Calendar = ({ weekDaysEnabled }) => {
   const [updateActivity, { isLoading: isActivityUpdating }] =
     useUpdateActivityMutation();
 
@@ -43,11 +46,18 @@ const Calendar = () => {
     };
     await updateActivity({ id: event.id, update: updateData });
   };
-
+  console.count("working");
   function filteredActivities() {
     const filteredActivitiesArr = [];
-    const copyData = data?.data && [...data.data];
+    const copyData = data && [...data];
     copyData.forEach((event) => {
+      let today = moment();
+      let endDate = moment(event.endDateTime).format("YYYY-MM-DD");
+      let backgroundColor = "#39c900";
+      console.log(endDate);
+      if (today.isBefore(endDate, "day")) backgroundColor = "#d10000";
+      if (today.isSame(endDate, "day")) backgroundColor = "#d1c700";
+
       filteredActivitiesArr.push({
         id: event._id,
         title: event.title,
@@ -55,21 +65,21 @@ const Calendar = () => {
         end: event.endDateTime,
         type: event.type,
         markDone: event.markDone,
-        location: event.location,
-        description: event.description,
+        backgroundColor,
       });
     });
     setEvents(filteredActivitiesArr);
-    // refetch();
     setIsActivityModelOpen(false);
   }
+
+  console.log(isActivityUpdating);
   useEffect(() => {
     let isMounted = true;
-    data?.data?.length > 0 && isMounted && filteredActivities();
+    data?.length > 0 && isMounted && filteredActivities();
     return () => {
       isMounted = false;
     };
-  }, [data?.data]);
+  }, [data]);
 
   return (
     isSuccess && (
@@ -94,27 +104,31 @@ const Calendar = () => {
             setIsOpen={setIsActivityModelOpen}
           />
         </Model>
-
         <section
-          className={`py-5 w-full px-5 text-sm ${
+          className={`py-5 w-full px-2 text-sm ${
             !isLoading && !isFetching && !isActivityUpdating
               ? "opacity-100"
               : "opacity-50"
           }`}
         >
           <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              interactionPlugin,
+              listPlugin,
+            ]}
             headerToolbar={{
               left: "prev,next today",
               center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay",
+              right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
             }}
             initialView="dayGridMonth"
             editable={true}
             selectable={true}
             selectMirror={true}
             dayMaxEvents={true}
-            weekends={true}
+            weekends={weekDaysEnabled}
             events={events}
             select={handleDateSelect}
             eventContent={renderEventContent}
@@ -157,7 +171,7 @@ const EventComponent = ({ eventInfo }) => {
   }, [data]);
   return (
     <>
-      <div className="flex justify-between w-full">
+      <div className="flex justify-between w-full text-white">
         <div className="flex gap-2">
           <span>
             <Icon className="text-lg" icon={icon} />
@@ -169,7 +183,7 @@ const EventComponent = ({ eventInfo }) => {
           </span>
         </div>
         {data?.markDone ? (
-          <span className="w-[18px] h-[18px] shrink-0 rounded-full bg-primary text-white">
+          <span className="w-[18px] h-[18px] shrink-0 rounded-full bg-primary">
             <Icon icon="uil:check" className="text-lg" />
           </span>
         ) : (

@@ -9,6 +9,9 @@ import { toast } from "react-toastify";
 import { Skeleton } from "@mui/material";
 import { DealSelect } from "@/modules/deal";
 import ReactDatePicker from "react-datepicker";
+import { ContactSelect } from "@/modules/contact";
+import { UserSelect } from "@/modules/user";
+import { useSelector } from "react-redux";
 
 const activityOptions = [
   {
@@ -42,9 +45,15 @@ const ActivityHandler = ({
   setIsOpen,
   isUpdate,
   activityId,
-  cards,
+  cards = [],
+  contacts = [],
 }) => {
-  const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
+  const [selectedDeals, setSelectedDeals] = useState(cards);
+  const [selectedContacts, setSelectedContacts] = useState(contacts);
+  const [selectedUsers, setSelectedUsers] = useState(null);
+
+  const user = useSelector((state) => state.auth);
+
   const [eventInfo, setEventInfo] = useState({
     title: "Call",
     type: "call",
@@ -52,9 +61,11 @@ const ActivityHandler = ({
     endDateTime: selectedInfo ? selectedInfo.end : new Date(),
     location: "",
     description: "",
-    cardId: selectedDeals,
-    holder: "asdfasdfasdfasdfsadfsadfas",
+    dealId: [],
+    contactId: [],
+    performer: user.loggedUserId,
   });
+
   const [
     getActivityById,
     { isLoading: isActivityLoading, isFetching: isActivityFetching },
@@ -71,8 +82,14 @@ const ActivityHandler = ({
     location: false,
   });
   async function handleCreateActivity() {
-    const filterCardId = eventInfo.cardId.map((item) => item.value);
-    await createActivity({ ...eventInfo, cardId: filterCardId });
+    const filterDealId = selectedDeals.map((item) => item.value);
+    const filterContactId = selectedContacts.map((item) => item.value);
+    const newActivity = {
+      ...eventInfo,
+      dealId: filterDealId,
+      contactId: filterContactId,
+    };
+    await createActivity(newActivity);
     handleCancel();
   }
   async function handleUpdateActivity() {
@@ -95,7 +112,7 @@ const ActivityHandler = ({
       endDateTime: selectedInfo ? selectedInfo.end : new Date(),
       location: "",
       description: "",
-      cardId: selectedDeals,
+      dealId: selectedDeals,
       holder: "asdfasdfasdfasdfsadfsadfas",
       icon: "uil:phone",
     });
@@ -140,13 +157,6 @@ const ActivityHandler = ({
   return !isActivityLoading && !isActivityFetching ? (
     <Suspense>
       <div className="container p-5">
-        <div className="mb-3">
-          <DealSelect
-            selectedData={selectedDeals}
-            setSelectedData={setSelectedDeals}
-            compare={cards}
-          />
-        </div>
         <div className="my-2">
           <h2 className="mb-1">Activity Title</h2>
           <input
@@ -273,16 +283,36 @@ const ActivityHandler = ({
             </div>
           )}
         </div>
+        <div className="my-3 ">
+          <p className="mb-1">Deals</p>
+          <DealSelect
+            selectedData={selectedDeals}
+            setSelectedData={setSelectedDeals}
+            compare={cards}
+          />
+        </div>
+        <div className="my-3">
+          <p className="mb-1">Contacts</p>
+          <ContactSelect
+            selectedData={selectedContacts}
+            setSelectedData={setSelectedContacts}
+            compare={contacts}
+          />
+        </div>
         <div className="task-performer">
-          <h3 className="text-lg mb-3 font-medium">Activity Performer</h3>
-          <div className="flex items-center gap-2">
+          <p className="mb-1">Activity Performer</p>
+          <UserSelect
+            selectedData={selectedUsers}
+            setSelectedData={setSelectedUsers}
+          />
+          {/* <div className="flex items-center gap-2">
             <Icon icon="uil:user" className="text-xl" />
             <select name="task-user" id="task-user" className="input flex-1">
               <option value="a4523df">Awesh Choudhary (You)</option>
               <option value="a4523df">John Doe</option>
               <option value="a4523df">John Jane</option>
             </select>
-          </div>
+          </div> */}
         </div>
       </div>
       <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">

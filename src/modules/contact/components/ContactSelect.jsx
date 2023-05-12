@@ -49,6 +49,22 @@ const ContactSelect = ({ selectedData, setSelectedData, compare = [] }) => {
       clearTimeout(interval);
     };
   }, [query]);
+
+  useEffect(() => {
+    const preFetchData = async () => {
+      const { data } = await searchContact({ data: true });
+      if (data?.length !== 0) {
+        const items = data.map((item) => {
+          return {
+            label: item.contactPerson,
+            value: item._id,
+          };
+        });
+        setSearchedData(items);
+      }
+    };
+    preFetchData();
+  }, []);
   return (
     <Suspense>
       <div className="w-full">

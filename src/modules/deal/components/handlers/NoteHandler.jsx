@@ -6,8 +6,9 @@ import DealSelect from "../DealSelect";
 import { ContactSelect } from "@/modules/contact";
 import { RichTextEditor } from "@/modules/common";
 
-const Notes = ({ cards = [], contacts = [] }) => {
-  const [createNote, { isLoading, isSuccess }] = useCreateNoteMutation();
+const Notes = ({ cards = [], contacts = [], pipelineId }) => {
+  const [createNote, { isLoading, isSuccess, error, isError }] =
+    useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
   const [isClear, setIsClear] = useState(false);
   const [selectedDeals, setSelectedDeals] = useState(cards);
@@ -20,6 +21,7 @@ const Notes = ({ cards = [], contacts = [] }) => {
       noteBody,
       deals: selectedDealsFiltered,
       contacts: selectedContactsFiltered,
+      pipelineId,
     });
     handleClear();
   }
@@ -33,6 +35,12 @@ const Notes = ({ cards = [], contacts = [] }) => {
       toast.success("Note has been created");
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error.data.message || error.message);
+    }
+  }, [isError]);
 
   return (
     <Suspense>

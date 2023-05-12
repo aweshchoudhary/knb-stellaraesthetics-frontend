@@ -49,6 +49,21 @@ const DealSelect = ({ selectedData, setSelectedData, compare = [] }) => {
       clearTimeout(interval);
     };
   }, [query]);
+  useEffect(() => {
+    const preFetchData = async () => {
+      const { data } = await searchDeal({ data: true });
+      if (data?.data?.length !== 0) {
+        const items = data.data.map((item) => {
+          return {
+            label: item.title,
+            value: item._id,
+          };
+        });
+        setSearchedData(items);
+      }
+    };
+    preFetchData();
+  }, []);
   return (
     <Suspense>
       <div className="w-full">

@@ -2,9 +2,9 @@ import React, { Suspense, useState } from "react";
 import { RichTextEditor } from "@/modules/common";
 import { DealSelect } from "@/modules/deal";
 
-const Email = ({ cards }) => {
+const Email = ({ cards = [] }) => {
   const [emailBody, setEmailBody] = useState("");
-  const [selectedDeals, setSelectedDeals] = useState(cards ? cards : []);
+  const [selectedDeals, setSelectedDeals] = useState(cards);
   return (
     <Suspense>
       <div className="p-5">

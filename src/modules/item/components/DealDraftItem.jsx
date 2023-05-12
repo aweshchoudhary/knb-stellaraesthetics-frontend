@@ -78,30 +78,10 @@ const DraftItem = ({
   // const [tax, setTax] = useState(0);
 
   function handleAddRow() {
-    const {
-      title,
-      description,
-      rate,
-      discount,
-      tax,
-      image,
-      type,
-      _id,
-      qty,
-      qty_type,
-    } = draftItem;
     let newRow = {
-      title,
-      description,
-      image,
-      type,
-      rate,
-      qty,
-      qty_type,
-      productServiceId: _id,
+      ...draftItem,
+      productServiceId: draftItem._id,
     };
-    isDiscounted ? (newRow.discount = +discount) : null;
-    isTax ? (newRow.tax = +tax) : null;
     setRows((prev) => [...prev, newRow]);
     handleCancelDraftItem();
   }
@@ -151,7 +131,7 @@ const DraftItem = ({
       console.log(error);
     }
   }, [selectedProduct]);
-  console.log("working");
+
   useEffect(() => {
     if (selectedProduct) {
       fetchItem();

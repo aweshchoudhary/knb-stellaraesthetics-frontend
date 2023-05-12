@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Icon } from "@iconify/react";
 
 import { BASE_URL, Loader, CurrencySelect } from "@/modules/common";
@@ -108,32 +108,6 @@ const ItemTable = ({ rows = [], setRows, setTableCurrency, tableCurrency }) => {
 };
 
 const RenderRow = ({ row, index, handleRemoveRow }) => {
-  const [total, setTotal] = useState(row?.rate);
-  const [discountedRate, setDiscountedRate] = useState(0);
-
-  function handleTotalCalculate() {
-    let subtotal = row.qty > 0 ? row.rate * row.qty : row.rate;
-    if (row.discount >= 0) {
-      let discount = subtotal * (+row.discount / 100);
-      subtotal = subtotal - discount;
-      setDiscountedRate(subtotal);
-    }
-    if (row.tax > 0) handleTaxCalculate();
-    else setTotal(+subtotal);
-  }
-  function handleTaxCalculate() {
-    let subtotal = +row.discount >= 0 ? discountedRate : row.rate * row.qty;
-    let tax = subtotal * (+row.tax / 100);
-    let total = subtotal + tax;
-    setTotal(total);
-  }
-
-  useEffect(() => {
-    if (row) {
-      handleTotalCalculate();
-    }
-  }, [row]);
-
   return (
     row && (
       <tr key={index} className="border-b">
@@ -152,7 +126,7 @@ const RenderRow = ({ row, index, handleRemoveRow }) => {
         <td className="p-3">{row.qty_type}</td>
         <td className="p-3">{row.discount || "--"}</td>
         <td className="p-3">{row.tax || "--"}</td>
-        <td className="p-3">{total}</td>
+        <td className="p-3">{row.total}</td>
         <td className="p-3">
           <button
             className="btn-outlined btn-small"

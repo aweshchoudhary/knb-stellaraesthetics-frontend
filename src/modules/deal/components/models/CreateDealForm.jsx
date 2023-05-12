@@ -108,7 +108,8 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
     const createItemFn = async (data) => await createDealProductService(data);
     if (isSuccess && itemRows.length !== 0) {
       itemRows.forEach((row) => {
-        const { productServiceId, rate, qty, qty_type, discount, tax } = row;
+        const { productServiceId, rate, qty, qty_type, discount, tax, total } =
+          row;
         createItemFn({
           dealId: deal._id,
           productServiceId,
@@ -117,6 +118,7 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
           qty_type,
           discount,
           tax,
+          total,
           currency: tableCurrency?.value,
         });
       });

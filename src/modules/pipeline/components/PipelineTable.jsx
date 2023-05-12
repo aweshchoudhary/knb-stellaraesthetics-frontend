@@ -388,7 +388,7 @@ const Owner = ({ ownerId }) => {
       <>
         {data ? (
           <Link
-            to={"/user/" + data._id}
+            to={"/users/" + data._id}
             className="underline capitalize font-medium hover:text-primary"
           >
             {isLoading && isFetching ? "Loading..." : data.fullname}
