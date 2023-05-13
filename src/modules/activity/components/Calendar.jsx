@@ -46,7 +46,6 @@ const Calendar = ({ weekDaysEnabled }) => {
     };
     await updateActivity({ id: event.id, update: updateData });
   };
-  console.count("working");
   function filteredActivities() {
     const filteredActivitiesArr = [];
     const copyData = data && [...data];
@@ -54,7 +53,6 @@ const Calendar = ({ weekDaysEnabled }) => {
       let today = moment();
       let endDate = moment(event.endDateTime).format("YYYY-MM-DD");
       let backgroundColor = "#39c900";
-      console.log(endDate);
       if (today.isBefore(endDate, "day")) backgroundColor = "#d10000";
       if (today.isSame(endDate, "day")) backgroundColor = "#d1c700";
 

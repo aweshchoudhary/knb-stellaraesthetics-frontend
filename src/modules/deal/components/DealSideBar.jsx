@@ -11,7 +11,6 @@ import {
   BASE_URL,
 } from "@/modules/common";
 
-import { useGetContactQuery } from "@/redux/services/contactApi";
 import { useGetDealProductServiceQuery } from "@/redux/services/dealProductService";
 
 const DealSideBar = ({ data }) => {
@@ -22,9 +21,9 @@ const DealSideBar = ({ data }) => {
           <Accordian title={"Contacts"}>
             <AccordianBody>
               {data?.contacts?.length
-                ? data.contacts.map((client, i) => {
+                ? data.contacts.map((contact, i) => {
                     return (
-                      <ContactAccordian key={i} data={data} clientId={client} />
+                      <ContactAccordian key={i} data={data} contact={contact} />
                     );
                   })
                 : null}
@@ -69,26 +68,17 @@ const DealSideBar = ({ data }) => {
   );
 };
 
-const ContactAccordian = ({ clientId }) => {
-  const {
-    data: client,
-    isLoading,
-    isFetching,
-    isSuccess,
-  } = useGetContactQuery(clientId);
-
+const ContactAccordian = ({ contact }) => {
   return (
-    !isLoading &&
-    !isFetching &&
-    isSuccess && (
-      <Link to={"/contacts/" + client._id} className="block border p-2 mb-1">
+    contact && (
+      <Link to={"/contacts/" + contact._id} className="block border p-2 mb-1">
         <div className="expected-close-date flex items-center gap-4 mb-2">
           <Icon icon="uil:user" className="text-2xl" />
-          <Link to={"/contacts/" + client._id}>{client.contactPerson}</Link>
+          <Link to={"/contacts/" + contact._id}>{contact.contactPerson}</Link>
         </div>
         <div className="expected-close-date flex items-center gap-4">
           <Icon icon="uil:building" className="text-2xl" />
-          <p>{client.company}</p>
+          <p>{contact.company}</p>
         </div>
       </Link>
     )

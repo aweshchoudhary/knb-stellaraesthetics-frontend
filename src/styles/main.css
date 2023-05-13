@@ -4,6 +4,7 @@
 html.darkMode:root {
     --primary: #571168;
     --text-color: #ffffff;
+    --text-dark: #9f9f9f;
     --secondary: #cc0000;
     --paper: rgb(59, 59, 59);
     --background: #212121;
@@ -14,6 +15,7 @@ html:root {
     --primary: #571168;
     --secondary: #cc0000;
     --text-color: #000000;
+    --text-dark: #747474;
     --paper: rgb(236, 236, 236);
     --background: #fff;
     --border-color: rgb(218, 218, 218);

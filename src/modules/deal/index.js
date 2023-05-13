@@ -7,7 +7,7 @@ const DealSelect = lazy(() => import("./components/DealSelect"));
 const DealSideBar = lazy(() => import("./components/DealSideBar"));
 
 const ActivitiesTabs = lazy(() =>
-  import("./components/handlers/ActivitiesTabs")
+  import("./components/handlers/FocusActivitiesTabs")
 );
 const ActivityDisplayModel = lazy(() =>
   import("./components/handlers/ActivityDisplayModel")
@@ -17,7 +17,7 @@ const ActivityHandler = lazy(() =>
 );
 const EmailHandler = lazy(() => import("./components/handlers/EmailHandler"));
 const EventTabsContainer = lazy(() =>
-  import("./components/handlers/EventTabsContainer")
+  import("./components/history/HistoryTabsContainer")
 );
 const FileHandler = lazy(() => import("./components/handlers/FileHandler"));
 const NoteHandler = lazy(() => import("./components/handlers/NoteHandler"));

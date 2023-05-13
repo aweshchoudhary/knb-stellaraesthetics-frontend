@@ -5,14 +5,16 @@ import { toast } from "react-toastify";
 import DealSelect from "../DealSelect";
 import { ContactSelect } from "@/modules/contact";
 import { RichTextEditor } from "@/modules/common";
+import { useSelector } from "react-redux";
 
-const Notes = ({ cards = [], contacts = [], pipelineId }) => {
+const Notes = ({ cards = [], contacts = [] }) => {
   const [createNote, { isLoading, isSuccess, error, isError }] =
     useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
   const [isClear, setIsClear] = useState(false);
   const [selectedDeals, setSelectedDeals] = useState(cards);
   const [selectedContacts, setSelectedContacts] = useState(contacts);
+  const loggedUserId = useSelector((state) => state.auth.loggedUserId);
 
   async function handleCreateNote() {
     const selectedContactsFiltered = selectedContacts.map((item) => item.value);
@@ -21,9 +23,8 @@ const Notes = ({ cards = [], contacts = [], pipelineId }) => {
       noteBody,
       deals: selectedDealsFiltered,
       contacts: selectedContactsFiltered,
-      pipelineId,
+      creator: loggedUserId,
     });
-    handleClear();
   }
   function handleClear() {
     setNoteBody("");
@@ -33,6 +34,7 @@ const Notes = ({ cards = [], contacts = [], pipelineId }) => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Note has been created");
+      handleClear();
     }
   }, [isSuccess]);
 
@@ -41,7 +43,6 @@ const Notes = ({ cards = [], contacts = [], pipelineId }) => {
       toast.error(error.data.message || error.message);
     }
   }, [isError]);
-
   return (
     <Suspense>
       <div className="px-5 py-3">
@@ -81,7 +82,7 @@ const Notes = ({ cards = [], contacts = [], pipelineId }) => {
           onClick={handleCreateNote}
           disabled={isLoading}
         >
-          {isLoading ? "Loading..." : "add note"}
+          {isLoading ? "Loading..." : "Create note"}
         </button>
       </footer>
     </Suspense>

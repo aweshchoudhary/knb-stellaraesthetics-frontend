@@ -10,7 +10,6 @@ import { Skeleton } from "@mui/material";
 import { DealSelect } from "@/modules/deal";
 import ReactDatePicker from "react-datepicker";
 import { ContactSelect } from "@/modules/contact";
-import { UserSelect } from "@/modules/user";
 import { useSelector } from "react-redux";
 
 const activityOptions = [
@@ -50,7 +49,6 @@ const ActivityHandler = ({
 }) => {
   const [selectedDeals, setSelectedDeals] = useState(cards);
   const [selectedContacts, setSelectedContacts] = useState(contacts);
-  const [selectedUsers, setSelectedUsers] = useState(null);
 
   const user = useSelector((state) => state.auth);
 
@@ -61,8 +59,8 @@ const ActivityHandler = ({
     endDateTime: selectedInfo ? selectedInfo.end : new Date(),
     location: "",
     description: "",
-    dealId: [],
-    contactId: [],
+    deals: [],
+    contacts: [],
     performer: user.loggedUserId,
   });
 
@@ -70,8 +68,10 @@ const ActivityHandler = ({
     getActivityById,
     { isLoading: isActivityLoading, isFetching: isActivityFetching },
   ] = useLazyGetActivityQuery();
+
   const [createActivity, { isLoading, isCreateSuccess }] =
     useCreateActivityMutation();
+
   const [
     updateActivity,
     { isLoading: isUpdating, isSuccess: isUpdateSuccess },
@@ -81,23 +81,22 @@ const ActivityHandler = ({
     description: false,
     location: false,
   });
+
   async function handleCreateActivity() {
     const filterDealId = selectedDeals.map((item) => item.value);
     const filterContactId = selectedContacts.map((item) => item.value);
     const newActivity = {
       ...eventInfo,
-      dealId: filterDealId,
-      contactId: filterContactId,
+      deals: filterDealId,
+      contacts: filterContactId,
     };
     await createActivity(newActivity);
-    handleCancel();
   }
   async function handleUpdateActivity() {
     await updateActivity({
       id: activityId,
       update: eventInfo,
     });
-    handleCancel();
   }
   function setAdditionalFieldsFn(name) {
     setAdditionalFields((prev) => {
@@ -113,11 +112,16 @@ const ActivityHandler = ({
       location: "",
       description: "",
       dealId: selectedDeals,
-      holder: "asdfasdfasdfasdfsadfsadfas",
-      icon: "uil:phone",
+      performer: "",
     });
+    setAdditionalFields({
+      description: false,
+      location: false,
+    });
+
     setIsOpen && setIsOpen(false);
   }
+
   function fillEventInfo(name, value) {
     setEventInfo((prev) => ({ ...prev, [name]: value }));
   }
@@ -147,15 +151,20 @@ const ActivityHandler = ({
   }, [activityId, isUpdate]);
 
   useEffect(() => {
-    if (isCreateSuccess) toast.success("Activity has been created");
+    if (isCreateSuccess) {
+      toast.success("Activity has been created");
+      handleCancel();
+    }
   }, [isCreateSuccess]);
 
   useEffect(() => {
-    if (isUpdateSuccess) toast.success("Activity has been updated");
+    if (isUpdateSuccess) {
+      toast.success("Activity has been updated");
+      handleCancel();
+    }
   }, [isUpdateSuccess]);
-
   return !isActivityLoading && !isActivityFetching ? (
-    <Suspense>
+    <Suspense fallback={<SkeletonLoader />}>
       <div className="container p-5">
         <div className="my-2">
           <h2 className="mb-1">Activity Title</h2>
@@ -301,18 +310,7 @@ const ActivityHandler = ({
         </div>
         <div className="task-performer">
           <p className="mb-1">Activity Performer</p>
-          <UserSelect
-            selectedData={selectedUsers}
-            setSelectedData={setSelectedUsers}
-          />
-          {/* <div className="flex items-center gap-2">
-            <Icon icon="uil:user" className="text-xl" />
-            <select name="task-user" id="task-user" className="input flex-1">
-              <option value="a4523df">Awesh Choudhary (You)</option>
-              <option value="a4523df">John Doe</option>
-              <option value="a4523df">John Jane</option>
-            </select>
-          </div> */}
+          <div className="input">{user.loggedUserName}</div>
         </div>
       </div>
       <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">
@@ -343,6 +341,12 @@ const ActivityHandler = ({
       </footer>
     </Suspense>
   ) : (
+    <SkeletonLoader />
+  );
+};
+
+const SkeletonLoader = () => {
+  return (
     <div className="p-5">
       <Skeleton
         variant="rectangular"

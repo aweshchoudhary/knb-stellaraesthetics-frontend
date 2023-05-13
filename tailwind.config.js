@@ -8,6 +8,7 @@ export default {
         paper: "var(--paper)",
         bg: "var(--background)",
         textColor: "var(--text-color)",
+        textDark: "var(--text-dark)",
         borderColor: "var(--border-color)",
       },
     },

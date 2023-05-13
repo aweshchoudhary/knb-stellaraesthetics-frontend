@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { Icon } from "@iconify/react";
 import moment from "moment";
 import { Loader } from "@/modules/common";
@@ -25,15 +25,15 @@ const FocusActivities = ({ dealId }) => {
 
 const Activites = ({ dealId }) => {
   const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
-    dataFilters: { dealId },
+    filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
     data: true,
   });
 
   return !isLoading && !isFetching && isSuccess ? (
     <div>
       <ul>
-        {data?.data?.length ? (
-          data?.data?.map((activity, index) => {
+        {data?.length ? (
+          data?.map((activity, index) => {
             return (
               <li key={index}>
                 <ActivityDeal data={activity} />
@@ -82,7 +82,7 @@ const ActivityDeal = ({ data }) => {
     await updateActivity({
       id: data._id,
       update: {
-        markDone: true,
+        completed: new Date(),
       },
     });
   }
@@ -111,24 +111,53 @@ const ActivityDeal = ({ data }) => {
     }
   }, [isUpdateError]);
 
+  const ActivityStatus = ({ startDateTime, endDateTime }) => {
+    const [status, setStatus] = useState("none");
+
+    useEffect(() => {
+      let today = moment();
+      let endDate = moment(endDateTime).format("YYYY-MM-DD");
+      let startDate = moment(startDateTime).format("YYYY-MM-DD");
+
+      if (today.isBefore(endDate, "day")) setStatus("none");
+      if (today.isBefore(endDate, "day") && today.isAfter(startDate, "day"))
+        setStatus("pending");
+      if (today.isAfter(endDate, "day")) setStatus("overdue");
+    }, [startDateTime, endDateTime]);
+    return (
+      <>
+        {status === "overdue" && (
+          <p className="text-white bg-red-600 py-1 px-2 rounded-full">
+            overdue
+          </p>
+        )}
+        {status === "pending" && (
+          <p className="text-white bg-yellow-600 py-1 px-2 rounded-full">
+            pending
+          </p>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className="flex">
       <div className="w-[60px] flex flex-col items-center">
-        <span className="w-[40px] h-[40px] rounded-full bg-bg flex items-center justify-center">
+        <span className="w-[40px] h-[40px] bg-bg flex items-center justify-center">
           <Icon icon={"material-symbols:sticky-note-2-outline"} />
         </span>
-        <div className="line border-l-2 flex-1"></div>
       </div>
       <div className="bg-bg mb-2 p-3 text-sm flex-1">
-        <header className="flex items-center justify-between ">
+        <header className="flex justify-between ">
           <div className="flex gap-2 items-center">
             <button
-              className="w-[15px] h-[15px] rounded-full border-2 hover:border-textColor grow-0 shrink-0"
+              className="w-[20px] h-[20px] rounded-full border-2 hover:border-textColor grow-0 shrink-0"
               onClick={handleMarkDoneActivity}
               title="Mark Done"
             ></button>
-            <span className="capitalize font-medium text-lg text-textColor">
-              {data.title}
+            <span className="capitalize font-medium text-textColor">
+              {data.title} On{" "}
+              {moment(data.startDateTime).format("DD-MM-YYYY HH:mm:ss")}
             </span>
           </div>
           <div className="flex gap-1">
@@ -147,18 +176,20 @@ const ActivityDeal = ({ data }) => {
             </button>
           </div>
         </header>
-        <div className="mt-2">
-          {data.description && <div className="mb-2">{data.description}</div>}
-          <div className="flex gap-3 text-sm ">
-            <span>{moment(data.endDate).fromNow()}</span>
-            <span>Awesh Choudhary</span>
-            {data.location && (
-              <span className="flex items-center gap-1">
-                <Icon icon="material-symbols:location-on" />
-                {data.location}
-              </span>
-            )}
-          </div>
+        {data.description && <div className="mb-2">{data.description}</div>}
+        <div className="mt-1 flex items-center gap-3 text-xs text-textDark">
+          <ActivityStatus
+            startDateTime={data.startDateTime}
+            endDateTime={data.endDateTime}
+          />
+          <span>{moment(data.endDateTime).fromNow()}</span>
+          <span>Awesh Choudhary</span>
+          {data.location && (
+            <span className="flex items-center gap-1">
+              <Icon icon="material-symbols:location-on" />
+              {data.location}
+            </span>
+          )}
         </div>
       </div>
     </div>

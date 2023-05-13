@@ -11,7 +11,10 @@ export const noteApi = mainApi.injectEndpoints({
       invalidatesTags: ["note"],
     }),
     getNote: builder.query({
-      query: (id) => "/api/note/get-note/" + id,
+      query: (data) => ({
+        url: "/api/note/get-note/" + data.id,
+        params: data.params,
+      }),
       providesTags: ["note"],
       transformResponse: (response) => {
         return response.data;
@@ -51,4 +54,6 @@ export const {
   useCreateNoteMutation,
   useDeleteNoteMutation,
   useGetNotesQuery,
+  useLazyGetNotesQuery,
+  useLazyGetNoteQuery,
 } = noteApi;

@@ -36,4 +36,5 @@ export const {
   useAddFileMutation,
   useDownloadFileQuery,
   useDeleteFileMutation,
+  useLazyGetAllFileInfoQuery,
 } = fileApi;

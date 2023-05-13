@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Tab, Tabs } from "@mui/material";
 
@@ -20,8 +20,8 @@ import {
   EmailHandler,
 } from "@/modules/deal";
 
-import { useLazyGetContactsQuery } from "@/redux/services/contactApi";
 import { useVerifyPipelineUserQuery } from "@/redux/services/pipelineApi";
+import { Icon } from "@iconify/react";
 
 const Deal = () => {
   const params = useParams();
@@ -31,11 +31,8 @@ const Deal = () => {
     isLoading,
     isFetching,
     isSuccess,
-  } = useGetDealQuery({ id });
-  const [
-    getContactsByDealId,
-    { data: contacts, isSuccess: isContactsSuccess },
-  ] = useLazyGetContactsQuery(id);
+  } = useGetDealQuery({ id, params: { populate: "contacts" } });
+
   const [updateDeal, { isLoading: isDealUpdating }] = useUpdateDealMutation();
   const [deleteDeal, { isLoading: isDealDeleting }] = useDeleteDealMutation();
 
@@ -54,23 +51,18 @@ const Deal = () => {
     navigate(-1);
   }
 
-  useEffect(() => {
-    const fetchContacts = async () =>
-      await getContactsByDealId({
-        filters: JSON.stringify([{ id: "_id", value: { $in: data.contacts } }]),
-        data: true,
-      });
-    if (data?.contacts?.length) {
-      fetchContacts();
-    }
-  }, [data?.contacts]);
-
-  return !isLoading && !isFetching && isSuccess && isContactsSuccess ? (
+  return !isLoading && !isFetching && isSuccess ? (
     <>
       <Header title={"Deal"} />
       <header className="header border-b border-collapse px-5 py-3 h-[120px]/">
         <div className="flex items-center justify-between mb-3">
-          <div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-4xl hover:text-primary"
+            >
+              <Icon icon="uil:arrow-left" />
+            </button>
             <h1 className="text-2xl font-semibold">{data.title}</h1>
           </div>
           {!checkedUser.viewOnly && (
@@ -106,14 +98,14 @@ const Deal = () => {
         <div className="flex-1 p-5 bg-paper">
           {!checkedUser.viewOnly && (
             <TabsContainer
-              contacts={contacts}
+              contacts={data.contacts}
               deal={data}
               dealId={id}
               pipelineId={id}
             />
           )}
-          <ActivitiesTabs cardId={id} />
-          <EventTabsContainer cardId={id} />
+          <ActivitiesTabs dealId={data._id} />
+          <EventTabsContainer dealId={data._id} />
         </div>
       </section>
     </>
@@ -126,21 +118,10 @@ const Deal = () => {
 
 const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
   const [currentTab, setCurrentTab] = useState(1);
-  const [filteredContacts, setFilteredContacts] = useState([]);
 
   function handleTabChange(event, newTab) {
     setCurrentTab(newTab);
   }
-
-  useEffect(() => {
-    if (contacts.length) {
-      const mapedContacts = contacts.map((contact) => ({
-        label: contact.contactPerson,
-        value: contact._id,
-      }));
-      setFilteredContacts(mapedContacts);
-    }
-  }, [contacts]);
   return (
     <Suspense>
       <Box className="bg-bg border-b">
@@ -162,28 +143,40 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
           {currentTab === 1 && (
             <NoteHandler
               cards={[{ value: dealId, label: deal?.title }]}
-              contacts={filteredContacts}
+              contacts={contacts.map((contact) => ({
+                label: contact.contactPerson,
+                value: contact._id,
+              }))}
               pipelineId={pipelineId}
             />
           )}
           {currentTab === 2 && (
             <ActivityHandler
               cards={[{ value: dealId, label: deal?.title }]}
-              contacts={filteredContacts}
+              contacts={contacts.map((contact) => ({
+                label: contact.contactPerson,
+                value: contact._id,
+              }))}
               pipelineId={pipelineId}
             />
           )}
           {currentTab === 3 && (
             <FileHandler
               cards={[{ value: dealId, label: deal?.title }]}
-              contacts={filteredContacts}
+              contacts={contacts.map((contact) => ({
+                label: contact.contactPerson,
+                value: contact._id,
+              }))}
               pipelineId={pipelineId}
             />
           )}
           {currentTab === 4 && (
             <EmailHandler
               cards={[{ value: dealId, label: deal?.title }]}
-              contacts={filteredContacts}
+              contacts={contacts.map((contact) => ({
+                label: contact.contactPerson,
+                value: contact._id,
+              }))}
               pipelineId={pipelineId}
             />
           )}
