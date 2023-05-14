@@ -9,6 +9,7 @@ import {
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { ActivityDisplayModel } from "@/modules/deal";
+import { Tooltip } from "@mui/material";
 
 const FocusActivities = ({ dealId }) => {
   return (
@@ -25,7 +26,10 @@ const FocusActivities = ({ dealId }) => {
 
 const Activites = ({ dealId }) => {
   const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
-    filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+    filters: JSON.stringify([
+      { id: "deals", value: { $in: [dealId] } },
+      { id: "completed_on", value: null },
+    ]),
     data: true,
     populate: "performer",
   });
@@ -67,7 +71,7 @@ const ActivityDeal = ({ data }) => {
     await updateActivity({
       id: data._id,
       update: {
-        completed: new Date(),
+        completed_on: new Date(),
       },
     });
   }
@@ -129,11 +133,12 @@ const ActivityDeal = ({ data }) => {
           </span>
         </div>
         <div className="bg-bg mb-2 p-3 text-sm flex flex-1 gap-2">
-          <button
-            className="w-[20px] h-[20px] rounded-full border-2 hover:border-textColor grow-0 shrink-0"
-            onClick={handleMarkDoneActivity}
-            title="Mark Done"
-          ></button>
+          <Tooltip title="Mark As Completed">
+            <button
+              className="w-[20px] h-[20px] rounded-full border-2 hover:border-textColor grow-0 shrink-0"
+              onClick={handleMarkDoneActivity}
+            ></button>
+          </Tooltip>
           <button
             onClick={() => setIsDisplayModelOpen(true)}
             className="block text-left"

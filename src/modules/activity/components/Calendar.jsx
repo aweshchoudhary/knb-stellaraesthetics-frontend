@@ -11,7 +11,8 @@ import {
   useUpdateActivityMutation,
 } from "@/redux/services/activityApi";
 import { Model } from "@/modules/common";
-import { ActivityDisplayModel, ActivityHandler } from "@/modules/deal";
+import { ActivityHandler } from "@/modules/deal";
+import { ActivityDisplayModel } from "@/modules/activity";
 import moment from "moment";
 
 const Calendar = ({ weekDaysEnabled }) => {
@@ -46,15 +47,24 @@ const Calendar = ({ weekDaysEnabled }) => {
     };
     await updateActivity({ id: event.id, update: updateData });
   };
+
   function filteredActivities() {
     const filteredActivitiesArr = [];
     const copyData = data && [...data];
+
     copyData.forEach((event) => {
       let today = moment();
+      let startDate = moment(event.startDateTime).format("YYYY-MM-DD");
       let endDate = moment(event.endDateTime).format("YYYY-MM-DD");
-      let backgroundColor = "#39c900";
-      if (today.isBefore(endDate, "day")) backgroundColor = "#d10000";
-      if (today.isSame(endDate, "day")) backgroundColor = "#d1c700";
+      let backgroundColor;
+
+      if (today.isAfter(endDate, "day")) backgroundColor = "bg-red-600"; // Red Color
+      if (today.isBefore(startDate, "day")) backgroundColor = "bg-paper"; // Gray
+
+      if (today.isAfter(startDate, "day") && today.isBefore(endDate, "day"))
+        backgroundColor = "bg-yellow-600"; // Yellow Color
+
+      if (event.completed_on) backgroundColor = "bg-primary";
 
       filteredActivitiesArr.push({
         id: event._id,
@@ -62,15 +72,15 @@ const Calendar = ({ weekDaysEnabled }) => {
         start: event.startDateTime,
         end: event.endDateTime,
         type: event.type,
-        markDone: event.markDone,
+        completed_on: event.completed_on,
         backgroundColor,
       });
     });
     setEvents(filteredActivitiesArr);
     setIsActivityModelOpen(false);
+    console.log(filteredActivitiesArr);
   }
 
-  console.log(isActivityUpdating);
   useEffect(() => {
     let isMounted = true;
     data?.length > 0 && isMounted && filteredActivities();
@@ -169,7 +179,12 @@ const EventComponent = ({ eventInfo }) => {
   }, [data]);
   return (
     <>
-      <div className="flex justify-between w-full text-white">
+      <div
+        className={
+          "flex justify-between w-full text-inherit px-2 py-1 " +
+          eventInfo?.backgroundColor
+        }
+      >
         <div className="flex gap-2">
           <span>
             <Icon className="text-lg" icon={icon} />
@@ -180,7 +195,7 @@ const EventComponent = ({ eventInfo }) => {
               : eventInfo.event.title}
           </span>
         </div>
-        {data?.markDone ? (
+        {data?.completed_on ? (
           <span className="w-[18px] h-[18px] shrink-0 rounded-full bg-primary">
             <Icon icon="uil:check" className="text-lg" />
           </span>

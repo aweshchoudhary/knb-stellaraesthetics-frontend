@@ -13,6 +13,7 @@ import moment from "moment";
 
 import { BASE_URL } from "@/modules/common";
 import { DealSelect } from "@/modules/deal";
+import { useSelector } from "react-redux";
 
 const File = ({ cards = [] }) => {
   const [selectedData, setSelectedData] = useState(cards);
@@ -25,16 +26,22 @@ const File = ({ cards = [] }) => {
     isFetching,
     isSuccess,
   } = useGetAllFileInfoQuery(id);
+
   const fileInputRef = useRef();
+
   const [uploadFile, { isLoading: isUploading, isSuccess: isUploadSuccess }] =
     useAddFileMutation();
+
   const [deleteFile, { isSuccess: isDeleteSuccess }] = useDeleteFileMutation();
 
+  const loggedUserId = useSelector((state) => state.auth.loggedUserId);
+
   async function handleUploadFile(file) {
-    const cardIds = selectedData.map((i) => i.value);
+    const dealIds = selectedData.map((i) => i.value);
     const newFormData = new FormData();
     newFormData.append("file", file);
-    newFormData.append("cardId", cardIds);
+    newFormData.append("dealId", dealIds);
+    newFormData.append("uploader", loggedUserId);
     await uploadFile(newFormData);
   }
   async function handleDeleteFile(fileId) {

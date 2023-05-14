@@ -12,8 +12,8 @@ const FileHistoryTab = ({ dealId }) => {
     const fetchHistories = async () => {
       setLoading(true);
       const fileData = await getFiles({
-        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
-        data: true,
+        cardId: dealId,
+        params: { populate: "uploader" },
       });
       fileData.data.length !== 0 && setFileHistory(fileData.data);
       setLoading(false);

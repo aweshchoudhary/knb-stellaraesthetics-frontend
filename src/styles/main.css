@@ -133,20 +133,21 @@ option {
     border: none !important;
 }
 
-.fc-h-event {
-    @apply py-1 px-2 hover:bg-paper gap-2;
-    /* background-color: var(--background);
-  border: none !important; */
+.fc-event-draggable{
+    color: white !important;
 }
 
-.fc-event {
-    @apply py-1 px-2 hover:bg-paper gap-2;
+.fc-list-day-cushion{
+    background-color: var(--background) !important;
 }
 
 .fc-event {
     background-color: var(--background);
     border: 1px solid var(--border-color) !important;
     height: auto;
+}
+.fc-daygrid-dot-event{
+    padding: 0 !important;
 }
 .fc-button-primary{
     text-transform: capitalize !important;
@@ -161,6 +162,9 @@ option {
 }
 .fc-list-event td{
     padding: 1rem !important;
+}
+.fc-list-event:hover{
+    background-color: inherit !important;
 }
 
 .rdw-editor-toolbar {

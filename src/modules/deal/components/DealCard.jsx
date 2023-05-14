@@ -7,6 +7,7 @@ import { Skeleton } from "@mui/material";
 
 import { formatNumber } from "@/modules/common";
 import { ActivityStatus } from "@/modules/activity";
+import { Icon } from "@iconify/react";
 
 const Deal = ({ deal }) => {
   const Loader = () => (
@@ -52,6 +53,12 @@ const Deal = ({ deal }) => {
                 currency={deal.currency}
               />
             </div>
+            <Tooltip title={deal?.items?.length + " products"}>
+              <div className="flex items-center gap-2">
+                <Icon icon="mdi:box-outline" className="text-base" />
+                {deal?.items?.length}
+              </div>
+            </Tooltip>
           </div>
         </Link>
       ) : (

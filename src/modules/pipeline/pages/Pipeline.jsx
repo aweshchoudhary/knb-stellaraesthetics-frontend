@@ -18,7 +18,6 @@ const Pipeline = () => {
 
   const { data: checkedUser = { viewOnly: true, userRole: "assignee" } } =
     useVerifyPipelineUserQuery(id);
-  console.log(checkedUser);
   return (
     <>
       <Header title={"Pipeline"} />

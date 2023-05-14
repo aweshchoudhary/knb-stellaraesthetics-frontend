@@ -11,7 +11,10 @@ export const fileApi = mainApi.injectEndpoints({
       invalidatesTags: ["file"],
     }),
     getAllFileInfo: builder.query({
-      query: (cardId) => "/api/file/get-fileinfos/" + cardId,
+      query: (data) => ({
+        url: "/api/file/get-fileinfos/" + data.cardId,
+        params: data.params,
+      }),
       providesTags: ["file"],
       transformResponse: (res) => {
         return res.data;

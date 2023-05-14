@@ -14,6 +14,7 @@ const ActvityHistoryTab = ({ dealId }) => {
       const activityData = await getActivities({
         filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
         data: true,
+        populate: "performer",
       });
       activityData.data.length !== 0 && setNoteHistory(activityData.data);
       setLoading(false);

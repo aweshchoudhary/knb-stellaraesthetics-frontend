@@ -12,15 +12,24 @@ const ActivityPanel = ({ data }) => {
   const [updateActivity] = useUpdateActivityMutation();
   const [deleteActivity] = useDeleteActivityMutation();
   const custom = data?.event?.extendedProps;
-  const [completed, setCompleted] = useState(custom.completed);
+  const [completed_on, setCompletedOn] = useState(
+    custom.completed_on ? true : false
+  );
   const [isActivityUpdateModelOpen, setIsActivityUpdateModelOpen] =
     useState(false);
   async function handleMarkAsDone() {
     await updateActivity({
       id: data.event.id,
-      update: { completed: new Date() },
+      update: { completed_on: new Date() },
     });
-    setCompleted(new Date());
+    setCompletedOn(true);
+  }
+  async function handleMarkAsUnDone() {
+    await updateActivity({
+      id: data.event.id,
+      update: { completed_on: null },
+    });
+    setCompletedOn(true);
   }
   async function handleDeleteActivity() {
     await deleteActivity(data.event.id);
@@ -81,8 +90,11 @@ const ActivityPanel = ({ data }) => {
         )}
       </ul>
       <footer className="px-5 py-2 border-t flex justify-between">
-        <button className="btn-outlined btn-small" onClick={handleMarkAsDone}>
-          {completed ? "Completed" : "Complete"}
+        <button
+          className="btn-outlined btn-small"
+          onClick={completed_on ? handleMarkAsUnDone : handleMarkAsDone}
+        >
+          {completed_on ? "Undo" : "Complete"}
         </button>
         <div className="flex gap-2 justify-end">
           <button onClick={handleDeleteActivity} className="btn-outlined">

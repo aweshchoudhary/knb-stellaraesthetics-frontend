@@ -6,6 +6,7 @@ import ActivityCard from "../activity/ActivityCard";
 import FileCard from "../file/FileCard";
 import EmailCard from "../email/EmailCard";
 import { Loader } from "@/modules/common";
+import { useLazyGetAllFileInfoQuery } from "@/redux/services/fileApi";
 
 const AllHistory = ({ dealId }) => {
   const [allHistory, setAllHistory] = useState([]);
@@ -13,6 +14,7 @@ const AllHistory = ({ dealId }) => {
 
   const [getActivities] = useLazyGetActivitiesQuery();
   const [getNotes] = useLazyGetNotesQuery();
+  const [getFiles] = useLazyGetAllFileInfoQuery();
 
   useEffect(() => {
     let isMounted = true;
@@ -21,6 +23,7 @@ const AllHistory = ({ dealId }) => {
       const noteData = await getNotes({
         filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
         data: true,
+        populate: "creator",
       });
       noteData.data.length !== 0 &&
         noteData.data.forEach((note) => {
@@ -30,10 +33,19 @@ const AllHistory = ({ dealId }) => {
       const activityData = await getActivities({
         filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
         data: true,
+        populate: "performer",
       });
       activityData.data.length !== 0 &&
         activityData.data.forEach((activity) => {
           setAllHistory((prev) => [...prev, { ...activity, type: "activity" }]);
+        });
+      const fileData = await getFiles({
+        cardId: dealId,
+        params: { populate: "uploader" },
+      });
+      fileData.data.length !== 0 &&
+        fileData.data.forEach((file) => {
+          setAllHistory((prev) => [...prev, { ...file, type: "file" }]);
         });
       setLoading(false);
     };
@@ -51,7 +63,7 @@ const AllHistory = ({ dealId }) => {
     <ul>
       {allHistory.length !== 0 ? (
         allHistory.map((history, index) => {
-          return (
+          return(
             <li key={index}>
               {history.type === "note" && <NoteCard note={history} />}
               {history.type === "activity" && (

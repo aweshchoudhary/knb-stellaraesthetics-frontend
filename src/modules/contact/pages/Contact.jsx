@@ -15,6 +15,7 @@ import {
   NoteHandler,
   FileHandler,
   EmailHandler,
+  ActivityDisplayModel,
 } from "@/modules/deal";
 
 import moment from "moment";
@@ -31,7 +32,11 @@ const Contact = () => {
   const params = useParams();
   const { id } = params;
   const { data: loggedUser } = useGetMeQuery();
+
   const [isCreateDealModelOpen, setIsCreateDealModeOpen] = useState(false);
+  const [isActivityDisplayModelOpen, setIsActivityDisplayModelOpen] =
+    useState(false);
+  const [currentActivity, setCurrentActivity] = useState({});
 
   const {
     data: activities,
@@ -96,6 +101,16 @@ const Contact = () => {
             />
           </Model>
         )}
+        <Model
+          title="Activity"
+          isOpen={isActivityDisplayModelOpen}
+          setIsOpen={setIsActivityDisplayModelOpen}
+        >
+          <ActivityDisplayModel
+            data={currentActivity}
+            setIsOpen={setIsActivityDisplayModelOpen}
+          />
+        </Model>
       </Suspense>
       {!isLoading && !isFetching && isSuccess ? (
         <section className="h-full">
@@ -190,25 +205,31 @@ const Contact = () => {
                   {activities?.length !== 0 ? (
                     activities?.map((activity, index) => {
                       return (
-                        <div
-                          key={index}
-                          className="w-full p-2 border flex justify-between items-center text-sm"
-                        >
-                          <div className="flex flex-1 gap-2 items-center">
-                            <Icon
-                              icon={"mdi:calendar-task"}
-                              className="text-xl"
-                            />
-                            <Typography noWrap className="w-[100px] text-xs">
-                              {activity.title}
-                            </Typography>
-                          </div>
-                          <div className="shrink-0">
-                            {moment(activity.startDateTime).format(
-                              "Do MMMM YYYY"
-                            )}
-                          </div>
-                        </div>
+                        <>
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setCurrentActivity(activity);
+                              setIsActivityDisplayModelOpen(true);
+                            }}
+                            className="w-full p-2 text-left border flex justify-between items-center text-sm"
+                          >
+                            <div className="flex flex-1 gap-2 items-center">
+                              <Icon
+                                icon={"mdi:calendar-task"}
+                                className="text-xl"
+                              />
+                              <Typography noWrap className="w-[100px] text-xs">
+                                {activity.title}
+                              </Typography>
+                            </div>
+                            <div className="shrink-0">
+                              {moment(activity.startDateTime).format(
+                                "Do MMMM YYYY"
+                              )}
+                            </div>
+                          </button>
+                        </>
                       );
                     })
                   ) : (

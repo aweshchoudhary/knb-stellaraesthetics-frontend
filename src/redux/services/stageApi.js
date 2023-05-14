@@ -28,7 +28,7 @@ export const stageApi = mainApi.injectEndpoints({
       query: (data) => ({
         url: "/api/stage/update/" + data.stageId,
         method: "PUT",
-        body: { name: data.name },
+        body: data.update,
       }),
       invalidatesTags: ["stage"],
     }),

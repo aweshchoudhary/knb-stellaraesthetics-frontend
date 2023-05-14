@@ -28,19 +28,19 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
     data && (
       <>
         <section className="p-10 pb-0">
-          <h2 className="w-full text-lg font-medium flex items-center gap-2">
+          <h2 className="w-full text-lg font-medium flex items-center gap-2 mb-5">
             <Icon icon="ic:phone" className="text-2xl" />
             <span>{data.title}</span>
           </h2>
-          <p className="my-4 input">{data.description}</p>
+          {data.description && <p className="mb-5 input">{data.description}</p>}
           {data.location && (
-            <p className="flex input gap-2 my-4 items-center capitalize">
+            <p className="flex input gap-2 mb-5 items-center capitalize">
               <Icon icon="material-symbols:location-on" className="text-xl" />
               <span>{data.location}</span>
             </p>
           )}
           {data.taskUrl && (
-            <p className="flex gap-2 items-center capitalize">
+            <p className="flex gap-2 mb-5 items-center capitalize">
               <Icon icon="material-symbols:link" className="text-xl" />
               <a href={data.taskUrl} className="text-blue-600 hover:underline">
                 {data.taskUrl}

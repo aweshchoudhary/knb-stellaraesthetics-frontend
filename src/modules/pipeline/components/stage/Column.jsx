@@ -35,7 +35,7 @@ const Column = ({ column, columnId }) => {
 
   return (
     <Suspense>
-      <div className="flex w-1/3 flex-col h-screen items-center">
+      <div className="flex w-1/3 flex-col min-h-screen items-center">
         <header
           className={`border-b w-full px-3 py-2 border-r z-[99] sticky top-0 left-0 text-white bg-primary`}
         >

@@ -2,7 +2,10 @@ import React, { Suspense, useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
 
-import { useLazyGetStagesQuery } from "@/redux/services/stageApi";
+import {
+  useLazyGetStagesQuery,
+  useUpdateStageMutation,
+} from "@/redux/services/stageApi";
 import { useUpdateDealStageMutation } from "@/redux/services/dealApi";
 import Column from "./Column";
 
@@ -10,66 +13,55 @@ import { Model } from "@/modules/common";
 import { CreateStageModel } from "@/modules/pipeline";
 
 const Stages = ({ pipeline, setIsStagesLength }) => {
-  const [columns, setColumns] = useState({});
   const [isCreateStageModelOpen, setIsCreateStageModelOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const [
     getStages,
-    { data, isLoading, isFetching, isSuccess, isError, error },
+    { data: stages, isLoading, isFetching, isSuccess, isError, error },
   ] = useLazyGetStagesQuery();
-  const [updateDealStage] = useUpdateDealStageMutation();
 
-  const onDragEnd = async (result, columns, setColumns) => {
+  const [updateDealStage] = useUpdateDealStageMutation();
+  const [updateStage] = useUpdateStageMutation();
+
+  const onDragEnd = async (result) => {
     if (!result.destination) return;
+    setLoading(true);
     const { source, destination, draggableId } = result;
 
     if (source.droppableId !== destination.droppableId) {
-      const sourceColumn = columns[source.droppableId];
-      const destColumn = columns[destination.droppableId];
-      const sourceItems = [...sourceColumn.deals];
-      const destItems = [...destColumn.deals];
-      const [removed] = sourceItems.splice(source.index, 1);
-      destItems.splice(destination.index, 0, removed);
-      setColumns({
-        ...columns,
-        [source.droppableId]: {
-          ...sourceColumn,
-          deals: sourceItems,
-        },
-        [destination.droppableId]: {
-          ...destColumn,
-          deals: destItems,
-        },
-      });
       await updateDealStage({
         dealId: draggableId,
         prevStageId: source.droppableId,
         newStageId: destination.droppableId,
       });
+      await updateStage({
+        stageId: source.droppableId,
+        update: {
+          $pull: { deals: draggableId },
+        },
+      });
+      await updateStage({
+        stageId: destination.droppableId,
+        update: {
+          $push: { deals: draggableId },
+        },
+      });
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchStages = async (pipelineId) =>
-      await getStages({
-        filters: JSON.stringify([{ id: "pipelineId", value: pipelineId }]),
-        data: true,
-      });
-    if (pipeline?._id) fetchStages(pipeline._id);
-  }, [pipeline]);
+  const fetchStages = async (pipelineId) => {
+    const { data } = await getStages({
+      filters: JSON.stringify([{ id: "pipelineId", value: pipelineId }]),
+      data: true,
+    });
+    if (data?.data?.length) setIsStagesLength(true);
+  };
 
   useEffect(() => {
-    if (data?.data?.length) {
-      setIsStagesLength(true);
-      data?.data?.forEach((stage) => {
-        setColumns((prev) => ({
-          ...prev,
-          [stage._id]: {
-            ...stage,
-          },
-        }));
-      });
-    }
-  }, [data]);
+    if (pipeline?._id) fetchStages(pipeline._id);
+  }, [pipeline]);
 
   useEffect(() => {
     if (isError) toast.error(error.data?.message);
@@ -79,17 +71,17 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
     <Suspense>
       <section
         className={`w-full  ${
-          !isLoading && !isFetching && isSuccess ? "opacity-100" : "opacity-50"
+          !isLoading && !isFetching && !loading && isSuccess
+            ? "opacity-100"
+            : "opacity-50"
         }`}
       >
         <div className="flex justify-center h-full">
-          <DragDropContext
-            onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
-          >
-            {Object.entries(columns).length ? (
-              Object.entries(columns).map(([columnId, column], index) => {
+          <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
+            {stages?.data?.length ? (
+              stages.data.map((stage, index) => {
                 return (
-                  <Column columnId={columnId} column={column} key={index} />
+                  <Column columnId={stage._id} column={stage} key={index} />
                 );
               })
             ) : (

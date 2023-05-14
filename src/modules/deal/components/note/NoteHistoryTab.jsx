@@ -16,6 +16,7 @@ const NoteHistoryTab = ({ dealId }) => {
       const noteData = await getNotes({
         filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
         data: true,
+        populate: "creator",
       });
       noteData.data.length !== 0 && setNoteHistory(noteData.data);
       setLoading(false);

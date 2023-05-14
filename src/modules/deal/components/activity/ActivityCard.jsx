@@ -19,11 +19,21 @@ const ActivityCard = ({ activity }) => {
         </div>
         <div className="mt-2 text-textDark flex gap-3 items-center justify-between text-xs">
           <div className="flex gap-3 items-center">
-            <span className="bg-green-600 py-1 px-2 rounded-full text-white">
-              Added
+            {activity.completed_on ? (
+              <span className="bg-green-600 py-1 px-2 rounded-full text-white">
+                Completed
+              </span>
+            ) : (
+              <span className="bg-green-600 py-1 px-2 rounded-full text-white">
+                Added
+              </span>
+            )}
+            <span>
+              {activity.completed_on
+                ? moment(activity.completed_on).fromNow()
+                : moment(activity.createdAt).fromNow()}
             </span>
-            <span>{moment(activity.createdAt).fromNow()}</span>
-            <span>{activity.creator?.fullname}</span>
+            <span>{activity?.performer?.fullname}</span>
           </div>
           <div className="flex gap-1">
             <button className="btn-outlined btn-small">
