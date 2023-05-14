@@ -1,49 +1,37 @@
 import { lazy } from "react";
 
-const Deal = lazy(() => import("./pages/Deal"));
+export const Deal = lazy(() => import("./pages/Deal"));
 
-const DealCard = lazy(() => import("./components/DealCard"));
-const DealSelect = lazy(() => import("./components/DealSelect"));
-const DealSideBar = lazy(() => import("./components/DealSideBar"));
+export const DealCard = lazy(() => import("./components/DealCard"));
+export const DealSelect = lazy(() => import("./components/DealSelect"));
+export const DealSideBar = lazy(() => import("./components/DealSideBar"));
 
-const ActivitiesTabs = lazy(() =>
-  import("./components/handlers/FocusActivitiesTabs")
+export const ActivityHandler = lazy(() =>
+  import("./components/activity/ActivityHandler")
 );
-const ActivityDisplayModel = lazy(() =>
-  import("./components/handlers/ActivityDisplayModel")
+export const EmailHandler = lazy(() =>
+  import("./components/email/EmailHandler")
 );
-const ActivityHandler = lazy(() =>
-  import("./components/handlers/ActivityHandler")
+export const FileHandler = lazy(() => import("./components/file/FileHandler"));
+export const NoteHandler = lazy(() => import("./components/note/NoteHandler"));
+
+export const ActivitiesTabs = lazy(() =>
+  import("./components/FocusActivitiesTabs")
 );
-const EmailHandler = lazy(() => import("./components/handlers/EmailHandler"));
-const EventTabsContainer = lazy(() =>
+export const ActivityDisplayModel = lazy(() =>
+  import("./components/activity/ActivityDisplayModel")
+);
+
+export const EventTabsContainer = lazy(() =>
   import("./components/history/HistoryTabsContainer")
 );
-const FileHandler = lazy(() => import("./components/handlers/FileHandler"));
-const NoteHandler = lazy(() => import("./components/handlers/NoteHandler"));
 
-const CreateDealForm = lazy(() => import("./components/models/CreateDealForm"));
-const CreateDealModel = lazy(() =>
+export const CreateDealForm = lazy(() =>
+  import("./components/models/CreateDealForm")
+);
+export const CreateDealModel = lazy(() =>
   import("./components/models/CreateDealModel")
 );
 
-const CreateLabel = lazy(() => import("./components/label/CreateLabel"));
-const Label = lazy(() => import("./components/label/Label"));
-
-export {
-  Deal,
-  DealCard,
-  DealSelect,
-  ActivitiesTabs,
-  ActivityDisplayModel,
-  ActivityHandler,
-  EmailHandler,
-  EventTabsContainer,
-  FileHandler,
-  NoteHandler,
-  CreateDealForm,
-  CreateDealModel,
-  CreateLabel,
-  Label,
-  DealSideBar,
-};
+export const CreateLabel = lazy(() => import("./components/label/CreateLabel"));
+export const Label = lazy(() => import("./components/label/Label"));

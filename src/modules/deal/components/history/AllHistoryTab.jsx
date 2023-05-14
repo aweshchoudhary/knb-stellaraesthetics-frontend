@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLazyGetNotesQuery } from "@/redux/services/noteApi";
 import { useLazyGetActivitiesQuery } from "@/redux/services/activityApi";
-import NoteCard from "../cards/NoteCard";
-import ActivityCard from "../cards/ActivityCard";
-import FileCard from "../cards/FileCard";
-import EmailCard from "../cards/EmailCard";
+import NoteCard from "../note/NoteCard";
+import ActivityCard from "../activity/ActivityCard";
+import FileCard from "../file/FileCard";
+import EmailCard from "../email/EmailCard";
 import { Loader } from "@/modules/common";
 
 const AllHistory = ({ dealId }) => {
@@ -14,7 +14,8 @@ const AllHistory = ({ dealId }) => {
   const [getActivities] = useLazyGetActivitiesQuery();
   const [getNotes] = useLazyGetNotesQuery();
 
-  useMemo(() => {
+  useEffect(() => {
+    let isMounted = true;
     const fetchHistories = async () => {
       setLoading(true);
       const noteData = await getNotes({
@@ -36,7 +37,8 @@ const AllHistory = ({ dealId }) => {
         });
       setLoading(false);
     };
-    fetchHistories();
+    isMounted && fetchHistories();
+    return () => (isMounted = false);
   }, [dealId]);
 
   if (loading)

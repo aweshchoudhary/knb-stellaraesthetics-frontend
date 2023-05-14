@@ -1,14 +1,14 @@
 import React, { Suspense, useState } from "react";
 import { Icon } from "@iconify/react";
 import moment from "moment";
-import { Loader } from "@/modules/common";
+import { Loader, Model } from "@/modules/common";
 import {
   useGetActivitiesQuery,
-  useDeleteActivityMutation,
   useUpdateActivityMutation,
 } from "@/redux/services/activityApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { ActivityDisplayModel } from "@/modules/deal";
 
 const FocusActivities = ({ dealId }) => {
   return (
@@ -27,6 +27,7 @@ const Activites = ({ dealId }) => {
   const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
     filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
     data: true,
+    populate: "performer",
   });
 
   return !isLoading && !isFetching && isSuccess ? (
@@ -55,28 +56,12 @@ const Activites = ({ dealId }) => {
 };
 
 const ActivityDeal = ({ data }) => {
-  const [
-    deleteActivity,
-    {
-      isLoading: isDeleteLoading,
-      isSuccess: isDeleteSuccess,
-      isError: isDeleteError,
-      error: deleteError,
-    },
-  ] = useDeleteActivityMutation();
+  const [isDisplayModelOpen, setIsDisplayModelOpen] = useState(false);
+
   const [
     updateActivity,
-    {
-      isLoading: isUpdateLoading,
-      isSuccess: isUpdateSuccess,
-      isError: isUpdateError,
-      error: updateError,
-    },
+    { isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError },
   ] = useUpdateActivityMutation();
-
-  async function handleDeleteActivity() {
-    await deleteActivity(data._id);
-  }
 
   async function handleMarkDoneActivity() {
     await updateActivity({
@@ -86,18 +71,6 @@ const ActivityDeal = ({ data }) => {
       },
     });
   }
-
-  useEffect(() => {
-    if (isDeleteSuccess) {
-      toast.success("Activity deleted successfully");
-    }
-  }, [isDeleteSuccess]);
-
-  useEffect(() => {
-    if (isDeleteError) {
-      toast.success(deleteError.data?.message);
-    }
-  }, [isDeleteError]);
 
   useEffect(() => {
     if (isUpdateSuccess) {
@@ -141,58 +114,57 @@ const ActivityDeal = ({ data }) => {
   };
 
   return (
-    <div className="flex">
-      <div className="w-[60px] flex flex-col items-center">
-        <span className="w-[40px] h-[40px] bg-bg flex items-center justify-center">
-          <Icon icon={"material-symbols:sticky-note-2-outline"} />
-        </span>
-      </div>
-      <div className="bg-bg mb-2 p-3 text-sm flex-1">
-        <header className="flex justify-between ">
-          <div className="flex gap-2 items-center">
-            <button
-              className="w-[20px] h-[20px] rounded-full border-2 hover:border-textColor grow-0 shrink-0"
-              onClick={handleMarkDoneActivity}
-              title="Mark Done"
-            ></button>
-            <span className="capitalize font-medium text-textColor">
-              {data.title} On{" "}
-              {moment(data.startDateTime).format("DD-MM-YYYY HH:mm:ss")}
-            </span>
-          </div>
-          <div className="flex gap-1">
-            <button
-              className="btn-outlined btn-small"
-              disabled={isDeleteLoading || isUpdateLoading}
-            >
-              <Icon icon={"uil:pen"} />
-            </button>
-            <button
-              className="btn-outlined btn-small"
-              onClick={handleDeleteActivity}
-              disabled={isDeleteLoading || isUpdateLoading}
-            >
-              <Icon icon={"uil:trash"} />
-            </button>
-          </div>
-        </header>
-        {data.description && <div className="mb-2">{data.description}</div>}
-        <div className="mt-1 flex items-center gap-3 text-xs text-textDark">
-          <ActivityStatus
-            startDateTime={data.startDateTime}
-            endDateTime={data.endDateTime}
-          />
-          <span>{moment(data.endDateTime).fromNow()}</span>
-          <span>Awesh Choudhary</span>
-          {data.location && (
-            <span className="flex items-center gap-1">
-              <Icon icon="material-symbols:location-on" />
-              {data.location}
-            </span>
-          )}
+    <>
+      <Model
+        title="Activity"
+        isOpen={isDisplayModelOpen}
+        setIsOpen={setIsDisplayModelOpen}
+      >
+        <ActivityDisplayModel data={data} />
+      </Model>
+      <div className="flex">
+        <div className="w-[60px] flex flex-col items-center">
+          <span className="w-[40px] h-[40px] bg-bg flex items-center justify-center">
+            <Icon icon={"material-symbols:sticky-note-2-outline"} />
+          </span>
+        </div>
+        <div className="bg-bg mb-2 p-3 text-sm flex flex-1 gap-2">
+          <button
+            className="w-[20px] h-[20px] rounded-full border-2 hover:border-textColor grow-0 shrink-0"
+            onClick={handleMarkDoneActivity}
+            title="Mark Done"
+          ></button>
+          <button
+            onClick={() => setIsDisplayModelOpen(true)}
+            className="block text-left"
+          >
+            <header className="flex justify-between ">
+              <div className="flex gap-2 items-center">
+                <span className="capitalize font-medium text-textColor">
+                  {data.title} On{" "}
+                  {moment(data.startDateTime).format("DD-MM-YYYY HH:mm:ss")}
+                </span>
+              </div>
+            </header>
+            {data.description && <div className="my-2">{data.description}</div>}
+            <div className="mt-1 flex items-center gap-3 text-xs text-textDark">
+              <ActivityStatus
+                startDateTime={data.startDateTime}
+                endDateTime={data.endDateTime}
+              />
+              <span>{moment(data.endDateTime).fromNow()}</span>
+              <span>Awesh Choudhary</span>
+              {data.location && (
+                <span className="flex items-center gap-1">
+                  <Icon icon="material-symbols:location-on" />
+                  {data.location}
+                </span>
+              )}
+            </div>
+          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

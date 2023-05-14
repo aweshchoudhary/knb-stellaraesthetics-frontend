@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLazyGetNotesQuery } from "@/redux/services/noteApi";
-import NoteCard from "../cards/NoteCard";
+import NoteCard from "./NoteCard";
 import { Loader } from "@/modules/common";
 
 const NoteHistoryTab = ({ dealId }) => {
@@ -9,7 +9,8 @@ const NoteHistoryTab = ({ dealId }) => {
 
   const [getNotes] = useLazyGetNotesQuery();
 
-  useMemo(() => {
+  useEffect(() => {
+    let isMounted = true;
     const fetchHistories = async () => {
       setLoading(true);
       const noteData = await getNotes({
@@ -19,7 +20,7 @@ const NoteHistoryTab = ({ dealId }) => {
       noteData.data.length !== 0 && setNoteHistory(noteData.data);
       setLoading(false);
     };
-    fetchHistories();
+    isMounted && fetchHistories();
   }, [dealId]);
 
   if (loading)

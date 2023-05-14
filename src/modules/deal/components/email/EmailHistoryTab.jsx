@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLazyGetAllFileInfoQuery } from "@/redux/services/fileApi";
-import FileCard from "../cards/FileCard";
+import FileCard from "../file/FileCard";
 
-const FileHistoryTab = ({ dealId }) => {
-  const [fileHistory, setFileHistory] = useState([]);
+const EmailHistoryTab = ({ dealId }) => {
+  const [emailHistory, setEmailHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [getFiles] = useLazyGetAllFileInfoQuery();
@@ -11,11 +11,11 @@ const FileHistoryTab = ({ dealId }) => {
   useEffect(() => {
     const fetchHistories = async () => {
       setLoading(true);
-      const fileData = await getFiles({
+      const emailData = await getFiles({
         filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
         data: true,
       });
-      fileData.data.length !== 0 && setFileHistory(fileData.data);
+      emailData.data.length !== 0 && setEmailHistory(emailData.data);
       setLoading(false);
     };
     fetchHistories();
@@ -23,8 +23,8 @@ const FileHistoryTab = ({ dealId }) => {
   return (
     !loading && (
       <ul>
-        {fileHistory.length !== 0 ? (
-          fileHistory.map((history, index) => {
+        {emailHistory.length !== 0 ? (
+          emailHistory.map((history, index) => {
             return (
               <li key={index}>
                 <FileCard file={history} />
@@ -41,4 +41,4 @@ const FileHistoryTab = ({ dealId }) => {
   );
 };
 
-export default FileHistoryTab;
+export default EmailHistoryTab;

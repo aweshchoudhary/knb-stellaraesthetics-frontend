@@ -18,7 +18,7 @@ import {
 } from "@/modules/deal";
 
 import moment from "moment";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
 
 import { useGetActivitiesQuery } from "@/redux/services/activityApi";
 import { useGetDealsQuery } from "@/redux/services/dealApi";
@@ -38,16 +38,18 @@ const Contact = () => {
     // isLoading: isActivitiesLoading,
     // isFetching: isActivitiesFetching,
   } = useGetActivitiesQuery({
-    filters: JSON.stringify([{ id: "contactId", value: id }]),
+    filters: JSON.stringify([{ id: "contacts", value: id }]),
     data: true,
   });
   const {
-    data: cards,
+    data: deals,
     isLoading: isDealsLoading,
     isFetching: isDealsFetching,
   } = useGetDealsQuery({
-    filters: JSON.stringify([{ id: "contactId", value: id }]),
+    filters: JSON.stringify([{ id: "contacts", value: { $in: [id] } }]),
     data: true,
+    populate: "label contacts",
+    sorting: JSON.stringify([{ id: "createdAt", desc: false }]),
   });
 
   const { data, isLoading, isSuccess, isFetching } = useGetContactQuery(id);
@@ -63,7 +65,7 @@ const Contact = () => {
     useDeleteContactMutation();
 
   const selectedDeals =
-    cards?.data?.map((i) => ({
+    deals?.data?.map((i) => ({
       label: i.title,
       value: i._id,
     })) || [];
@@ -122,7 +124,7 @@ const Contact = () => {
           <div className="flex w-full min-h-[calc(100vh-60px)] border-b">
             <div className="w-[350px] shrink-0">
               <div className="flex-1 border-r">
-                <header className="py-3 px-5 bg-primary text-white border-b">
+                <header className="py-3 px-5 bg-paper border-b">
                   <h2>Personal Details</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-4">
@@ -150,27 +152,30 @@ const Contact = () => {
                     </span>
                     <span>{data.email || "Not Specified"}</span>
                   </p>
-                  <p className="flex gap-2 items-center">
-                    <span className="text-2xl">
-                      <Icon icon="material-symbols:location-on-outline" />
-                    </span>
-                    <span>
-                      {data?.address?.city?.name}, {data?.address?.state?.name},{" "}
-                      {data?.address?.country?.name}
-                    </span>
-                  </p>
+                  {data.address.city && (
+                    <p className="flex gap-2 items-center">
+                      <span className="text-2xl">
+                        <Icon icon="material-symbols:location-on-outline" />
+                      </span>
+                      <span>
+                        {data?.address?.city?.name},{" "}
+                        {data?.address?.state?.name},{" "}
+                        {data?.address?.country?.name}
+                      </span>
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex-1 border-r">
-                <header className="py-3 px-5 bg-primary text-white border-b">
+                <header className="py-3 px-5 bg-paper border-b">
                   <h2>Open Deals</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-2">
                   {!isDealsFetching &&
                   !isDealsLoading &&
-                  cards?.data?.length ? (
-                    cards.data.map((card) => {
-                      return <DealCard card={card} key={card._id} />;
+                  deals?.data?.length ? (
+                    deals.data.map((deal) => {
+                      return <DealCard deal={deal} key={deal._id} />;
                     })
                   ) : (
                     <p>No Deals to show</p>
@@ -178,27 +183,29 @@ const Contact = () => {
                 </div>
               </div>
               <div className="flex-1 border-r">
-                <header className="py-3 px-5 bg-primary text-white border-b">
+                <header className="py-3 px-5 bg-paper border-b">
                   <h2>Next Activities</h2>
                 </header>
                 <div className="p-5 flex flex-col gap-3">
-                  {activities?.data?.length !== 0 ? (
-                    activities?.data?.map((activity, index) => {
+                  {activities?.length !== 0 ? (
+                    activities?.map((activity, index) => {
                       return (
                         <div
                           key={index}
-                          className="w-full py-3 px-4 border flex justify-between items-center"
+                          className="w-full p-2 border flex justify-between items-center text-sm"
                         >
-                          <div className="flex gap-2 items-center">
+                          <div className="flex flex-1 gap-2 items-center">
                             <Icon
-                              icon={activity?.icon || "mdi:calendar-task"}
+                              icon={"mdi:calendar-task"}
                               className="text-xl"
                             />
-                            <h2>{activity.title}</h2>
+                            <Typography noWrap className="w-[100px] text-xs">
+                              {activity.title}
+                            </Typography>
                           </div>
-                          <div>
+                          <div className="shrink-0">
                             {moment(activity.startDateTime).format(
-                              "DD-MM-YYYY"
+                              "Do MMMM YYYY"
                             )}
                           </div>
                         </div>
@@ -237,23 +244,23 @@ const Contact = () => {
                       </Box>
                       <Box className="bg-bg">
                         {currentTab === 1 && (
-                          <NoteHandler cards={selectedDeals} />
+                          <NoteHandler deals={selectedDeals} />
                         )}
                         {currentTab === 2 && (
-                          <ActivityHandler cards={selectedDeals} />
+                          <ActivityHandler deals={selectedDeals} />
                         )}
                         {currentTab === 3 && (
-                          <FileHandler cards={selectedDeals} />
+                          <FileHandler deals={selectedDeals} />
                         )}
                         {currentTab === 4 && (
-                          <EmailHandler cards={selectedDeals} />
+                          <EmailHandler deals={selectedDeals} />
                         )}
                       </Box>
                     </Box>
                   )}
                 </Suspense>
-                <EventTabsContainer cardId={id} />
-                <ActivitiesTabs cardId={id} />
+                <ActivitiesTabs dealId={id} />
+                <EventTabsContainer dealId={id} />
               </div>
             </div>
           </div>

@@ -5,24 +5,21 @@ import { Link } from "react-router-dom";
 import Tooltip from "@mui/material/Tooltip";
 import { Skeleton } from "@mui/material";
 
-import { useGetDealQuery } from "@/redux/services/dealApi";
 import { formatNumber } from "@/modules/common";
 import { ActivityStatus } from "@/modules/activity";
 
-const Deal = ({ dealId }) => {
-  const {
-    data: deal,
-    isLoading,
-    isFetching,
-    isSuccess,
-  } = useGetDealQuery({
-    id: dealId,
-    params: { populate: "label contacts items" },
-  });
-
+const Deal = ({ deal }) => {
+  const Loader = () => (
+    <Skeleton
+      variant="rectangular"
+      height={100}
+      sx={{ width: "100%" }}
+      className="mb-1"
+    />
+  );
   return (
-    <Suspense>
-      {!isLoading && !isFetching && isSuccess ? (
+    <Suspense fallback={<Loader />}>
+      {deal ? (
         <Link
           to={"/deals/" + deal._id}
           className={
@@ -42,7 +39,7 @@ const Deal = ({ dealId }) => {
               <ActivityStatus dealId={deal._id} />
             </div>
           </div>
-          <div className="bottom text-xs flex items-center gap-3 text-sm">
+          <div className="bottom text-xs flex items-center gap-3">
             <div className="user">
               <Tooltip title={moment(deal.createdAt).format("DD-MM-YYYY")}>
                 <span>{moment(deal.createdAt).fromNow()}</span>
@@ -58,12 +55,7 @@ const Deal = ({ dealId }) => {
           </div>
         </Link>
       ) : (
-        <Skeleton
-          variant="rectangular"
-          height={100}
-          sx={{ width: "100%" }}
-          className="mb-1"
-        />
+        <Loader />
       )}
     </Suspense>
   );

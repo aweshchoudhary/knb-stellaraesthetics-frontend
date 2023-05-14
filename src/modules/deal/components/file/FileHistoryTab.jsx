@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import ActivityCard from "../cards/ActivityCard";
-import { useLazyGetActivitiesQuery } from "@/redux/services/activityApi";
+import { useLazyGetAllFileInfoQuery } from "@/redux/services/fileApi";
+import FileCard from "./FileCard";
 
-const ActvityHistoryTab = ({ dealId }) => {
-  const [activityHistory, setNoteHistory] = useState([]);
+const FileHistoryTab = ({ dealId }) => {
+  const [fileHistory, setFileHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [getActivities] = useLazyGetActivitiesQuery();
+  const [getFiles] = useLazyGetAllFileInfoQuery();
 
   useEffect(() => {
     const fetchHistories = async () => {
       setLoading(true);
-      const activityData = await getActivities({
+      const fileData = await getFiles({
         filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
         data: true,
       });
-      activityData.data.length !== 0 && setNoteHistory(activityData.data);
+      fileData.data.length !== 0 && setFileHistory(fileData.data);
       setLoading(false);
     };
     fetchHistories();
@@ -23,11 +23,11 @@ const ActvityHistoryTab = ({ dealId }) => {
   return (
     !loading && (
       <ul>
-        {activityHistory.length !== 0 ? (
-          activityHistory.map((history, index) => {
+        {fileHistory.length !== 0 ? (
+          fileHistory.map((history, index) => {
             return (
               <li key={index}>
-                <ActivityCard activity={history} />
+                <FileCard file={history} />
               </li>
             );
           })
@@ -41,4 +41,4 @@ const ActvityHistoryTab = ({ dealId }) => {
   );
 };
 
-export default ActvityHistoryTab;
+export default FileHistoryTab;

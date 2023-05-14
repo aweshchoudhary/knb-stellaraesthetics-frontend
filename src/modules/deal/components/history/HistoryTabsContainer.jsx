@@ -1,11 +1,11 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import React, { Suspense, useState } from "react";
-import AllHistory from "./tabs/AllHistoryTab";
-import NoteHistoryTab from "./tabs/NoteHistoryTab";
-import ActivityHistoryTab from "./tabs/ActivityHistoryTab";
-import FileHistoryTab from "./tabs/FileHistoryTab";
+import AllHistory from "./AllHistoryTab";
+import NoteHistoryTab from "../note/NoteHistoryTab";
+import ActivityHistoryTab from "../activity/ActivityHistoryTab";
+import FileHistoryTab from "../file/FileHistoryTab";
 import { Loader } from "@/modules/common";
-import EmailHistoryTab from "./tabs/EmailHistoryTab";
+import EmailHistoryTab from "../email/EmailHistoryTab";
 
 const TabsContainer = ({ dealId }) => {
   const [currentTab, setCurrentTab] = useState(1);
@@ -37,11 +37,11 @@ const TabsContainer = ({ dealId }) => {
           </section>
         }
       >
-        <Box>{currentTab === 1 && <AllHistory dealId={dealId} />}</Box>
-        <Box>{currentTab === 2 && <NoteHistoryTab dealId={dealId} />}</Box>
-        <Box>{currentTab === 3 && <ActivityHistoryTab dealId={dealId} />}</Box>
-        <Box>{currentTab === 4 && <FileHistoryTab dealId={dealId} />}</Box>
-        <Box>{currentTab === 5 && <EmailHistoryTab dealId={dealId} />}</Box>
+        {currentTab === 1 && <AllHistory dealId={dealId} />}
+        {currentTab === 2 && <NoteHistoryTab dealId={dealId} />}
+        {currentTab === 3 && <ActivityHistoryTab dealId={dealId} />}
+        {currentTab === 4 && <FileHistoryTab dealId={dealId} />}
+        {currentTab === 5 && <EmailHistoryTab dealId={dealId} />}
       </Suspense>
     </Suspense>
   );
