@@ -7,7 +7,7 @@ import FileHistoryTab from "../file/FileHistoryTab";
 import { Loader } from "@/modules/common";
 import EmailHistoryTab from "../email/EmailHistoryTab";
 
-const TabsContainer = ({ dealId }) => {
+const TabsContainer = ({ activities, notes, files }) => {
   const [currentTab, setCurrentTab] = useState(1);
 
   function handleTabChange(event, newTab) {
@@ -37,11 +37,13 @@ const TabsContainer = ({ dealId }) => {
           </section>
         }
       >
-        {currentTab === 1 && <AllHistory dealId={dealId} />}
-        {currentTab === 2 && <NoteHistoryTab dealId={dealId} />}
-        {currentTab === 3 && <ActivityHistoryTab dealId={dealId} />}
-        {currentTab === 4 && <FileHistoryTab dealId={dealId} />}
-        {currentTab === 5 && <EmailHistoryTab dealId={dealId} />}
+        {currentTab === 1 && (
+          <AllHistory activities={activities} notes={notes} files={files} />
+        )}
+        {currentTab === 2 && <NoteHistoryTab notes={notes} />}
+        {currentTab === 3 && <ActivityHistoryTab activities={activities} />}
+        {currentTab === 4 && <FileHistoryTab files={files} />}
+        {currentTab === 5 && <EmailHistoryTab />}
       </Suspense>
     </Suspense>
   );

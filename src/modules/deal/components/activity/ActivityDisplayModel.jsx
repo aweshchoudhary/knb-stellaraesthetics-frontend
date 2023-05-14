@@ -23,12 +23,13 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
   useEffect(() => {
     if (isError) toast.error(error.data?.message);
   }, [isError]);
+  console.log(data);
 
   return (
     data && (
       <>
         <section className="p-10 pb-0">
-          <h2 className="w-full text-lg font-medium flex items-center gap-2 mb-5">
+          <h2 className="w-full border-b pb-3 text-lg font-medium flex items-center gap-2 mb-5">
             <Icon icon="ic:phone" className="text-2xl" />
             <span>{data.title}</span>
           </h2>
@@ -47,7 +48,7 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
               </a>
             </p>
           )}
-          <div className="text-sm flex items-center gap-3">
+          <div className="text-sm flex items-center mb-5 gap-3">
             <ActivityStatus
               startDateTime={data.startDateTime}
               endDateTime={data.endDateTime}
@@ -72,9 +73,30 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
               </span>
             </p>
           </div>
-          <div className="mt-5">
+          <div className="mb-5">
             <p>
               <span>Created: {moment(data.createdAt).fromNow()}</span>
+            </p>
+          </div>
+
+          <div className="mb-3">
+            <h2 className="text-lg mb-2">Deals</h2>
+            <p className="flex items-center gap-3">
+              <span className="input">
+                {data?.deals?.map((deal) => {
+                  return deal.title;
+                })}
+              </span>
+            </p>
+          </div>
+          <div>
+            <h2 className="text-lg mb-2">Contacts</h2>
+            <p className="flex items-center gap-3">
+              <span className="input">
+                {data?.contacts?.map((contact) => {
+                  return contact.contactPerson;
+                })}
+              </span>
             </p>
           </div>
         </section>

@@ -9,7 +9,7 @@ import { Icon } from "@iconify/react";
 import { toast } from "react-toastify";
 
 import {
-  EventTabsContainer,
+  HistoryTabs,
   ActivitiesTabs,
   ActivityHandler,
   NoteHandler,
@@ -21,12 +21,17 @@ import {
 import moment from "moment";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 
-import { useGetActivitiesQuery } from "@/redux/services/activityApi";
+import {
+  useGetActivitiesQuery,
+  useLazyGetActivitiesQuery,
+} from "@/redux/services/activityApi";
 import { useGetDealsQuery } from "@/redux/services/dealApi";
 import { useGetMeQuery } from "@/redux/services/userApi";
 
 import { Model } from "@/modules/common";
 import { CreateDealModel, DealCard } from "@/modules/deal";
+import { useLazyGetNotesQuery } from "@/redux/services/noteApi";
+import { useLazyGetFilesQuery } from "@/redux/services/fileApi";
 
 const Contact = () => {
   const params = useParams();
@@ -271,7 +276,11 @@ const Contact = () => {
                           <ActivityHandler deals={selectedDeals} />
                         )}
                         {currentTab === 3 && (
-                          <FileHandler deals={selectedDeals} />
+                          <FileHandler
+                            deals={selectedDeals}
+                            contactId={id}
+                            getByContactsId
+                          />
                         )}
                         {currentTab === 4 && (
                           <EmailHandler deals={selectedDeals} />
@@ -281,7 +290,7 @@ const Contact = () => {
                   )}
                 </Suspense>
                 <ActivitiesTabs dealId={id} />
-                <EventTabsContainer dealId={id} />
+                <HistoryTabsContainer dealId={id} />
               </div>
             </div>
           </div>
@@ -292,6 +301,52 @@ const Contact = () => {
         </section>
       )}
     </Suspense>
+  );
+};
+
+const HistoryTabsContainer = ({ dealId }) => {
+  const [notes, setNotes] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [getActivities] = useLazyGetActivitiesQuery();
+  const [getNotes] = useLazyGetNotesQuery();
+  const [getFiles] = useLazyGetFilesQuery();
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHistories = async () => {
+      setLoading(true);
+      const noteData = await getNotes({
+        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+        data: true,
+        populate: "creator",
+      });
+      noteData.data.length !== 0 && setNotes(noteData.data);
+
+      const activityData = await getActivities({
+        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+        data: true,
+        populate: "performer",
+      });
+      activityData.data.length !== 0 && setActivities(activityData.data);
+      const fileData = await getFiles({
+        filters: JSON.stringify([{ id: "dealId", value: { $in: [dealId] } }]),
+        data: true,
+        populate: "performer",
+      });
+      fileData.data.length !== 0 && setFiles(fileData.data);
+      setLoading(false);
+    };
+    isMounted && fetchHistories();
+    return () => (isMounted = false);
+  }, [dealId]);
+
+  return (
+    !loading && (
+      <HistoryTabs activities={activities} files={files} notes={notes} />
+    )
   );
 };
 

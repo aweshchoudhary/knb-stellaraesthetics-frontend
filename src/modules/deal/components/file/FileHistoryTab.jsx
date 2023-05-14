@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useLazyGetAllFileInfoQuery } from "@/redux/services/fileApi";
+import { useLazyGetFilesQuery } from "@/redux/services/fileApi";
 import FileCard from "./FileCard";
 
 const FileHistoryTab = ({ dealId }) => {
   const [fileHistory, setFileHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [getFiles] = useLazyGetAllFileInfoQuery();
+  const [getFiles] = useLazyGetFilesQuery();
 
   useEffect(() => {
     const fetchHistories = async () => {
       setLoading(true);
       const fileData = await getFiles({
-        cardId: dealId,
-        params: { populate: "uploader" },
+        filters: JSON.stringify([{ id: "dealId", value: { $in: [dealId] } }]),
+        data: true,
+        populate: "performer",
       });
       fileData.data.length !== 0 && setFileHistory(fileData.data);
       setLoading(false);

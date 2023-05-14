@@ -3,10 +3,9 @@ import { Icon } from "@iconify/react";
 import {
   useAddFileMutation,
   useDeleteFileMutation,
-  useGetAllFileInfoQuery,
+  useLazyGetFilesQuery,
 } from "@/redux/services/fileApi";
 
-import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Skeleton } from "@mui/material";
 import moment from "moment";
@@ -15,17 +14,17 @@ import { BASE_URL } from "@/modules/common";
 import { DealSelect } from "@/modules/deal";
 import { useSelector } from "react-redux";
 
-const File = ({ cards = [] }) => {
+const File = ({
+  cards = [],
+  dealId,
+  contactId,
+  getByDealsId,
+  getByContactsId,
+}) => {
   const [selectedData, setSelectedData] = useState(cards);
-  const params = useParams();
-  const { id } = params;
 
-  const {
-    data: files,
-    isLoading,
-    isFetching,
-    isSuccess,
-  } = useGetAllFileInfoQuery(id);
+  const [getFiles, { data: files, isLoading, isFetching, isSuccess }] =
+    useLazyGetFilesQuery();
 
   const fileInputRef = useRef();
 
@@ -41,6 +40,7 @@ const File = ({ cards = [] }) => {
     const newFormData = new FormData();
     newFormData.append("file", file);
     newFormData.append("dealId", dealIds);
+    newFormData.append("contactId", contactId);
     newFormData.append("uploader", loggedUserId);
     await uploadFile(newFormData);
   }
@@ -64,6 +64,14 @@ const File = ({ cards = [] }) => {
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sufixes[i]}`;
   }
+
+  useEffect(() => {
+    const fetchFiles = async (query) =>
+      await getFiles({ filters: JSON.stringify(query), data: true });
+    if (getByDealsId) fetchFiles([{ id: "dealId", value: { $in: [dealId] } }]);
+    if (getByContactsId)
+      fetchFiles([{ id: "contactId", value: { $in: [contactId] } }]);
+  }, [dealId, contactId]);
 
   useEffect(() => {
     isUploadSuccess && toast.success("File Upload Successful!");

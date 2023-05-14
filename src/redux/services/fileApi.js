@@ -10,14 +10,14 @@ export const fileApi = mainApi.injectEndpoints({
       }),
       invalidatesTags: ["file"],
     }),
-    getAllFileInfo: builder.query({
-      query: (data) => ({
-        url: "/api/file/get-fileinfos/" + data.cardId,
-        params: data.params,
+    getFiles: builder.query({
+      query: (params) => ({
+        url: "/api/file/get-files",
+        params,
       }),
-      providesTags: ["file"],
-      transformResponse: (res) => {
-        return res.data;
+      providesTags: ["contact"],
+      transformResponse: (response) => {
+        return response.data;
       },
     }),
     downloadFile: builder.query({
@@ -35,9 +35,9 @@ export const fileApi = mainApi.injectEndpoints({
 });
 
 export const {
-  useGetAllFileInfoQuery,
   useAddFileMutation,
   useDownloadFileQuery,
   useDeleteFileMutation,
-  useLazyGetAllFileInfoQuery,
+  useGetFilesQuery,
+  useLazyGetFilesQuery,
 } = fileApi;

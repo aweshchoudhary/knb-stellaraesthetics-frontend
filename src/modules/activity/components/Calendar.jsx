@@ -11,9 +11,9 @@ import {
   useUpdateActivityMutation,
 } from "@/redux/services/activityApi";
 import { Model } from "@/modules/common";
-import { ActivityHandler } from "@/modules/deal";
-import { ActivityDisplayModel } from "@/modules/activity";
+import { ActivityHandler, ActivityDisplayModel } from "@/modules/deal";
 import moment from "moment";
+import { Typography } from "@mui/material";
 
 const Calendar = ({ weekDaysEnabled }) => {
   const [updateActivity, { isLoading: isActivityUpdating }] =
@@ -26,6 +26,7 @@ const Calendar = ({ weekDaysEnabled }) => {
   const [selectedInfo, setSelectedInfo] = useState(null);
   const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
     data: true,
+    populate: "deals contacts performer",
   });
   const [events, setEvents] = useState([]);
 
@@ -71,9 +72,8 @@ const Calendar = ({ weekDaysEnabled }) => {
         title: event.title,
         start: event.startDateTime,
         end: event.endDateTime,
-        type: event.type,
-        completed_on: event.completed_on,
         backgroundColor,
+        external: event,
       });
     });
     setEvents(filteredActivitiesArr);
@@ -108,7 +108,7 @@ const Calendar = ({ weekDaysEnabled }) => {
           setIsOpen={setIsActivityModelOpen}
         >
           <ActivityDisplayModel
-            data={clickedActivityData}
+            data={clickedActivityData?.event?.extendedProps.external}
             setIsOpen={setIsActivityModelOpen}
           />
         </Model>
@@ -181,26 +181,24 @@ const EventComponent = ({ eventInfo }) => {
     <>
       <div
         className={
-          "flex justify-between w-full text-inherit px-2 py-1 " +
+          "flex justify-between w-full gap-2 text-inherit px-2 py-1 " +
           eventInfo?.backgroundColor
         }
       >
-        <div className="flex gap-2">
-          <span>
-            <Icon className="text-lg" icon={icon} />
-          </span>
-          <span>
-            {eventInfo.event.title.length > 20
-              ? eventInfo.event.title.slice(0, 12) + "..."
-              : eventInfo.event.title}
-          </span>
+        <div className="flex w-[calc(100%-20px)] gap-1">
+          <div>
+            <Icon className="text-lg" icon={icon || "mdi:calendar-task"} />
+          </div>
+          <Typography noWrap variant="p" className="flex-1 text-xs">
+            {eventInfo.event.title}
+          </Typography>
         </div>
         {data?.completed_on ? (
-          <span className="w-[18px] h-[18px] shrink-0 rounded-full bg-primary">
+          <div className="w-[18px] h-[18px] shrink-0 rounded-full bg-primary">
             <Icon icon="uil:check" className="text-lg" />
-          </span>
+          </div>
         ) : (
-          <span className="w-[18px] h-[18px] shrink-0 rounded-full border-2"></span>
+          <div className="w-[18px] h-[18px] shrink-0 rounded-full border-2"></div>
         )}
       </div>
     </>

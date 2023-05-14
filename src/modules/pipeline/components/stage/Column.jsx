@@ -22,7 +22,10 @@ const Column = ({ column, columnId }) => {
     const fetchDeals = async () =>
       await getDeals({
         data: true,
-        filters: JSON.stringify([{ id: "currentStage", value: columnId }]),
+        filters: JSON.stringify([
+          { id: "currentStage", value: columnId },
+          { id: "status", value: "open" },
+        ]),
         populate: "label contacts",
       });
     isMounted && fetchDeals();

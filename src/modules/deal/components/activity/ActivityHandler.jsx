@@ -113,6 +113,7 @@ const ActivityHandler = ({
       description: "",
       dealId: selectedDeals,
       performer: "",
+      icon: "uil:phone",
     });
     setAdditionalFields({
       description: false,
@@ -313,7 +314,7 @@ const ActivityHandler = ({
           <div className="input">{user.loggedUserName}</div>
         </div>
       </div>
-      <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">
+      <footer className="modal-footer">
         <button
           className="btn-outlined btn-small"
           disabled={isLoading}

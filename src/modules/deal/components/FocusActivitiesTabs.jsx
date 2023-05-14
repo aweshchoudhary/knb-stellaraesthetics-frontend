@@ -31,7 +31,7 @@ const Activites = ({ dealId }) => {
       { id: "completed_on", value: null },
     ]),
     data: true,
-    populate: "performer",
+    populate: "performer contacts deals",
   });
 
   return !isLoading && !isFetching && isSuccess ? (

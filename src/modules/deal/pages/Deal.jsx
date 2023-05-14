@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Tab, Tabs } from "@mui/material";
 
@@ -12,7 +12,7 @@ import { Header, Loader } from "@/modules/common";
 import { DealSideBar } from "@/modules/deal";
 
 import {
-  EventTabsContainer,
+  HistoryTabs,
   ActivitiesTabs,
   ActivityHandler,
   NoteHandler,
@@ -20,8 +20,11 @@ import {
   EmailHandler,
 } from "@/modules/deal";
 
-import { useVerifyPipelineUserQuery } from "@/redux/services/pipelineApi";
+import { useLazyVerifyPipelineUserQuery } from "@/redux/services/pipelineApi";
 import { Icon } from "@iconify/react";
+import { useLazyGetActivitiesQuery } from "@/redux/services/activityApi";
+import { useLazyGetNotesQuery } from "@/redux/services/noteApi";
+import { useLazyGetAllFileInfoQuery } from "@/redux/services/fileApi";
 
 const Deal = () => {
   const params = useParams();
@@ -36,9 +39,8 @@ const Deal = () => {
   const [updateDeal, { isLoading: isDealUpdating }] = useUpdateDealMutation();
   const [deleteDeal, { isLoading: isDealDeleting }] = useDeleteDealMutation();
 
-  const { data: checkedUser = { viewOnly: true } } = useVerifyPipelineUserQuery(
-    data.pipelineId
-  );
+  const [verifyPipelineUser, { data: checkedUser = { viewOnly: true } }] =
+    useLazyVerifyPipelineUserQuery();
 
   const navigate = useNavigate();
   async function handleDeleteDeal() {
@@ -50,6 +52,10 @@ const Deal = () => {
     await updateDeal({ id, update: { status } });
     navigate(-1);
   }
+
+  useEffect(() => {
+    if (data.pipelineId) verifyPipelineUser(data.pipelineId);
+  }, [data]);
 
   return !isLoading && !isFetching && isSuccess ? (
     <>
@@ -105,7 +111,7 @@ const Deal = () => {
             />
           )}
           <ActivitiesTabs dealId={data._id} />
-          <EventTabsContainer dealId={data._id} />
+          <HistoryTabsContainer />
         </div>
       </section>
     </>
@@ -148,6 +154,7 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
                 value: contact._id,
               }))}
               pipelineId={pipelineId}
+              dealId={dealId}
             />
           )}
           {currentTab === 2 && (
@@ -158,6 +165,7 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
                 value: contact._id,
               }))}
               pipelineId={pipelineId}
+              dealId={dealId}
             />
           )}
           {currentTab === 3 && (
@@ -168,6 +176,8 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
                 value: contact._id,
               }))}
               pipelineId={pipelineId}
+              dealId={dealId}
+              getByDealsId
             />
           )}
           {currentTab === 4 && (
@@ -183,6 +193,51 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
         </Box>
       </Suspense>
     </Suspense>
+  );
+};
+
+const HistoryTabsContainer = ({ dealId }) => {
+  const [notes, setNotes] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [getActivities] = useLazyGetActivitiesQuery();
+  const [getNotes] = useLazyGetNotesQuery();
+  const [getFiles] = useLazyGetAllFileInfoQuery();
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHistories = async () => {
+      setLoading(true);
+      const noteData = await getNotes({
+        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+        data: true,
+        populate: "creator",
+      });
+      noteData.data.length !== 0 && setNotes(noteData.data);
+
+      const activityData = await getActivities({
+        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+        data: true,
+        populate: "performer",
+      });
+      activityData.data.length !== 0 && setActivities(activityData.data);
+      const fileData = await getFiles({
+        dealId,
+        params: { populate: "uploader" },
+      });
+      fileData.data.length !== 0 && setFiles(fileData.data);
+      setLoading(false);
+    };
+    isMounted && fetchHistories();
+    return () => (isMounted = false);
+  }, [dealId]);
+
+  return (
+    !loading && (
+      <HistoryTabs activities={activities} files={files} notes={notes} />
+    )
   );
 };
 

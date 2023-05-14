@@ -22,7 +22,7 @@ export const ActivityDisplayModel = lazy(() =>
   import("./components/activity/ActivityDisplayModel")
 );
 
-export const EventTabsContainer = lazy(() =>
+export const HistoryTabs = lazy(() =>
   import("./components/history/HistoryTabsContainer")
 );
 
