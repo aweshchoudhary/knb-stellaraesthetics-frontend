@@ -78,23 +78,20 @@ const ProductServiceTable = () => {
     useInfiniteQuery({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam = 0 }) => {
-        const { data } = await axiosInstance.get(
-          "/api/product-service/get-products-services",
-          {
-            params: {
-              start: pageParam * fetchSize,
-              size: fetchSize,
-              filter: JSON.stringify(columnFilters ?? []),
-              sort: JSON.stringify(sorting ?? []),
-              search: globalFilter,
-              data: true,
-              count: true,
-            },
-            headers: {
-              Authorization: accessToken,
-            },
-          }
-        );
+        const { data } = await axiosInstance.get("/api/item/get-items", {
+          params: {
+            start: pageParam * fetchSize,
+            size: fetchSize,
+            filter: JSON.stringify(columnFilters ?? []),
+            sort: JSON.stringify(sorting ?? []),
+            search: globalFilter,
+            data: true,
+            count: true,
+          },
+          headers: {
+            Authorization: accessToken,
+          },
+        });
         return data;
       },
       getNextPageParam: (_lastGroup, groups) => groups.length,

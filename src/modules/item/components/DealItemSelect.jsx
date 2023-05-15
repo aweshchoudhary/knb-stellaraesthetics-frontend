@@ -1,14 +1,13 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Select from "react-select";
 import { formatNumber } from "@/modules/common";
-import { useLazyGetProductsServicesQuery } from "@/redux/services/productServiceApi";
+import { useLazyGetItemsQuery } from "@/redux/services/itemApi";
 
 const ProductSelect = ({ selectedData, setSelectedData }) => {
   const [searchedData, setSearchedData] = useState([]);
 
   const [query, setQuery] = useState("");
-  const [searchProduct, { isLoading, isFetching }] =
-    useLazyGetProductsServicesQuery();
+  const [searchProduct, { isLoading, isFetching }] = useLazyGetItemsQuery();
 
   const handleChange = async (selectedOptions) => {
     setSelectedData(selectedOptions);

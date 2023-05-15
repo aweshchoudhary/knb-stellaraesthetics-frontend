@@ -3,9 +3,10 @@ import moment from "moment";
 
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  useDeleteProductServiceMutation,
-  useGetProductServiceQuery,
-} from "@/redux/services/productServiceApi";
+  useDeleteItemMutation,
+  useGetItemQuery,
+} from "@/redux/services/itemApi";
+
 import { useLazyGetUserQuery } from "@/redux/services/userApi";
 
 import { toast } from "react-toastify";
@@ -22,7 +23,7 @@ const Item = () => {
     useState(false);
 
   const { data, isLoading, isFetching, isSuccess, isError, error } =
-    useGetProductServiceQuery(id);
+    useGetItemQuery(id);
   const [
     getUserById,
     {
@@ -120,7 +121,7 @@ const ItemHeader = ({ data, setIsOpen }) => {
       isError: isDeleteError,
       error: deleteError,
     },
-  ] = useDeleteProductServiceMutation();
+  ] = useDeleteItemMutation();
   const navigate = useNavigate();
 
   async function handleDeleteProductService() {

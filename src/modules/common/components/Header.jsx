@@ -53,7 +53,7 @@ const Header = ({ title }) => {
           </Link>
           {!isLoading && !isFetching && (
             <Link
-              to={"/user/" + data._id}
+              to={"/users/" + data._id}
               className="rounded-full h-[30px] w-[30px] border uppercase flex items-center justify-center"
             >
               <Icon icon="uil:user" />

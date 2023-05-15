@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 const NoteCard = ({ note }) => {
   const [deleteNote, { isLoading, isError, error, isSuccess }] =
     useDeleteNoteMutation();
-  console.log(note);
 
   async function handleDeleteNote() {
     await deleteNote(note._id);

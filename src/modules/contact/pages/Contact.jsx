@@ -49,8 +49,10 @@ const Contact = () => {
     // isFetching: isActivitiesFetching,
   } = useGetActivitiesQuery({
     filters: JSON.stringify([{ id: "contacts", value: id }]),
+    populate: "contacts deals",
     data: true,
   });
+
   const {
     data: deals,
     isLoading: isDealsLoading,
@@ -74,11 +76,11 @@ const Contact = () => {
   const [deleteContact, { isSuccess: isDeleteSuccess }] =
     useDeleteContactMutation();
 
-  const selectedDeals =
-    deals?.data?.map((i) => ({
-      label: i.title,
-      value: i._id,
-    })) || [];
+  // const selectedDeals =
+  //   deals?.data?.map((i) => ({
+  //     label: i.title,
+  //     value: i._id,
+  //   })) || [];
 
   async function handleDeleteContact() {
     await deleteContact(id);
@@ -118,28 +120,32 @@ const Contact = () => {
         </Model>
       </Suspense>
       {!isLoading && !isFetching && isSuccess ? (
-        <section className="h-full">
+        <header className="h-full">
           <div className="px-5 py-3 h-[60px] border-b flex justify-between items-center">
-            <button
-              onClick={() => setIsCreateDealModeOpen(true)}
-              className="btn-filled btn-small"
-            >
-              <Icon icon="uil:plus" className="text-lg" />
-              Deal
-            </button>
+            {loggedUser?.role === "admin" && (
+              <button
+                onClick={() => setIsCreateDealModeOpen(true)}
+                className="btn-filled btn-small"
+              >
+                <Icon icon="uil:plus" className="text-lg" />
+                Deal
+              </button>
+            )}
             <h1 className="text-xl font-semibold flex items-center gap-2">
               <Icon icon={"uil:user"} className="text-3xl" />{" "}
               <span>{data.contactPerson}</span>
             </h1>
-            <div className="flex gap-2">
-              <button
-                onClick={handleDeleteContact}
-                className="btn-filled bg-red-600 border-red-600 btn-small"
-              >
-                Delete
-              </button>
-              <button className="btn-filled btn-small">Update</button>
-            </div>
+            {loggedUser?.role === "admin" && (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleDeleteContact}
+                  className="btn-filled bg-red-600 border-red-600 btn-small"
+                >
+                  Delete
+                </button>
+                <button className="btn-filled btn-small">Update</button>
+              </div>
+            )}
           </div>
           <div className="flex w-full min-h-[calc(100vh-60px)] border-b">
             <div className="w-[350px] shrink-0">
@@ -270,31 +276,49 @@ const Contact = () => {
                       </Box>
                       <Box className="bg-bg">
                         {currentTab === 1 && (
-                          <NoteHandler deals={selectedDeals} />
+                          <NoteHandler
+                            contacts={[
+                              { label: data.contactPerson, value: id },
+                            ]}
+                            // deals={selectedDeals}
+                          />
                         )}
                         {currentTab === 2 && (
-                          <ActivityHandler deals={selectedDeals} />
+                          <ActivityHandler
+                            contacts={[
+                              { label: data.contactPerson, value: id },
+                            ]}
+                            // deals={selectedDeals}
+                          />
                         )}
                         {currentTab === 3 && (
                           <FileHandler
-                            deals={selectedDeals}
+                            // deals={selectedDeals}
+                            contacts={[
+                              { label: data.contactPerson, value: id },
+                            ]}
                             contactId={id}
                             getByContactsId
                           />
                         )}
                         {currentTab === 4 && (
-                          <EmailHandler deals={selectedDeals} />
+                          <EmailHandler
+                            contacts={[
+                              { label: data.contactPerson, value: id },
+                            ]}
+                            // deals={selectedDeals}
+                          />
                         )}
                       </Box>
                     </Box>
                   )}
                 </Suspense>
                 <ActivitiesTabs dealId={id} />
-                <HistoryTabsContainer dealId={id} />
+                <HistoryTabsContainer contactId={id} />
               </div>
             </div>
           </div>
-        </section>
+        </header>
       ) : (
         <section className="w-full h-screen flex items-center justify-center">
           <Loader />
@@ -304,7 +328,7 @@ const Contact = () => {
   );
 };
 
-const HistoryTabsContainer = ({ dealId }) => {
+const HistoryTabsContainer = ({ contactId }) => {
   const [notes, setNotes] = useState([]);
   const [activities, setActivities] = useState([]);
   const [files, setFiles] = useState([]);
@@ -319,29 +343,34 @@ const HistoryTabsContainer = ({ dealId }) => {
     const fetchHistories = async () => {
       setLoading(true);
       const noteData = await getNotes({
-        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+        filters: JSON.stringify([
+          { id: "contacts", value: { $in: [contactId] } },
+        ]),
         data: true,
         populate: "creator",
       });
       noteData.data.length !== 0 && setNotes(noteData.data);
 
       const activityData = await getActivities({
-        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+        filters: JSON.stringify([{ id: "deals", value: { $in: [contactId] } }]),
         data: true,
         populate: "performer",
       });
+
       activityData.data.length !== 0 && setActivities(activityData.data);
       const fileData = await getFiles({
-        filters: JSON.stringify([{ id: "dealId", value: { $in: [dealId] } }]),
+        filters: JSON.stringify([
+          { id: "contactId", value: { $in: [contactId] } },
+        ]),
         data: true,
-        populate: "performer",
+        populate: "uploader",
       });
       fileData.data.length !== 0 && setFiles(fileData.data);
       setLoading(false);
     };
     isMounted && fetchHistories();
     return () => (isMounted = false);
-  }, [dealId]);
+  }, [contactId]);
 
   return (
     !loading && (

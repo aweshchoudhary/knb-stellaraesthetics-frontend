@@ -13,7 +13,7 @@ import { Label } from "@/modules/deal";
 import { useLazyGetStagesQuery } from "@/redux/services/stageApi";
 import { useCreateDealMutation } from "@/redux/services/dealApi";
 import { useGetPipelinesQuery } from "@/redux/services/pipelineApi";
-import { useCreateDealProductServiceMutation } from "@/redux/services/dealProductService";
+import { useCreateDealItemMutation } from "@/redux/services/dealItemApi";
 
 const Select = lazy(() => import("react-select"));
 import { DealItemTable } from "@/modules/item";
@@ -78,9 +78,9 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   const [createDeal, { data: deal, isLoading, isError, error, isSuccess }] =
     useCreateDealMutation();
   const [
-    createDealProductService,
+    createDealItem,
     { isLoading: isItemLoading, isSuccess: isItemSuccess },
-  ] = useCreateDealProductServiceMutation();
+  ] = useCreateDealItemMutation();
   const { data } = useGetPipelinesQuery({ data: true });
 
   async function handleCreateDeal(values) {
@@ -94,7 +94,6 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
       creator: loggedUserId,
     };
     await createDeal(newDeal);
-    setIsOpen(false);
   }
 
   const fetchStages = async (pipeId) => {
@@ -105,14 +104,13 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   };
 
   useEffect(() => {
-    const createItemFn = async (data) => await createDealProductService(data);
+    const createItemFn = async (data) => await createDealItem(data);
     if (isSuccess && itemRows.length !== 0) {
       itemRows.forEach((row) => {
-        const { productServiceId, rate, qty, qty_type, discount, tax, total } =
-          row;
+        const { _id, rate, qty, qty_type, discount, tax, total } = row;
         createItemFn({
           dealId: deal._id,
-          productServiceId,
+          itemId: _id,
           rate,
           qty,
           qty_type,
@@ -122,12 +120,12 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
           currency: tableCurrency?.value,
         });
       });
-      toast.success("Deal has been created");
     }
   }, [isSuccess]);
   useEffect(() => {
     if (isItemSuccess) {
       toast.success("Deal has been created");
+      setIsOpen(false);
     }
   }, [isItemSuccess]);
 

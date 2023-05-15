@@ -145,7 +145,7 @@ const ActivityStatus = ({ startDateTime, endDateTime }) => {
         </div>
       )}
       {status === "none" && (
-        <div className="w-fit text-white bg-paper py-1 px-2 rounded-full">
+        <div className="w-fit text-white bg-textDark py-1 px-2 rounded-full">
           Not Started
         </div>
       )}

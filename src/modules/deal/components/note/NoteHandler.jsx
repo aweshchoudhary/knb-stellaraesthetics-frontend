@@ -7,12 +7,12 @@ import { ContactSelect } from "@/modules/contact";
 import { RichTextEditor } from "@/modules/common";
 import { useSelector } from "react-redux";
 
-const Notes = ({ cards = [], contacts = [] }) => {
+const Notes = ({ deals = [], contacts = [] }) => {
   const [createNote, { isLoading, isSuccess, error, isError }] =
     useCreateNoteMutation();
   const [noteBody, setNoteBody] = useState("");
   const [isClear, setIsClear] = useState(false);
-  const [selectedDeals, setSelectedDeals] = useState(cards);
+  const [selectedDeals, setSelectedDeals] = useState(deals);
   const [selectedContacts, setSelectedContacts] = useState(contacts);
   const loggedUserId = useSelector((state) => state.auth.loggedUserId);
 
@@ -57,7 +57,7 @@ const Notes = ({ cards = [], contacts = [] }) => {
           <DealSelect
             selectedData={selectedDeals}
             setSelectedData={setSelectedDeals}
-            compare={cards}
+            compare={deals}
           />
         </div>
         <div className="my-3">

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Icon } from "@iconify/react";
 import Select from "react-select";
 
-import { useLazyGetProductServiceQuery } from "@/redux/services/productServiceApi";
+import { useLazyGetItemQuery } from "@/redux/services/itemApi";
 
 import { BASE_URL, Loader } from "@/modules/common";
 import { DealItemSelect } from "@/modules/item";
@@ -54,7 +54,7 @@ const DraftItem = ({
   const [
     getProductService,
     { isLoading, isFetching, isSuccess, isError, error },
-  ] = useLazyGetProductServiceQuery();
+  ] = useLazyGetItemQuery();
 
   const [draftItem, setDraftItem] = useState({
     title: "",
@@ -78,11 +78,7 @@ const DraftItem = ({
   // const [tax, setTax] = useState(0);
 
   function handleAddRow() {
-    let newRow = {
-      ...draftItem,
-      productServiceId: draftItem._id,
-    };
-    setRows((prev) => [...prev, newRow]);
+    setRows((prev) => [...prev, draftItem]);
     handleCancelDraftItem();
   }
   function handleFillDraftItem(name, value) {

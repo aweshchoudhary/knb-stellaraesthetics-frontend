@@ -44,10 +44,10 @@ const ActivityHandler = ({
   setIsOpen,
   isUpdate,
   activityId,
-  cards = [],
+  deals = [],
   contacts = [],
 }) => {
-  const [selectedDeals, setSelectedDeals] = useState(cards);
+  const [selectedDeals, setSelectedDeals] = useState(deals);
   const [selectedContacts, setSelectedContacts] = useState(contacts);
 
   const user = useSelector((state) => state.auth);
@@ -298,7 +298,7 @@ const ActivityHandler = ({
           <DealSelect
             selectedData={selectedDeals}
             setSelectedData={setSelectedDeals}
-            compare={cards}
+            compare={deals}
           />
         </div>
         <div className="my-3">

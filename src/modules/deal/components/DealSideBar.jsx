@@ -11,7 +11,7 @@ import {
   BASE_URL,
 } from "@/modules/common";
 
-import { useGetDealProductServiceQuery } from "@/redux/services/dealProductService";
+import { useGetDealItemQuery } from "@/redux/services/dealItemApi";
 
 const DealSideBar = ({ data }) => {
   return (
@@ -86,33 +86,33 @@ const ContactAccordian = ({ contact }) => {
 };
 
 const ItemCard = ({ itemId }) => {
-  const { data, isLoading, isFetching, isSuccess } =
-    useGetDealProductServiceQuery({
-      id: itemId,
-      params: { populate: "productServiceId" },
-    });
+  const { data, isLoading, isFetching, isSuccess } = useGetDealItemQuery({
+    id: itemId,
+    params: { populate: "itemId" },
+  });
+  console.log(data);
   return (
     !isLoading &&
     !isFetching &&
     isSuccess && (
       <div className="flex gap-3 items-start border-b py-3">
-        {data?.productServiceId.image?.path && (
+        {data?.itemId.image?.path && (
           <div className="w-[80px] h-[60px]">
             <img
-              src={BASE_URL + data.productServiceId.image.path}
+              src={BASE_URL + data.itemId.image.path}
               className="w-full h-full object-cover"
             />
           </div>
         )}
         <div className="flex-1">
-          <h2 className="font-medium mb-1">{data.productServiceId.title}</h2>
+          <h2 className="font-medium mb-1">{data.itemId.title}</h2>
           <div className="flex gap-1">
             <span className="border px-2 py-1">{formatNumber(data.rate)}</span>
             <span className="border px-2 py-1">
               {data.qty} {data.qty_type}
             </span>
             <span className="capitalize border px-2 py-1">
-              {data.productServiceId.type}
+              {data.itemId.type}
             </span>
           </div>
         </div>

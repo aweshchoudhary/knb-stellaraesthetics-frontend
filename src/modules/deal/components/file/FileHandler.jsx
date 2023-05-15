@@ -13,15 +13,18 @@ import moment from "moment";
 import { BASE_URL } from "@/modules/common";
 import { DealSelect } from "@/modules/deal";
 import { useSelector } from "react-redux";
+import { ContactSelect } from "@/modules/contact";
 
 const File = ({
   cards = [],
+  contacts = [],
   dealId,
   contactId,
   getByDealsId,
   getByContactsId,
 }) => {
-  const [selectedData, setSelectedData] = useState(cards);
+  const [selectedDeals, setSelectedDeals] = useState(cards);
+  const [selectedContacts, setSelectedContacts] = useState(contacts);
 
   const [getFiles, { data: files, isLoading, isFetching, isSuccess }] =
     useLazyGetFilesQuery();
@@ -36,7 +39,7 @@ const File = ({
   const loggedUserId = useSelector((state) => state.auth.loggedUserId);
 
   async function handleUploadFile(file) {
-    const dealIds = selectedData.map((i) => i.value);
+    const dealIds = selectedDeals.map((i) => i.value);
     const newFormData = new FormData();
     newFormData.append("file", file);
     newFormData.append("dealId", dealIds);
@@ -64,10 +67,13 @@ const File = ({
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sufixes[i]}`;
   }
-
   useEffect(() => {
     const fetchFiles = async (query) =>
-      await getFiles({ filters: JSON.stringify(query), data: true });
+      await getFiles({
+        filters: JSON.stringify(query),
+        data: true,
+        populate: "uploader",
+      });
     if (getByDealsId) fetchFiles([{ id: "dealId", value: { $in: [dealId] } }]);
     if (getByContactsId)
       fetchFiles([{ id: "contactId", value: { $in: [contactId] } }]);
@@ -83,13 +89,6 @@ const File = ({
   return (
     <Suspense>
       <section className="p-5">
-        <div className="mb-4">
-          <DealSelect
-            selectedData={selectedData}
-            setSelectedData={setSelectedData}
-            compare={cards ? cards : null}
-          />
-        </div>
         {!isLoading && !isFetching && isSuccess ? (
           <ul>
             {files.length > 0 ? (
@@ -154,6 +153,22 @@ const File = ({
             />
           </div>
         )}
+        <div className="my-3">
+          <h2 className="mb-1">Deal Select</h2>
+          <DealSelect
+            selectedData={selectedDeals}
+            setSelectedData={setSelectedDeals}
+            compare={cards ? cards : null}
+          />
+        </div>
+        <div className="mb-3">
+          <h2 className="mb-1">Contact Select</h2>
+          <ContactSelect
+            selectedData={selectedContacts}
+            setSelectedData={setSelectedContacts}
+            compare={contacts ? contacts : null}
+          />
+        </div>
       </section>
       <footer className="flex items-center px-5 py-3 border-t gap-2 justify-end">
         <input

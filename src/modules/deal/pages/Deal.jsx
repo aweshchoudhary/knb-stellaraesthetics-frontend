@@ -24,7 +24,7 @@ import { useLazyVerifyPipelineUserQuery } from "@/redux/services/pipelineApi";
 import { Icon } from "@iconify/react";
 import { useLazyGetActivitiesQuery } from "@/redux/services/activityApi";
 import { useLazyGetNotesQuery } from "@/redux/services/noteApi";
-import { useLazyGetAllFileInfoQuery } from "@/redux/services/fileApi";
+import { useLazyGetFilesQuery } from "@/redux/services/fileApi";
 
 const Deal = () => {
   const params = useParams();
@@ -111,7 +111,7 @@ const Deal = () => {
             />
           )}
           <ActivitiesTabs dealId={data._id} />
-          <HistoryTabsContainer />
+          <HistoryTabsContainer dealId={data._id} />
         </div>
       </section>
     </>
@@ -148,7 +148,7 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
         <Box className="bg-bg">
           {currentTab === 1 && (
             <NoteHandler
-              cards={[{ value: dealId, label: deal?.title }]}
+              deals={[{ value: dealId, label: deal?.title }]}
               contacts={contacts.map((contact) => ({
                 label: contact.contactPerson,
                 value: contact._id,
@@ -159,7 +159,7 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
           )}
           {currentTab === 2 && (
             <ActivityHandler
-              cards={[{ value: dealId, label: deal?.title }]}
+              deals={[{ value: dealId, label: deal?.title }]}
               contacts={contacts.map((contact) => ({
                 label: contact.contactPerson,
                 value: contact._id,
@@ -170,7 +170,7 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
           )}
           {currentTab === 3 && (
             <FileHandler
-              cards={[{ value: dealId, label: deal?.title }]}
+              deals={[{ value: dealId, label: deal?.title }]}
               contacts={contacts.map((contact) => ({
                 label: contact.contactPerson,
                 value: contact._id,
@@ -182,7 +182,7 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
           )}
           {currentTab === 4 && (
             <EmailHandler
-              cards={[{ value: dealId, label: deal?.title }]}
+              deals={[{ value: dealId, label: deal?.title }]}
               contacts={contacts.map((contact) => ({
                 label: contact.contactPerson,
                 value: contact._id,
@@ -204,7 +204,7 @@ const HistoryTabsContainer = ({ dealId }) => {
 
   const [getActivities] = useLazyGetActivitiesQuery();
   const [getNotes] = useLazyGetNotesQuery();
-  const [getFiles] = useLazyGetAllFileInfoQuery();
+  const [getFiles] = useLazyGetFilesQuery();
 
   useEffect(() => {
     let isMounted = true;
@@ -224,8 +224,9 @@ const HistoryTabsContainer = ({ dealId }) => {
       });
       activityData.data.length !== 0 && setActivities(activityData.data);
       const fileData = await getFiles({
-        dealId,
-        params: { populate: "uploader" },
+        filters: JSON.stringify([{ id: "dealId", value: { $in: [dealId] } }]),
+        data: true,
+        populate: "uploader",
       });
       fileData.data.length !== 0 && setFiles(fileData.data);
       setLoading(false);

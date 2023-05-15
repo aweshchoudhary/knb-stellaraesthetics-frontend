@@ -1,44 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ActivityCard from "./ActivityCard";
-import { useLazyGetActivitiesQuery } from "@/redux/services/activityApi";
 
-const ActvityHistoryTab = ({ dealId }) => {
-  const [activityHistory, setNoteHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const [getActivities] = useLazyGetActivitiesQuery();
-
-  useEffect(() => {
-    const fetchHistories = async () => {
-      setLoading(true);
-      const activityData = await getActivities({
-        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
-        data: true,
-        populate: "performer",
-      });
-      activityData.data.length !== 0 && setNoteHistory(activityData.data);
-      setLoading(false);
-    };
-    fetchHistories();
-  }, [dealId]);
+const ActvityHistoryTab = ({ activities }) => {
   return (
-    !loading && (
-      <ul>
-        {activityHistory.length !== 0 ? (
-          activityHistory.map((history, index) => {
-            return (
-              <li key={index}>
-                <ActivityCard activity={history} />
-              </li>
-            );
-          })
-        ) : (
-          <section className="p-10 text-center bg-bg mt-3">
-            <p>No history to show</p>
-          </section>
-        )}
-      </ul>
-    )
+    <ul>
+      {activities.length !== 0 ? (
+        activities.map((history, index) => {
+          return (
+            <li key={index}>
+              <ActivityCard activity={history} />
+            </li>
+          );
+        })
+      ) : (
+        <section className="p-10 text-center bg-bg mt-3">
+          <p>No history to show</p>
+        </section>
+      )}
+    </ul>
   );
 };
 

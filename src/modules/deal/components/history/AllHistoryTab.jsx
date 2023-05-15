@@ -22,7 +22,7 @@ const AllHistory = ({ activities, notes, files }) => {
   }, [activities, notes, files]);
   return (
     <ul>
-      {allHistory.length !== 0 ? (
+      {allHistory?.length !== 0 ? (
         allHistory.map((history, index) => {
           return (
             <li key={index}>

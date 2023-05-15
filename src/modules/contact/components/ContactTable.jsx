@@ -7,7 +7,7 @@ import React, {
   Suspense,
 } from "react";
 import MaterialReactTable from "material-react-table";
-import { Box, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import {
@@ -23,6 +23,8 @@ import { useGetActivitiesQuery } from "@/redux/services/activityApi";
 import { useSelector } from "react-redux";
 
 import { EditContact } from "@/modules/contact";
+import moment from "moment";
+import { useGetMeQuery } from "@/redux/services/userApi";
 
 const fetchLimit = 10;
 
@@ -49,7 +51,7 @@ const ContactTable = () => {
       },
       {
         id: "next-activites",
-        header: "Next Deal",
+        header: "Next Activity",
         // size: 250,
         Cell: ({ row }) => {
           return (
@@ -71,6 +73,8 @@ const ContactTable = () => {
 
   const [isContactEditModelOpen, setIsContactEditModelOpen] = useState(false);
   const [editRow, setEditRow] = useState({});
+
+  const { data: user } = useGetMeQuery();
 
   const { data, fetchNextPage, isError, isFetching, isLoading } =
     useInfiniteQuery({
@@ -218,15 +222,17 @@ const ContactTable = () => {
         rowVirtualizerProps={{ overscan: 4 }}
         renderRowActions={({ row }) => (
           <div className="flex gap-1">
-            <button
-              className="btn-outlined btn-small"
-              onClick={() => {
-                setIsContactEditModelOpen(true);
-                setEditRow(row);
-              }}
-            >
-              <Icon icon={"uil:pen"} />
-            </button>
+            {user?.role === "admin" && (
+              <button
+                className="btn-outlined btn-small"
+                onClick={() => {
+                  setIsContactEditModelOpen(true);
+                  setEditRow(row);
+                }}
+              >
+                <Icon icon={"uil:pen"} />
+              </button>
+            )}
             <Link
               className="btn-filled btn-small"
               to={"/contacts/" + row.original._id}
@@ -238,9 +244,16 @@ const ContactTable = () => {
         enableRowSelection
         renderTopToolbarCustomActions={({ table }) => (
           <Box display="flex" gap="5px">
+            {user?.role === "admin" && (
+              <Tooltip title="Create Contact">
+                <button className="btn btn-filled btn-small h-full">
+                  <Icon icon="uil:plus" className="text-xl" />
+                </button>
+              </Tooltip>
+            )}
             <button
               onClick={() => setDownloadMenuOpen((prev) => !prev)}
-              className="btn-filled btn-small h-full"
+              className="btn-outlined btn-small h-full"
             >
               <Icon
                 icon={
@@ -317,21 +330,40 @@ const Deals = ({ contactId, status }) => {
   );
 };
 
-const NextActivity = ({ contactId, status }) => {
+const NextActivity = ({ contactId }) => {
+  const [latestActivity, setLatestActivity] = useState(null);
   const { data, isLoading, isFetching } = useGetActivitiesQuery({
     filters: JSON.stringify([{ id: "contacts", value: contactId }]),
     data: true,
   });
-
   useEffect(() => {
-    if (data?.data?.length) {
-      // data.data.for
-    }
-  }, [data?.data]);
+    const getLatesActivity = () => {
+      data.reduce((date, activity) => {
+        const activityDate = moment(activity.date); // Assuming activity.date is a valid date string
 
+        if (!date || activityDate.isAfter(date)) {
+          setLatestActivity(activity);
+          return;
+        } else {
+          return date;
+        }
+      }, null);
+    };
+    if (data?.length) {
+      getLatesActivity();
+    }
+  }, [data]);
   return (
-    <span className={status === "lost" ? "text-red-600" : "text-green-600"}>
-      {isLoading && isFetching ? "Loading..." : data?.meta?.total}
+    <span className={!latestActivity ? "text-red-600" : "text-green-600"}>
+      {isLoading && isFetching ? (
+        "Loading..."
+      ) : (
+        <span>
+          {latestActivity
+            ? moment(latestActivity.startDateTime).format("hh:mm | DD/MM/YYYY")
+            : "No Activity"}
+        </span>
+      )}
     </span>
   );
 };

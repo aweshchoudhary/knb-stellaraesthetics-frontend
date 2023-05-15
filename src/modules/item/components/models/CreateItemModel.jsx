@@ -4,10 +4,10 @@ import { Icon } from "@iconify/react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
-  useCreateProductServiceMutation,
-  useLazyGetProductServiceQuery,
-  useUpdateProductServiceMutation,
-} from "@/redux/services/productServiceApi";
+  useCreateItemMutation,
+  useLazyGetItemQuery,
+  useUpdateItemMutation,
+} from "@/redux/services/itemApi";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { Country } from "country-state-city";
@@ -90,7 +90,7 @@ const CreateItemModel = ({ setIsOpen, isUpdate, id }) => {
   const [imageUrl, setImageUrl] = useState(null);
 
   const [createProductService, { isLoading, isError, isSuccess, error }] =
-    useCreateProductServiceMutation();
+    useCreateItemMutation();
 
   const [
     getProductService,
@@ -101,7 +101,7 @@ const CreateItemModel = ({ setIsOpen, isUpdate, id }) => {
       isError: isItemError,
       error: itemError,
     },
-  ] = useLazyGetProductServiceQuery();
+  ] = useLazyGetItemQuery();
   const [
     updateProductService,
     {
@@ -110,7 +110,7 @@ const CreateItemModel = ({ setIsOpen, isUpdate, id }) => {
       isSuccess: isUpdateSuccess,
       error: updateError,
     },
-  ] = useUpdateProductServiceMutation();
+  ] = useUpdateItemMutation();
   const loggedUserId = useSelector((state) => state.auth.loggedUserId);
 
   const [currentCurrency, setCurrentCurrency] = useState({});
