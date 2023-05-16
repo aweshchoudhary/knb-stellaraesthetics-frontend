@@ -47,7 +47,7 @@ const Activites = ({ dealId }) => {
           })
         ) : (
           <section className="w-full h-[100px] bg-bg my-4 flex items-center justify-center">
-            <p>No notes to show</p>
+            <p>No active activities to show</p>
           </section>
         )}
       </ul>

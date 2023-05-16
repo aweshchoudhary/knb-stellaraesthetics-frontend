@@ -1,29 +1,27 @@
-import { useDeleteNoteMutation } from "@/redux/services/noteApi";
+import { Model } from "@/modules/common";
 import { Icon } from "@iconify/react";
 import moment from "moment";
-import React, { Suspense, useEffect } from "react";
-import { toast } from "react-toastify";
+import React, { Suspense, useState } from "react";
+import NoteDisplayModel from "./NoteDisplayModel";
 
 const NoteCard = ({ note }) => {
-  const [deleteNote, { isLoading, isError, error, isSuccess }] =
-    useDeleteNoteMutation();
-
-  async function handleDeleteNote() {
-    await deleteNote(note._id);
-  }
-
-  useEffect(() => {
-    if (isSuccess) toast.success("Note deleted");
-  }, [isSuccess]);
-
-  useEffect(() => {
-    if (isError) toast.error(error.data?.message);
-  }, [isError]);
-
+  const [isDisplayModelOpen, setIsDisplayModelOpen] = useState(false);
   return (
     note && (
       <Suspense>
-        <div className="w-full flex my-2 gap-2">
+        {isDisplayModelOpen && (
+          <Model
+            setIsOpen={setIsDisplayModelOpen}
+            isOpen={isDisplayModelOpen}
+            title={"Note"}
+          >
+            <NoteDisplayModel data={note} setIsOpen={setIsDisplayModelOpen} />
+          </Model>
+        )}
+        <button
+          onClick={() => setIsDisplayModelOpen(true)}
+          className="w-full text-left flex my-2 gap-2"
+        >
           <div className="w-[40px] h-[40px] bg-bg flex items-center justify-center">
             <div>
               <Icon
@@ -45,7 +43,7 @@ const NoteCard = ({ note }) => {
                 <span>{moment(note.createdAt).fromNow()}</span>
                 <span>{note?.creator?.fullname}</span>
               </div>
-              <div className="flex gap-1">
+              {/* <div className="flex gap-1">
                 <button disabled={isLoading} className="btn-outlined btn-small">
                   <Icon icon="uil:pen" />
                 </button>
@@ -56,10 +54,10 @@ const NoteCard = ({ note }) => {
                 >
                   <Icon icon="uil:trash" />
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
-        </div>
+        </button>
       </Suspense>
     )
   );

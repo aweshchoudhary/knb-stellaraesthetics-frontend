@@ -197,44 +197,39 @@ const TabsContainer = ({ deal, dealId, contacts = [], pipelineId }) => {
 };
 
 const HistoryTabsContainer = ({ dealId }) => {
-  const [notes, setNotes] = useState([]);
-  const [activities, setActivities] = useState([]);
-  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [getActivities] = useLazyGetActivitiesQuery();
-  const [getNotes] = useLazyGetNotesQuery();
-  const [getFiles] = useLazyGetFilesQuery();
+  const [getActivities, { data: activities }] = useLazyGetActivitiesQuery();
+  const [getNotes, { data: notes }] = useLazyGetNotesQuery();
+  const [getFiles, { data: files }] = useLazyGetFilesQuery();
 
   useEffect(() => {
     let isMounted = true;
     const fetchHistories = async () => {
       setLoading(true);
-      const noteData = await getNotes({
+      await getNotes({
         filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
         data: true,
-        populate: "creator",
+        populate: "creator deals contacts",
       });
-      noteData.data.length !== 0 && setNotes(noteData.data);
-
-      const activityData = await getActivities({
-        filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+      await getActivities({
+        filters: JSON.stringify([
+          { id: "deals", value: { $in: [dealId] } },
+          { id: "completed_on", value: { $not: { $eq: null } } },
+        ]),
         data: true,
-        populate: "performer",
+        populate: "performer deals contacts",
       });
-      activityData.data.length !== 0 && setActivities(activityData.data);
-      const fileData = await getFiles({
+      await getFiles({
         filters: JSON.stringify([{ id: "dealId", value: { $in: [dealId] } }]),
         data: true,
         populate: "uploader",
       });
-      fileData.data.length !== 0 && setFiles(fileData.data);
       setLoading(false);
     };
     isMounted && fetchHistories();
     return () => (isMounted = false);
   }, [dealId]);
-
   return (
     !loading && (
       <HistoryTabs activities={activities} files={files} notes={notes} />

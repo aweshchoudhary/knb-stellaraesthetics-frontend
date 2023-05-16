@@ -2,10 +2,10 @@ import React, { Suspense } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { DealCard } from "@/modules/deal";
 
-const Row = ({ index, deal, setColumnInfo }) => {
+const Row = ({ index, dealId, setColumnInfo }) => {
   return (
     <Suspense>
-      <Draggable key={deal._id} draggableId={deal._id} index={index}>
+      <Draggable key={dealId} draggableId={dealId} index={index}>
         {(provided) => {
           return (
             <div
@@ -13,7 +13,7 @@ const Row = ({ index, deal, setColumnInfo }) => {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
-              <DealCard deal={deal} setColumnInfo={setColumnInfo} />
+              <DealCard dealId={dealId} setColumnInfo={setColumnInfo} />
             </div>
           );
         }}

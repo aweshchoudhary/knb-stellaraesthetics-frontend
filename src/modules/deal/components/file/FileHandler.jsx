@@ -16,14 +16,13 @@ import { useSelector } from "react-redux";
 import { ContactSelect } from "@/modules/contact";
 
 const File = ({
-  cards = [],
+  deals = [],
   contacts = [],
   dealId,
-  contactId,
   getByDealsId,
   getByContactsId,
 }) => {
-  const [selectedDeals, setSelectedDeals] = useState(cards);
+  const [selectedDeals, setSelectedDeals] = useState(deals);
   const [selectedContacts, setSelectedContacts] = useState(contacts);
 
   const [getFiles, { data: files, isLoading, isFetching, isSuccess }] =
@@ -40,10 +39,11 @@ const File = ({
 
   async function handleUploadFile(file) {
     const dealIds = selectedDeals.map((i) => i.value);
+    const contactIds = selectedContacts.map((i) => i.value);
     const newFormData = new FormData();
     newFormData.append("file", file);
     newFormData.append("dealId", dealIds);
-    newFormData.append("contactId", contactId);
+    newFormData.append("contactId", contactIds);
     newFormData.append("uploader", loggedUserId);
     await uploadFile(newFormData);
   }
@@ -75,9 +75,10 @@ const File = ({
         populate: "uploader",
       });
     if (getByDealsId) fetchFiles([{ id: "dealId", value: { $in: [dealId] } }]);
+    const contactIds = selectedContacts.map((i) => i.value);
     if (getByContactsId)
-      fetchFiles([{ id: "contactId", value: { $in: [contactId] } }]);
-  }, [dealId, contactId]);
+      fetchFiles([{ id: "contactId", value: { $in: contactIds } }]);
+  }, [dealId, contacts]);
 
   useEffect(() => {
     isUploadSuccess && toast.success("File Upload Successful!");
@@ -158,7 +159,7 @@ const File = ({
           <DealSelect
             selectedData={selectedDeals}
             setSelectedData={setSelectedDeals}
-            compare={cards ? cards : null}
+            compare={deals}
           />
         </div>
         <div className="mb-3">

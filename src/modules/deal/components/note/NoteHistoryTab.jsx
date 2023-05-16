@@ -1,7 +1,7 @@
 import React from "react";
 import NoteCard from "./NoteCard";
 
-const NoteHistoryTab = ({ notes }) => {
+const NoteHistoryTab = ({ notes = [] }) => {
   return (
     <ul>
       {notes.length !== 0 ? (

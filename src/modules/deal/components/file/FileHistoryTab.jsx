@@ -1,7 +1,7 @@
 import React from "react";
 import FileCard from "./FileCard";
 
-const FileHistoryTab = ({ files }) => {
+const FileHistoryTab = ({ files = [] }) => {
   return (
     <ul>
       {files.length !== 0 ? (

@@ -1,4 +1,7 @@
-import { useDeleteActivityMutation } from "@/redux/services/activityApi";
+import {
+  useDeleteActivityMutation,
+  useUpdateActivityMutation,
+} from "@/redux/services/activityApi";
 import { Icon } from "@iconify/react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -9,8 +12,22 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
   const [deleteActivity, { isLoading, isError, isSuccess, error }] =
     useDeleteActivityMutation();
 
+  const [updateActivity] = useUpdateActivityMutation();
+
   async function handledDeleteActivity() {
     await deleteActivity(data._id);
+  }
+
+  async function handleMarkCompleted() {
+    await updateActivity({
+      id: data._id,
+      update: { completed_on: new Date() },
+    });
+    setIsOpen(false);
+  }
+  async function handleUndoCompleted() {
+    await updateActivity({ id: data._id, update: { completed_on: null } });
+    setIsOpen(false);
   }
 
   useEffect(() => {
@@ -23,7 +40,6 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
   useEffect(() => {
     if (isError) toast.error(error.data?.message);
   }, [isError]);
-  console.log(data);
 
   return (
     data && (
@@ -100,19 +116,36 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
             </p>
           </div>
         </section>
-        <footer className="modal-footer mt-5">
-          <button
-            disabled={isLoading}
-            onClick={handledDeleteActivity}
-            className="btn-filled bg-red-600 border-red-600 btn-small"
-          >
-            <Icon icon="uil:trash" />
-            <span>{isLoading ? "Deleting..." : "Delete"}</span>
-          </button>
-          <button disabled={isLoading} className="btn-filled btn-small">
-            <Icon icon="uil:pen" />
-            <span>Edit</span>
-          </button>
+        <footer className="modal-footer mt-5 justify-between">
+          {data.completed_on ? (
+            <button
+              onClick={handleUndoCompleted}
+              className="btn-outlined btn-small"
+            >
+              Undo
+            </button>
+          ) : (
+            <button
+              onClick={handleMarkCompleted}
+              className="btn-outlined btn-small"
+            >
+              Mark Completed
+            </button>
+          )}
+          <div className="flex gap-2">
+            <button
+              disabled={isLoading}
+              onClick={handledDeleteActivity}
+              className="btn-filled bg-red-600 border-red-600 btn-small"
+            >
+              <Icon icon="uil:trash" />
+              <span>{isLoading ? "Deleting..." : "Delete"}</span>
+            </button>
+            <button disabled={isLoading} className="btn-filled btn-small">
+              <Icon icon="uil:pen" />
+              <span>Edit</span>
+            </button>
+          </div>
         </footer>
       </>
     )

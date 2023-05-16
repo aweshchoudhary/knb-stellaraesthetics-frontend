@@ -1,7 +1,7 @@
 import React from "react";
 import ActivityCard from "./ActivityCard";
 
-const ActvityHistoryTab = ({ activities }) => {
+const ActvityHistoryTab = ({ activities = [] }) => {
   return (
     <ul>
       {activities.length !== 0 ? (

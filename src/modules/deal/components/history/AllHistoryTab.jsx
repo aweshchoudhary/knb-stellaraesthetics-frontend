@@ -4,25 +4,31 @@ import ActivityCard from "../activity/ActivityCard";
 import FileCard from "../file/FileCard";
 import EmailCard from "../email/EmailCard";
 
-const AllHistory = ({ activities, notes, files }) => {
+const AllHistory = ({ activities = [], notes = [], files = [] }) => {
   const [allHistory, setAllHistory] = useState([]);
   useEffect(() => {
-    if (activities?.length)
-      activities.forEach((act) =>
-        setAllHistory((prev) => [...prev, { ...act, type: "activity" }])
-      );
-    if (notes?.length)
-      notes.forEach((note) =>
-        setAllHistory((prev) => [...prev, { ...note, type: "note" }])
-      );
-    if (files?.length)
-      files.forEach((file) =>
-        setAllHistory((prev) => [...prev, { ...file, type: "file" }])
-      );
+    let isMounted = true;
+    const createHistory = () => {
+      setAllHistory([]);
+      if (activities.length)
+        activities.forEach((act) =>
+          setAllHistory((prev) => [...prev, { ...act, type: "activity" }])
+        );
+      if (notes.length)
+        notes.forEach((note) =>
+          setAllHistory((prev) => [...prev, { ...note, type: "note" }])
+        );
+      if (files.length)
+        files.forEach((file) =>
+          setAllHistory((prev) => [...prev, { ...file, type: "file" }])
+        );
+    };
+    isMounted && createHistory();
+    return () => (isMounted = false);
   }, [activities, notes, files]);
   return (
     <ul>
-      {allHistory?.length !== 0 ? (
+      {allHistory.length !== 0 ? (
         allHistory.map((history, index) => {
           return (
             <li key={index}>
