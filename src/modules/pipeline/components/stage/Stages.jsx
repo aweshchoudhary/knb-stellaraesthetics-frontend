@@ -83,7 +83,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
           !isLoading && !isFetching && isSuccess ? "opacity-100" : "opacity-50"
         }`}
       >
-        <div className="flex justify-center h-full">
+        <div className="flex justify-center h-full w-full overflow-x-auto">
           <DragDropContext
             onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
           >
