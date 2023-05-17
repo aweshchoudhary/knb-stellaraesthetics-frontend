@@ -25,21 +25,20 @@ const FocusActivities = ({ dealId, contactId }) => {
 };
 
 const Activites = ({ dealId, contactId }) => {
-  const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
+  const query = {
     filters: JSON.stringify([
       {
-        id: "$or",
-        value: [
-          { dealId: { $in: [dealId] } },
-          { contactId: { $in: [contactId] } },
-        ],
+        id: dealId ? "deals" : "contacts",
+        value: { $in: dealId ? [dealId] : [contactId] },
       },
       { id: "completed_on", value: null },
     ]),
     data: true,
     populate: "performer contacts deals",
-  });
-  console.log(data);
+  };
+  const { data, isLoading, isFetching, isSuccess } =
+    useGetActivitiesQuery(query);
+
   return !isLoading && !isFetching && isSuccess ? (
     <div>
       <ul>
