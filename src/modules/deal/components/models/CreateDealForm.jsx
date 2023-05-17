@@ -9,14 +9,15 @@ import ReactDatePicker from "react-datepicker";
 import { useSelector } from "react-redux";
 
 import { Label } from "@/modules/deal";
-
 import { useLazyGetStagesQuery } from "@/redux/services/stageApi";
+import { mainApi } from "@/redux/services/mainApi";
 import { useCreateDealMutation } from "@/redux/services/dealApi";
 import { useGetPipelinesQuery } from "@/redux/services/pipelineApi";
 import { useCreateDealItemMutation } from "@/redux/services/dealItemApi";
 
 const Select = lazy(() => import("react-select"));
 import { DealItemTable } from "@/modules/item";
+import { useDispatch } from "react-redux";
 
 const initialValues = {
   title: "",
@@ -52,6 +53,8 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
   const [tableCurrency, setTableCurrency] = useState("INR");
 
   const [currentCurrency, setCurrentCurrency] = useState({});
+
+  const dispatch = useDispatch();
 
   const AllCountriesCurrencyData = Country.getAllCountries().map((country) => {
     if (!currentCurrency?.label && country.currency === "INR") {
@@ -122,10 +125,15 @@ const CreateDealForm = ({ setIsOpen, pipelineId, selectedContacts }) => {
       });
     }
   }, [isSuccess]);
+
   useEffect(() => {
+    // const refetchStages = async ()=> await dispatch(stageApi.util.invalidateTags)
+    const refetchStages = async () =>
+      await dispatch(mainApi.util.invalidateTags(["stage"]));
     if (isItemSuccess) {
       toast.success("Deal has been created");
       setIsOpen(false);
+      refetchStages();
     }
   }, [isItemSuccess]);
 

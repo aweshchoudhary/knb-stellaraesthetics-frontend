@@ -4,9 +4,10 @@ import {
 } from "@/redux/services/activityApi";
 import { Icon } from "@iconify/react";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useActivityStatus } from "@/modules/deal";
 
 const ActivityDisplayModel = ({ data, setIsOpen }) => {
   const [deleteActivity, { isLoading, isError, isSuccess, error }] =
@@ -153,18 +154,7 @@ const ActivityDisplayModel = ({ data, setIsOpen }) => {
 };
 
 const ActivityStatus = ({ startDateTime, endDateTime }) => {
-  const [status, setStatus] = useState("none");
-
-  useEffect(() => {
-    let today = moment();
-    let endDate = moment(endDateTime).format("YYYY-MM-DD");
-    let startDate = moment(startDateTime).format("YYYY-MM-DD");
-
-    if (today.isBefore(endDate, "day")) setStatus("none");
-    if (today.isBefore(endDate, "day") && today.isAfter(startDate, "day"))
-      setStatus("pending");
-    if (today.isAfter(endDate, "day")) setStatus("overdue");
-  }, [startDateTime, endDateTime]);
+  const { status } = useActivityStatus(startDateTime, endDateTime);
   return (
     <>
       {status === "overdue" && (

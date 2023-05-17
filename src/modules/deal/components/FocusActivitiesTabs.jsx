@@ -8,32 +8,38 @@ import {
 } from "@/redux/services/activityApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { ActivityDisplayModel } from "@/modules/deal";
+import { ActivityDisplayModel, useActivityStatus } from "@/modules/deal";
 import { Tooltip } from "@mui/material";
 
-const FocusActivities = ({ dealId }) => {
+const FocusActivities = ({ dealId, contactId }) => {
   return (
     <Suspense>
       <div className="my-4">
         <header className="mb-3">
           <h2 className="text-lg font-medium">Focus Activity</h2>
         </header>
-        <Activites dealId={dealId} />
+        <Activites dealId={dealId} contactId={contactId} />
       </div>
     </Suspense>
   );
 };
 
-const Activites = ({ dealId }) => {
+const Activites = ({ dealId, contactId }) => {
   const { data, isLoading, isFetching, isSuccess } = useGetActivitiesQuery({
     filters: JSON.stringify([
-      { id: "deals", value: { $in: [dealId] } },
+      {
+        id: "$or",
+        value: [
+          { dealId: { $in: [dealId] } },
+          { contactId: { $in: [contactId] } },
+        ],
+      },
       { id: "completed_on", value: null },
     ]),
     data: true,
     populate: "performer contacts deals",
   });
-
+  console.log(data);
   return !isLoading && !isFetching && isSuccess ? (
     <div>
       <ul>
@@ -89,18 +95,7 @@ const ActivityDeal = ({ data }) => {
   }, [isUpdateError]);
 
   const ActivityStatus = ({ startDateTime, endDateTime }) => {
-    const [status, setStatus] = useState("none");
-
-    useEffect(() => {
-      let today = moment();
-      let endDate = moment(endDateTime).format("YYYY-MM-DD");
-      let startDate = moment(startDateTime).format("YYYY-MM-DD");
-
-      if (today.isBefore(endDate, "day")) setStatus("none");
-      if (today.isBefore(endDate, "day") && today.isAfter(startDate, "day"))
-        setStatus("pending");
-      if (today.isAfter(endDate, "day")) setStatus("overdue");
-    }, [startDateTime, endDateTime]);
+    const { status } = useActivityStatus(startDateTime, endDateTime);
     return (
       <>
         {status === "overdue" && (
@@ -157,7 +152,7 @@ const ActivityDeal = ({ data }) => {
                 startDateTime={data.startDateTime}
                 endDateTime={data.endDateTime}
               />
-              <span>{moment(data.endDateTime).fromNow()}</span>
+              <span>{moment(data.startDateTime).fromNow()}</span>
               <span>Awesh Choudhary</span>
               {data.location && (
                 <span className="flex items-center gap-1">

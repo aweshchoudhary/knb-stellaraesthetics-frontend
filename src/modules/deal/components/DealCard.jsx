@@ -11,8 +11,9 @@ import { formatNumber } from "@/modules/common";
 import { ActivityStatus } from "@/modules/activity";
 import { Icon } from "@iconify/react";
 
-const Deal = ({ dealId }) => {
+const Deal = ({ dealId, setColumnInfo }) => {
   const [label, setLabel] = useState({});
+  const [total, setTotal] = useState(0);
 
   const {
     data: deal,
@@ -40,12 +41,22 @@ const Deal = ({ dealId }) => {
     if (deal?.label) {
       fetchLabel(deal.label);
     }
-    // if (deal?.contacts?.length) {
-    //   deal.contacts.forEach((contact) => {
-    //     fetchContact(contact);
-    //   });
-    // }
+    if (setColumnInfo) {
+      setColumnInfo((prev) => ({
+        ...prev,
+        totalDeals: prev.totalDeals + 1,
+      }));
+    }
   }, [deal]);
+
+  useEffect(() => {
+    if (setColumnInfo) {
+      setColumnInfo((prev) => ({
+        ...prev,
+        totalRevenue: prev.totalRevenue + total,
+      }));
+    }
+  }, [total]);
 
   return (
     <Suspense>
@@ -89,6 +100,8 @@ const Deal = ({ dealId }) => {
                 items={deal.items}
                 value={deal.value}
                 currency={deal.currency}
+                total={total}
+                setTotal={setTotal}
               />
             </div>
             <Tooltip title={deal?.items?.length + " products"}>
@@ -128,11 +141,12 @@ const DealContacts = ({ contacts = [] }) => {
     </p>
   );
 };
-const DealTotal = ({ items, value }) => {
-  const [total, setTotal] = useState(0);
+const DealTotal = ({ items, value, total, setTotal }) => {
   useEffect(() => {
     if (items.length !== 0) {
-      items.forEach((item) => setTotal((prev) => +prev + +item.total));
+      let currTotal = 0;
+      items.forEach((item) => (currTotal = +item.total));
+      setTotal(currTotal);
     } else {
       setTotal(value);
     }

@@ -10,16 +10,19 @@ const ActivityStatus = ({ dealId }) => {
     isLoading,
     isFetching,
     isSuccess,
-  } = useGetActivitiesQuery({ dealId });
+  } = useGetActivitiesQuery({
+    filters: JSON.stringify([{ id: "deals", value: { $in: [dealId] } }]),
+    select: "_id endDateTime",
+    data: true,
+  });
   const [status, setStatus] = useState("nothing");
-
   useEffect(() => {
     if (!data.length) {
       return setStatus("nothing");
     }
     let isOverdue = false;
     data.forEach((item) => {
-      isOverdue = moment(item.endDate).isAfter();
+      isOverdue = moment(item.endDateTime).isBefore();
     });
     if (isOverdue) {
       setStatus("overdue");

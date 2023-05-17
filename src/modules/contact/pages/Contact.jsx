@@ -15,16 +15,11 @@ import {
   NoteHandler,
   FileHandler,
   EmailHandler,
-  ActivityDisplayModel,
 } from "@/modules/deal";
 
-import moment from "moment";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 
-import {
-  useGetActivitiesQuery,
-  useLazyGetActivitiesQuery,
-} from "@/redux/services/activityApi";
+import { useLazyGetActivitiesQuery } from "@/redux/services/activityApi";
 import { useGetDealsQuery } from "@/redux/services/dealApi";
 import { useGetMeQuery } from "@/redux/services/userApi";
 
@@ -39,19 +34,6 @@ const Contact = () => {
   const { data: loggedUser } = useGetMeQuery();
 
   const [isCreateDealModelOpen, setIsCreateDealModeOpen] = useState(false);
-  const [isActivityDisplayModelOpen, setIsActivityDisplayModelOpen] =
-    useState(false);
-  const [currentActivity, setCurrentActivity] = useState({});
-
-  const {
-    data: activities,
-    // isLoading: isActivitiesLoading,
-    // isFetching: isActivitiesFetching,
-  } = useGetActivitiesQuery({
-    filters: JSON.stringify([{ id: "contacts", value: id }]),
-    populate: "contacts deals",
-    data: true,
-  });
 
   const {
     data: deals,
@@ -60,8 +42,7 @@ const Contact = () => {
   } = useGetDealsQuery({
     filters: JSON.stringify([{ id: "contacts", value: { $in: [id] } }]),
     data: true,
-    populate: "label contacts",
-    sorting: JSON.stringify([{ id: "createdAt", desc: false }]),
+    select: "_id",
   });
 
   const { data, isLoading, isSuccess, isFetching } = useGetContactQuery(id);
@@ -75,12 +56,6 @@ const Contact = () => {
 
   const [deleteContact, { isSuccess: isDeleteSuccess }] =
     useDeleteContactMutation();
-
-  // const selectedDeals =
-  //   deals?.data?.map((i) => ({
-  //     label: i.title,
-  //     value: i._id,
-  //   })) || [];
 
   async function handleDeleteContact() {
     await deleteContact(id);
@@ -108,16 +83,6 @@ const Contact = () => {
             />
           </Model>
         )}
-        <Model
-          title="Activity"
-          isOpen={isActivityDisplayModelOpen}
-          setIsOpen={setIsActivityDisplayModelOpen}
-        >
-          <ActivityDisplayModel
-            data={currentActivity}
-            setIsOpen={setIsActivityDisplayModelOpen}
-          />
-        </Model>
       </Suspense>
       {!isLoading && !isFetching && isSuccess ? (
         <header className="h-full">
@@ -201,50 +166,10 @@ const Contact = () => {
                   !isDealsLoading &&
                   deals?.data?.length ? (
                     deals.data.map((deal) => {
-                      return <DealCard deal={deal} key={deal._id} />;
+                      return <DealCard dealId={deal._id} key={deal._id} />;
                     })
                   ) : (
                     <p>No Deals to show</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex-1 border-r">
-                <header className="py-3 px-5 bg-paper border-b">
-                  <h2>Next Activities</h2>
-                </header>
-                <div className="p-5 flex flex-col gap-3">
-                  {activities?.length !== 0 ? (
-                    activities?.map((activity, index) => {
-                      return (
-                        <>
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setCurrentActivity(activity);
-                              setIsActivityDisplayModelOpen(true);
-                            }}
-                            className="w-full p-2 text-left border flex justify-between items-center text-sm"
-                          >
-                            <div className="flex flex-1 gap-2 items-center">
-                              <Icon
-                                icon={"mdi:calendar-task"}
-                                className="text-xl"
-                              />
-                              <Typography noWrap className="w-[100px] text-xs">
-                                {activity.title}
-                              </Typography>
-                            </div>
-                            <div className="shrink-0">
-                              {moment(activity.startDateTime).format(
-                                "Do MMMM YYYY"
-                              )}
-                            </div>
-                          </button>
-                        </>
-                      );
-                    })
-                  ) : (
-                    <p>No activites to show</p>
                   )}
                 </div>
               </div>
@@ -313,7 +238,7 @@ const Contact = () => {
                     </Box>
                   )}
                 </Suspense>
-                <ActivitiesTabs dealId={id} />
+                <ActivitiesTabs contactId={id} />
                 <HistoryTabsContainer contactId={id} />
               </div>
             </div>
@@ -329,43 +254,38 @@ const Contact = () => {
 };
 
 const HistoryTabsContainer = ({ contactId }) => {
-  const [notes, setNotes] = useState([]);
-  const [activities, setActivities] = useState([]);
-  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [getActivities] = useLazyGetActivitiesQuery();
-  const [getNotes] = useLazyGetNotesQuery();
-  const [getFiles] = useLazyGetFilesQuery();
+  const [getActivities, { data: activities }] = useLazyGetActivitiesQuery();
+  const [getNotes, { data: notes }] = useLazyGetNotesQuery();
+  const [getFiles, { data: files }] = useLazyGetFilesQuery();
 
   useEffect(() => {
     let isMounted = true;
     const fetchHistories = async () => {
       setLoading(true);
-      const noteData = await getNotes({
+      await getNotes({
         filters: JSON.stringify([
           { id: "contacts", value: { $in: [contactId] } },
         ]),
         data: true,
-        populate: "creator",
+        populate: "creator deals contacts",
       });
-      noteData.data.length !== 0 && setNotes(noteData.data);
-
-      const activityData = await getActivities({
-        filters: JSON.stringify([{ id: "deals", value: { $in: [contactId] } }]),
+      await getActivities({
+        filters: JSON.stringify([
+          { id: "contacts", value: { $in: [contactId] } },
+          { id: "completed_on", value: { $not: { $eq: null } } },
+        ]),
         data: true,
-        populate: "performer",
+        populate: "performer deals contacts",
       });
-
-      activityData.data.length !== 0 && setActivities(activityData.data);
-      const fileData = await getFiles({
+      await getFiles({
         filters: JSON.stringify([
           { id: "contactId", value: { $in: [contactId] } },
         ]),
         data: true,
         populate: "uploader",
       });
-      fileData.data.length !== 0 && setFiles(fileData.data);
       setLoading(false);
     };
     isMounted && fetchHistories();

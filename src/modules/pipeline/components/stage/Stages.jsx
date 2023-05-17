@@ -53,6 +53,7 @@ const Stages = ({ pipeline, setIsStagesLength }) => {
       await getStages({
         filters: JSON.stringify([{ id: "pipelineId", value: pipelineId }]),
         data: true,
+        sort: JSON.stringify([{ id: "position", desc: false }]),
       });
     if (pipeline?._id) fetchStages(pipeline._id);
   }, [pipeline]);

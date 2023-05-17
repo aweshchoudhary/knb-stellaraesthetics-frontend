@@ -35,3 +35,6 @@ export const CreateDealModel = lazy(() =>
 
 export const CreateLabel = lazy(() => import("./components/label/CreateLabel"));
 export const Label = lazy(() => import("./components/label/Label"));
+
+import useActivityStatus from "./hooks/useActivityStatus";
+export { useActivityStatus };

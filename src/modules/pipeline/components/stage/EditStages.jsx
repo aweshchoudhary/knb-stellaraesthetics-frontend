@@ -21,6 +21,7 @@ const EditStage = ({ pipeline }) => {
   } = useGetStagesQuery({
     filters: JSON.stringify([{ id: "pipelineId", value: pipeline._id }]),
     data: true,
+    sort: JSON.stringify([{ id: "position", desc: false }]),
   });
 
   const [reorderStages, { isLoading: isStagesReorderLoading }] =
@@ -79,7 +80,7 @@ const EditStage = ({ pipeline }) => {
                       <Draggable
                         key={item._id}
                         draggableId={item._id}
-                        index={item.position}
+                        index={+item.position}
                       >
                         {(provided) => (
                           <EditColumn
